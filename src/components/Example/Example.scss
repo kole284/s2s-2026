@@ -1,0 +1,21 @@
+.example-container {
+  padding: 24px;
+  color: $color-blue;
+  font-family: $font-body;
+  background: $color-yellow;
+}
+
+.example-title {
+  margin: 0 0 8px;
+  font-family: $font-display;
+}
+
+.example-text {
+  margin: 0;
+}
+
+@media #{$mobile} {
+  .example-container {
+    padding: 16px;
+  }
+}

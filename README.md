@@ -191,8 +191,7 @@ Ne pravimo Pull Request direktno ka `main`.
 Pre Pull Request-a proveri:
 
 ```bash
-npm run lint
-npm run build
+npm run check
 ```
 
 ## Rad na komponentama
@@ -254,6 +253,10 @@ Važno:
 - nije deo finalnog dizajna,
 - nije stvarna sekcija sajta,
 - ne koristi se kao mesto za implementaciju tvoje sekcije.
+
+### Example komponenta
+
+[`src/components/Example/`](src/components/Example/) služi samo kao mala referenca za strukturu React komponente i SCSS konvencije u ovom projektu. Ne renderuje se u finalnoj aplikaciji.
 
 ## Naming konvencije
 
@@ -496,6 +499,5 @@ Primer dekorativne slike:
 - Pre Pull Request-a proveriti:
 
 ```bash
-npm run lint
-npm run build
+npm run check
 ```
