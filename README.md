@@ -1,8 +1,5 @@
 # S2S 2026 Frontend
 
-Frontend repository za S2S 2026 sajt.
-
-Projekat koristi React, TypeScript, Vite, SCSS/Sass, ESLint i React Router DOM sa `HashRouter`. Ne koristi se Tailwind CSS.
 
 ## Dizajn
 
