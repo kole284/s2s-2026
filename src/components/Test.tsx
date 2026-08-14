@@ -1,5 +1,7 @@
+import Example from '@/components/Example/Example';
+
 const Test = () => {
-  return <div>Test</div>;
+  return <Example />;
 };
 
 export default Test;
