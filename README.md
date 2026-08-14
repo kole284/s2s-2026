@@ -493,11 +493,8 @@ Primer dekorativne slike:
 - Novu granu praviti iz ažuriranog `development`.
 - Pull Request ide ka `development`.
 - Ne merge-ovati direktno u `main`.
-- Radi prvenstveno samo svoju komponentu.
-- Ne menjaj tuđe komponente bez dogovora.
 - Ne hardkodovati globalne boje i breakpointove ako postoje SCSS tokeni.
 - Koristi SCSS tokene iz `src/styles/`.
-- Ne koristiti Tailwind CSS.
 - Pisati TypeScript (`.tsx` za React komponente, `.ts` za ostalu TS logiku).
 - Pre Pull Request-a proveriti:
 
