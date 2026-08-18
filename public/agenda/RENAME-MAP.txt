@@ -1,0 +1,47 @@
+Agenda SVG rename mapping
+
+MOBILE
+Component 12.svg -> event-connector-01.svg
+Component 3.svg  -> event-connector-02.svg
+Component 11.svg -> event-connector-03.svg
+Component 4.svg  -> event-connector-04.svg
+Component 8.svg  -> event-connector-05.svg
+Component 5.svg  -> event-connector-06.svg
+Component 13.svg -> event-connector-07.svg
+Component 6.svg  -> event-connector-08.svg
+Component 9.svg  -> event-connector-09.svg
+Component 7.svg  -> event-connector-10.svg
+Component 10.svg -> event-connector-11.svg
+Group 55.svg     -> timeline-path.svg
+Component 14.svg -> day-1-badge.svg
+Component 16.svg -> day-2-badge.svg
+Component 15.svg -> day-2-marker.svg
+
+Component 15-1.svg -> event-star-01.svg
+Component 25.svg   -> event-star-02.svg
+Component 26.svg   -> event-star-03.svg
+Component 24.svg   -> event-star-04.svg
+Component 17.svg   -> event-star-05.svg
+Component 23.svg   -> event-star-06.svg
+Component 18.svg   -> event-star-07.svg
+Component 22.svg   -> event-star-08.svg
+Component 19.svg   -> event-star-09.svg
+Component 21.svg   -> event-star-10.svg
+Component 20.svg   -> event-star-11.svg
+
+DESKTOP
+Component 27.svg   -> event-star-01.svg
+Component 27-1.svg -> event-star-02.svg
+Component 27-2.svg -> event-star-03.svg
+Component 27-3.svg -> event-star-04.svg
+Component 27-4.svg -> event-star-05.svg
+Component 27-5.svg -> event-star-06.svg
+Component 27-6.svg -> event-star-07.svg
+Component 27-7.svg -> event-star-08.svg
+Component 27-8.svg -> event-star-09.svg
+Component 27-9.svg and Component 27-10.svg were empty and omitted.
+munja.svg -> timeline-path.svg
+
+SHARED
+dan 1 munja.svg   -> day-1-badge.svg
+dan 2 marker.svg  -> day-2-marker.svg

@@ -1,0 +1,740 @@
+.agenda {
+  position: relative;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  background: $color-white;
+}
+
+.agenda__desktop,
+.agenda__mobile {
+  position: relative;
+
+  width: 100%;
+}
+
+/* =========================================================
+   SHARED CANVAS
+   ========================================================= */
+
+.agenda__desktop-canvas,
+.agenda__mobile-canvas {
+  position: relative;
+
+  margin: 0 auto;
+
+  background: transparent;
+}
+
+/* =========================================================
+   SHARED TYPOGRAPHY
+   ========================================================= */
+
+.agenda__title {
+  position: absolute;
+
+  z-index: 20;
+
+  margin: 0;
+
+  font-family: $font-display;
+  font-weight: $font-black;
+
+  line-height: 1;
+
+  color: $color-blue;
+}
+
+.agenda__event-time,
+.agenda__event-title {
+  display: block;
+
+  margin: 0;
+
+  font-family: $font-body;
+  font-weight: $font-regular;
+
+  line-height: 1.2;
+}
+
+.agenda__event-time {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   DESKTOP WRAPPER
+   ========================================================= */
+
+.agenda__desktop {
+  position: relative;
+
+  display: flex;
+
+  width: 100%;
+  height: 100dvh;
+
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background: $color-white;
+}
+
+/* =========================================================
+   DESKTOP FULL-WIDTH PAPER
+   ========================================================= */
+
+.agenda__desktop::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  background-color: $color-blue;
+  background-image: url("/agenda/paper-texture.webp");
+
+  background-repeat: no-repeat;
+  background-size: 232% auto;
+  background-position: left top;
+
+  /*
+   * Gornja i donja pocepana ivica.
+   *
+   * Ovaj sloj pripada celoj sekciji,
+   * a ne unutrašnjem Figma canvasu,
+   * zato ide full-width.
+   */
+  clip-path: polygon(
+    0% 14.5%,
+    5% 13.3%,
+    10% 15.1%,
+    17% 16.6%,
+    24% 13.9%,
+    31% 12.3%,
+    38% 14.1%,
+    44% 15.4%,
+    51% 13.5%,
+    57% 15.3%,
+    64% 13.8%,
+    71% 15%,
+    78% 13.7%,
+    85% 14.8%,
+    92% 13.6%,
+    100% 14.8%,
+
+    100% 94%,
+    94% 95.4%,
+    88% 93.6%,
+    80% 95.2%,
+    73% 93.2%,
+    65% 95.5%,
+    57% 92.8%,
+    49% 95%,
+    41% 92.5%,
+    33% 95.5%,
+    25% 92.8%,
+    17% 95.2%,
+    10% 92.4%,
+    5% 94%,
+    0% 95.5%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   DESKTOP CANVAS
+   ========================================================= */
+
+/*
+ * Originalni Figma frame:
+ *
+ * 1440 × 1024
+ *
+ * Canvas se skalira tako da nikada ne bude viši
+ * od viewporta, ali zadržava originalni aspect ratio.
+ *
+ * Background nije na njemu — background je full-width
+ * na .agenda__desktop::before.
+ */
+.agenda__desktop-canvas {
+  position: relative;
+
+  z-index: 1;
+
+  width: min(100%, calc(100dvh * 1.40625));
+
+  aspect-ratio: 1440 / 1024;
+
+  flex: 0 0 auto;
+
+  margin: 0;
+
+  overflow: visible;
+
+  background: transparent;
+
+  /*
+   * Omogućava cqw jedinice.
+   *
+   * Sve što koristi cqw skalira se prema širini
+   * Agenda canvasa, a ne prema celom viewportu.
+   */
+  container-type: inline-size;
+}
+
+/* =========================================================
+   DESKTOP TITLE
+   ========================================================= */
+
+.agenda__desktop .agenda__title {
+  top: 5.57%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  /*
+   * 50px na originalnih 1440px.
+   */
+  font-size: 3.4722cqw;
+
+  text-align: center;
+}
+
+/* =========================================================
+   DESKTOP WHITE TIMELINE
+   ========================================================= */
+
+.agenda__desktop-path {
+  position: absolute;
+
+  z-index: 2;
+
+  top: 37.695%;
+  left: 10.139%;
+
+  width: 80.833%;
+  height: 38.086%;
+
+  object-fit: fill;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =========================================================
+   DESKTOP STARS
+   ========================================================= */
+
+.agenda__desktop-star {
+  position: absolute;
+
+  z-index: 4;
+
+  display: block;
+
+  object-fit: fill;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =========================================================
+   DESKTOP YELLOW CONNECTORS
+   ========================================================= */
+
+.agenda__desktop-connector {
+  position: absolute;
+
+  /*
+   * Mora biti iza zvezde da žuta linija
+   * ne preseče tamnoplavi SVG outline.
+   */
+  z-index: 3;
+
+  width: 0.5556cqw;
+
+  pointer-events: none;
+}
+
+/*
+ * Vertikalna žuta linija.
+ */
+.agenda__desktop-connector::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+  left: 50%;
+
+  /*
+   * 2px na 1440px.
+   */
+  width: 0.1389cqw;
+
+  background: $color-yellow;
+
+  transform: translateX(-50%);
+}
+
+/*
+ * Žuta tačka.
+ */
+.agenda__desktop-connector::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+
+  /*
+   * 8px na 1440px.
+   */
+  width: 0.5556cqw;
+  height: 0.5556cqw;
+
+  border-radius: 50%;
+
+  background: $color-yellow;
+
+  transform: translateX(-50%);
+}
+
+/*
+ * Gornji događaji.
+ */
+.agenda__desktop-connector--top::after {
+  top: -0.2778cqw;
+}
+
+/*
+ * Donji događaji.
+ */
+.agenda__desktop-connector--bottom::after {
+  bottom: -0.2778cqw;
+}
+
+/* =========================================================
+   DESKTOP EVENT TEXT
+   ========================================================= */
+
+.agenda__desktop-event {
+  position: absolute;
+
+  z-index: 6;
+
+  width: 12.3%;
+
+  color: $color-white;
+}
+
+.agenda__desktop-event .agenda__event-time,
+.agenda__desktop-event .agenda__event-title {
+  /*
+   * 24px na originalnih 1440px.
+   */
+  font-size: 1.6667cqw;
+}
+
+/* =========================================================
+   DESKTOP DAY BADGES
+   ========================================================= */
+
+.agenda__desktop-day {
+  position: absolute;
+
+  z-index: 7;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.agenda__desktop-day img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: fill;
+}
+
+.agenda__desktop-day span {
+  position: absolute;
+
+  font-family: $font-body;
+  font-weight: $font-black;
+
+  white-space: nowrap;
+
+  transform: translate(-50%, -50%);
+}
+
+/* =========================================================
+   DAN 1
+   ========================================================= */
+
+.agenda__desktop-day--one {
+  top: 25.488%;
+  left: 5.903%;
+
+  width: 11.319%;
+  height: 16.504%;
+}
+
+.agenda__desktop-day--one span {
+  top: 52.37%;
+  left: 52.75%;
+
+  font-size: 1.6667cqw;
+
+  color: $color-blue-dark;
+}
+
+/* =========================================================
+   DAN 2
+   ========================================================= */
+
+.agenda__desktop-day--two {
+  top: 16.992%;
+  left: 4.722%;
+
+  width: 6.875%;
+  height: 10.059%;
+}
+
+.agenda__desktop-day--two span {
+  top: 56.8%;
+  left: 56.8%;
+
+  font-size: 1.1111cqw;
+
+  color: $color-yellow;
+}
+
+/* =========================================================
+   MOBILE WRAPPER
+   ========================================================= */
+
+.agenda__mobile {
+  display: none;
+
+  position: relative;
+
+  width: 100%;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  background: $color-white;
+}
+
+/* =========================================================
+   MOBILE FULL-WIDTH PAPER
+   ========================================================= */
+
+/*
+ * Mobile koristi zasebnu verziju teksture.
+ */
+.agenda__mobile::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  background-color: $color-blue;
+  background-image: url("/agenda/paper-texture-mobile.webp");
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  clip-path: polygon(
+    0% 6.2%,
+    8% 5.5%,
+    17% 6.5%,
+    28% 5.5%,
+    39% 6.5%,
+    51% 5.6%,
+    62% 6.6%,
+    73% 5.6%,
+    84% 6.4%,
+    94% 5.5%,
+    100% 6.1%,
+
+    100% 97.1%,
+    88% 96.5%,
+    77% 97.2%,
+    66% 96.4%,
+    55% 97.2%,
+    44% 96.5%,
+    33% 97.2%,
+    22% 96.5%,
+    11% 97.2%,
+    0% 96.7%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   MOBILE CANVAS
+   ========================================================= */
+
+.agenda__mobile-canvas {
+  position: relative;
+
+  z-index: 1;
+
+  width: min(100%, 430px);
+
+  aspect-ratio: 390 / 1472;
+
+  margin: 0 auto;
+
+  overflow: visible;
+
+  background: transparent;
+}
+
+/* =========================================================
+   MOBILE TITLE
+   ========================================================= */
+
+.agenda__mobile .agenda__title {
+  top: 1%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-size: clamp(40px, 12.3vw, 48px);
+
+  text-align: center;
+}
+
+/* =========================================================
+   MOBILE WHITE TIMELINE
+   ========================================================= */
+
+.agenda__mobile-path {
+  position: absolute;
+
+  z-index: 2;
+
+  top: 15.83%;
+  left: 11.36%;
+
+  width: 81.82%;
+  height: 72.74%;
+
+  object-fit: contain;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =========================================================
+   MOBILE STARS
+   ========================================================= */
+
+.agenda__mobile-star {
+  position: absolute;
+
+  z-index: 4;
+
+  display: block;
+
+  height: auto;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =========================================================
+   MOBILE YELLOW CONNECTORS
+   ========================================================= */
+
+.agenda__mobile-connector {
+  position: absolute;
+
+  /*
+   * Isto kao desktop:
+   * konektor mora biti iza zvezde.
+   */
+  z-index: 3;
+
+  display: block;
+
+  width: 22%;
+  height: auto;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =========================================================
+   MOBILE EVENTS
+   ========================================================= */
+
+.agenda__mobile-event {
+  position: absolute;
+
+  z-index: 6;
+
+  width: 25%;
+
+  color: $color-white;
+}
+
+.agenda__mobile-event .agenda__event-time {
+  font-size: clamp(12px, 4.53vw, 18px);
+}
+
+.agenda__mobile-event .agenda__event-title {
+  font-size: clamp(14px, 5.13vw, 20px);
+}
+
+/* =========================================================
+   MOBILE ACTIVE DAY
+   ========================================================= */
+
+.agenda__mobile-current-day {
+  position: absolute;
+
+  z-index: 7;
+
+  top: 11.07%;
+  left: 51.79%;
+
+  width: 31.28%;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.agenda__mobile-current-day img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+.agenda__mobile-current-day span {
+  position: absolute;
+
+  top: 50%;
+  left: 55%;
+
+  font-family: $font-body;
+  font-size: clamp(13px, 4.35vw, 17px);
+  font-weight: $font-black;
+
+  color: $color-blue-dark;
+
+  white-space: nowrap;
+
+  transform: translate(-50%, -50%);
+}
+
+/* =========================================================
+   MOBILE DAY SWITCH
+   ========================================================= */
+
+.agenda__day-switch {
+  position: absolute;
+
+  z-index: 15;
+
+  top: 84.71%;
+  left: 61.79%;
+
+  width: 31.28%;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  transition: transform 160ms ease;
+}
+
+.agenda__day-switch img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  pointer-events: none;
+}
+
+.agenda__day-switch span {
+  position: absolute;
+
+  top: 52.55%;
+  left: 52.55%;
+
+  font-family: $font-body;
+  font-size: clamp(13px, 4.35vw, 17px);
+  font-weight: $font-black;
+
+  color: $color-blue-dark;
+
+  white-space: nowrap;
+
+  pointer-events: none;
+
+  transform: translate(-50%, -50%);
+}
+
+.agenda__day-switch:hover {
+  transform: scale(1.04);
+}
+
+.agenda__day-switch:active {
+  transform: scale(0.98);
+}
+
+.agenda__day-switch:focus-visible {
+  outline: 3px solid $color-yellow;
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   MOBILE BREAKPOINT
+   ========================================================= */
+
+@media #{$mobile} {
+  .agenda {
+    overflow: visible;
+  }
+
+  .agenda__desktop {
+    display: none;
+  }
+
+  .agenda__mobile {
+    display: flex;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media #{$small-mobile} {
+  .agenda__mobile-canvas {
+    width: 100%;
+  }
+}
