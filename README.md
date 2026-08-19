@@ -5,7 +5,7 @@
 
 Figma dizajn:
 
-[S2S 2026 Figma dizajn]([https://www.figma.com/design/X0ZjGNSIdEIR0dKrJQLrjC/S2S-2026--Copy-?node-id=0-1](https://www.figma.com/design/xmPiZeVEqG2hBKquGjVYtX/S2S-2026?t=98MuLGq07kY4n9FW-0))
+[S2S 2026 Figma dizajn](https://www.figma.com/design/xmPiZeVEqG2hBKquGjVYtX/S2S-2026?t=98MuLGq07kY4n9FW-0)
 Samo prvo idite desni klik, duplicate, pa u toj kopiji radite šta hoćete
 ## Pokretanje projekta
 
