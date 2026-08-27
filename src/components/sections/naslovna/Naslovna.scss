@@ -1,0 +1,384 @@
+.naslovna-section {
+  position: relative;
+  width: 100%;
+  height: 1024px;
+  overflow: hidden;
+  color: $color-white;
+  font-family: $font-display;
+  background: $color-blue;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+.naslovna-stage {
+  position: relative;
+  width: 100%;
+  height: 1024px;
+  overflow: hidden;
+  background: $color-blue;
+}
+
+.naslovna-side-band-desktop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 468px;
+  height: 1024px;
+  pointer-events: none;
+}
+
+.naslovna-mobile-band {
+  display: none;
+}
+
+.naslovna-mobile-art {
+  display: none;
+}
+
+.naslovna-headline-art {
+  position: absolute;
+  top: 23.98%;
+  left: 9.85%;
+  width: 48.22%;
+  height: 41.9%;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.naslovna-desktop-lightning-cluster {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.naslovna-desktop-logo-group {
+  position: absolute;
+  z-index: 2;
+  top: 36.23%;
+  left: 79.8%;
+  width: 352px;
+  height: 308px;
+  transform: translate(-50%, -50%);
+}
+
+.naslovna-logo-desktop {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.naslovna-mobile-logo-group {
+  display: none;
+}
+
+.naslovna-cta {
+  position: absolute;
+  z-index: 3;
+  top: 53.12%;
+  left: 67.03%;
+  display: grid;
+  width: 22.41%;
+  height: 13.61%;
+  color: $color-black;
+  font-size: clamp(26px, 2.5vw, 36px);
+  font-weight: $font-black;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  place-items: center;
+
+  padding: 0;
+  border: 0;
+  font-family: inherit;
+  background: transparent;
+  cursor: pointer;
+
+  span {
+    z-index: 1;
+    grid-area: 1 / 1;
+    transform: translate(-5px, -10%);
+  }
+
+  &:focus-visible {
+    outline: 4px solid $color-yellow;
+    outline-offset: 5px;
+  }
+}
+
+.naslovna-cta-art {
+  width: 100%;
+  height: 100%;
+  grid-area: 1 / 1;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.naslovna-date {
+  position: absolute;
+  top: 66.7%;
+  left: 22.15%;
+  width: 32.85%;
+  margin: 0;
+  font-size: clamp(45px, 5vw, 72px);
+  font-weight: $font-black;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  span {
+    font-size: 0.78em;
+  }
+}
+
+.naslovna-lightning {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.naslovna-lightning-top-desktop {
+  top: -10.4%;
+  left: 83.42%;
+  width: 51.86%;
+  height: 47.82%;
+}
+
+.naslovna-lightning-upper-desktop {
+  top: -244.68%;
+  left: 58.74%;
+  width: 20.1%;
+  height: 286.92%;
+}
+
+.naslovna-lightning-logo-desktop {
+  top: 1.46%;
+  left: 18.16%;
+  width: 63.19%;
+  height: 94.3%;
+}
+
+.naslovna-lightning-center-desktop {
+  top: 39.06%;
+  left: 81.06%;
+  width: 3.81%;
+  height: 17.45%;
+}
+
+.naslovna-lightning-right-desktop {
+  top: 61.22%;
+  left: 83.42%;
+  width: 60.51%;
+  height: 47.28%;
+}
+
+.naslovna-lightning-bottom-desktop {
+  top: 73.23%;
+  left: 21.11%;
+  width: 41.38%;
+  height: 29.1%;
+}
+
+@media #{$tablet} {
+  .naslovna-headline-art {
+    top: 29%;
+    left: 5%;
+    width: 55%;
+    height: auto;
+  }
+
+  .naslovna-cta {
+    top: 53%;
+    left: 67%;
+    width: 27%;
+  }
+
+  .naslovna-date {
+    top: 69%;
+    left: 18%;
+    width: 42%;
+  }
+}
+
+@media #{$desktop} {
+  .naslovna-stage {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(100%, 1440px);
+    transform: translateX(-50%);
+  }
+
+  .naslovna-headline-art {
+    top: clamp(245.5552px, calc(-12.356923vw + 423.494892px), 296.96px);
+    left: clamp(51.2px, calc(21.788462vw - 171.913846px), 141.84px);
+    width: clamp(563.2px, calc(31.530769vw + 240.324923px), 694.368px);
+    height: clamp(347.953125px, calc(19.49369vw + 148.33774px), 429.046875px);
+  }
+
+  .naslovna-cta {
+    top: clamp(542.72px, calc(0.295385vw + 539.695262px), 543.9488px);
+    left: clamp(686.08px, calc(67.103846vw - 1.063385px), 965.232px);
+    width: clamp(276.48px, calc(11.111538vw + 162.697846px), 322.704px);
+  }
+
+  .naslovna-date {
+    top: clamp(683.008px, calc(-5.661538vw + 764.534154px), 706.56px);
+    left: clamp(184.32px, calc(32.365385vw - 147.101538px), 318.96px);
+    width: clamp(430.08px, calc(10.326923vw + 324.332308px), 473.04px);
+  }
+}
+
+@media #{$mobile} {
+  .naslovna-section {
+    height: 844px;
+  }
+
+  .naslovna-stage {
+    height: 844px;
+
+    &::before {
+      position: absolute;
+      top: 260.31px;
+      left: -107px;
+      width: calc(100% + 214px);
+      height: 104.72px;
+      content: '';
+      background: $color-blue-dark;
+      transform: rotate(-6.39deg);
+      pointer-events: none;
+    }
+  }
+
+  .naslovna-side-band-desktop {
+    display: none;
+  }
+
+  .naslovna-mobile-band {
+    position: absolute;
+    top: 169px;
+    left: 50%;
+    display: block;
+    color: $color-blue-dark;
+    font-size: 128px;
+    font-weight: $font-black;
+    line-height: 100px;
+    white-space: nowrap;
+    transform: translateX(-50%) rotate(-5.89deg);
+  }
+
+  .naslovna-headline-art {
+    display: none;
+  }
+
+  .naslovna-logo-desktop {
+    display: none;
+  }
+
+  .naslovna-desktop-logo-group {
+    display: none;
+  }
+
+  .naslovna-mobile-logo-group {
+    position: absolute;
+    z-index: 2;
+    top: -4.05px;
+    right: -3.21px;
+    display: block;
+    width: 139.13px;
+    height: 132.05px;
+  }
+
+  .naslovna-mobile-logo-outline {
+    position: absolute;
+    inset: 0 auto auto 0;
+    display: block;
+    width: 139.13px;
+    height: 129.23px;
+    pointer-events: none;
+  }
+
+  .naslovna-mobile-logo {
+    position: absolute;
+    top: 14.05px;
+    left: 3.92px;
+    display: block;
+    width: 135px;
+    height: 118px;
+  }
+
+  .naslovna-cta {
+    top: 550.87px;
+    left: 50%;
+    width: 243.34px;
+    height: auto;
+    font-size: clamp(26px, 8.21vw, 32px);
+    aspect-ratio: 243.34 / 126.12;
+    transform: translateX(-50%);
+
+    span {
+      transform: translateY(-35%);
+    }
+  }
+
+  .naslovna-cta-art {
+    visibility: hidden;
+  }
+
+  .naslovna-date {
+    top: 738.5px;
+    left: 50%;
+    width: 324px;
+    font-size: 48px;
+    transform: translateX(-50%);
+  }
+
+  .naslovna-lightning-top-desktop,
+  .naslovna-lightning-upper-desktop,
+  .naslovna-lightning-logo-desktop,
+  .naslovna-lightning-center-desktop,
+  .naslovna-lightning-right-desktop,
+  .naslovna-lightning-bottom-desktop {
+    display: none;
+  }
+
+  .naslovna-mobile-art {
+    position: absolute;
+    top: -4.05px;
+    left: calc(50% - 295.99px);
+    display: block;
+    width: 657.31px;
+    height: 886.11px;
+    pointer-events: none;
+  }
+
+}
+
+@media #{$small-mobile} {
+  .naslovna-section,
+  .naslovna-stage {
+    width: 100%;
+  }
+
+  .naslovna-stage::before {
+    top: 258px;
+    height: 104px;
+  }
+}
