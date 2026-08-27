@@ -38,7 +38,7 @@ const Naslovna = () => {
         />
 
         <div className="naslovna-mobile-band" aria-hidden="true">
-          S2S2S2S2S
+          S2S2S2S2S2S2S2S
         </div>
 
         <div className="naslovna-desktop-lightning-cluster">
