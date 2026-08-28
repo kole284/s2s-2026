@@ -321,31 +321,26 @@
 }
 
 @media #{$desktop} {
+  .naslovna-section {
+    height: 100vh;
+  }
+
   .naslovna-stage {
     position: absolute;
     top: 0;
     left: 50%;
-    width: min(100%, 1440px);
-    transform: translateX(-50%);
-  }
-
-  .naslovna-headline-art {
-    top: clamp(245.5552px, calc(-12.356923vw + 423.494892px), 296.96px);
-    left: clamp(51.2px, calc(21.788462vw - 171.913846px), 141.84px);
-    width: clamp(563.2px, calc(31.530769vw + 240.324923px), 694.368px);
-    height: clamp(347.953125px, calc(19.49369vw + 148.33774px), 429.046875px);
+    width: 1440px;
+    height: 1024px;
+    transform: translateX(-50%) scale(calc(100vh / 1024px));
+    transform-origin: top center;
   }
 
   .naslovna-cta {
-    top: clamp(542.72px, calc(0.295385vw + 539.695262px), 543.9488px);
-    left: clamp(686.08px, calc(67.103846vw - 1.063385px), 965.232px);
-    width: clamp(276.48px, calc(11.111538vw + 162.697846px), 322.704px);
+    font-size: 36px;
   }
 
   .naslovna-date {
-    top: clamp(683.008px, calc(-5.661538vw + 764.534154px), 706.56px);
-    left: clamp(184.32px, calc(32.365385vw - 147.101538px), 318.96px);
-    width: clamp(430.08px, calc(10.326923vw + 324.332308px), 473.04px);
+    font-size: 72px;
   }
 }
 
