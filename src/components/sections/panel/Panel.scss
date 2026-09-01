@@ -203,16 +203,23 @@
   height: 223px;
 }
 
-.panel-featured-plaque {
+.panel-featured-plaque-composition::before, .panel-featured-plaque-composition::after {
   position: absolute;
-  inset: 0;
   display: block;
-  width: 100%;
-  height: 100%;
+  inset: 0;
+  content: '';
 }
 
-.panel-featured-plaque--mobile {
-  display: none;
+.panel-featured-plaque-composition::before {
+  z-index: 1;
+  background: $color-blue;
+  clip-path: polygon(20.23px 0, 436.3px 29.99px, 426.57px 168.73px, 0 176.52px);
+}
+
+.panel-featured-plaque-composition::after {
+  z-index: 0;
+  background: $color-blue-dark;
+  clip-path: polygon(133.27px 215.42px, 141.76px 161.61px, 441.49px 147.81px, 437.85px 222.32px);
 }
 
 .panel-featured-name-area {
@@ -395,6 +402,17 @@
   }
 }
 
+@media only screen and (min-width: 769px) and (max-aspect-ratio: 1439 / 1024) {
+  .panel-stage-blue {
+    left: calc(
+      var(--panel-crop) + var(--panel-visible-width) * .429 -
+      142.56px * var(--panel-compression)
+    );
+    transform: scale(var(--panel-compression));
+    transform-origin: left bottom;
+  }
+}
+
 @media #{$mobile} {
   .panel-section {
     display: grid;
@@ -537,12 +555,12 @@
     height: 175px;
   }
 
-  .panel-featured-plaque--desktop {
-    display: none;
+  .panel-featured-plaque-composition::before {
+    clip-path: polygon(30.31px 0, 288.27px 15.25px, 283.95px 112.85px, 19.96px 124.29px);
   }
 
-  .panel-featured-plaque--mobile {
-    display: block;
+  .panel-featured-plaque-composition::after {
+    clip-path: polygon(0 168.51px, 8.49px 121.18px, 308.22px 109.04px, 304.58px 174.57px);
   }
   
   .panel-featured-name-area {

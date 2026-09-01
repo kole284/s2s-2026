@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import arrow from '@/assets/panel/arrow.svg';
 import microphone from '@/assets/panel/microphone.svg';
-import panelPlaqueDesktop from '@/assets/panel/panel-plaque-desktop.svg';
-import panelPlaqueMobile from '@/assets/panel/panel-plaque-mobile.svg';
 import panelSparkDesktop from '@/assets/panel/panel-spark-desktop.svg';
 import panelSparkMobile from '@/assets/panel/panel-spark-mobile.svg';
 import placeholderOutline from '@/assets/panel/placeholder-panelist-outline.svg';
@@ -58,8 +56,6 @@ const SelectedPanelistCard = ({ panelist, previousPanelist, nextPanelist, onPrev
     <PanelistVisual panelist={panelist} featured />
     <div className="panel-featured-separator" />
     <div className="panel-featured-plaque-composition">
-      <img className="panel-featured-plaque panel-featured-plaque--desktop" src={panelPlaqueDesktop} alt="" />
-      <img className="panel-featured-plaque panel-featured-plaque--mobile" src={panelPlaqueMobile} alt="" />
       <div className="panel-featured-name-area">
         <h3 className="panel-featured-name">{panelist.name}</h3>
       </div>
