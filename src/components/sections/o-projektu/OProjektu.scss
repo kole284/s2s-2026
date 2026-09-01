@@ -1,0 +1,531 @@
+@use 'sass:list';
+
+@font-face {
+  font-family: 'Jost';
+  src: url('@/assets/o-projektu/Jost-Variable.ttf') format('truetype-variations');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@function o-projektu-zigzag($strip-width, $tooth-width, $tooth-height, $step, $count) {
+  $points: ();
+
+  @for $index from 0 through $count {
+    $peak-x: $index * $tooth-width;
+    $peak-y: $index * $step;
+    $points: list.append($points, $peak-x $peak-y, comma);
+    $points: list.append(
+      $points,
+      ($peak-x + ($tooth-width * 0.5)) ($peak-y + $tooth-height),
+      comma
+    );
+  }
+
+  $points: list.append($points, $strip-width 100%, comma);
+  $points: list.append($points, 0 100%, comma);
+
+  @return $points;
+}
+
+.o-projektu {
+  --o-projektu-desktop-scale: calc(100dvh / 1024px);
+
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  color: $color-black;
+  background: $color-white;
+  font-family: $font-body;
+}
+
+.o-projektu-content {
+  position: absolute;
+  inset: 0 auto auto 50%;
+  width: 1440px;
+  height: 1024px;
+  transform: translateX(-50%) scale(var(--o-projektu-desktop-scale));
+  transform-origin: top center;
+}
+
+.o-projektu-white-stage,
+.o-projektu-blue-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.o-projektu-background {
+  position: absolute;
+  z-index: 0;
+  top: 448px;
+  left: -1104px;
+  width: 4096px;
+  height: 576px;
+  background: $color-blue;
+  clip-path: polygon(o-projektu-zigzag(4096px, 102px, 53px, 5px, 40));
+}
+
+.o-projektu-students {
+  position: absolute;
+  z-index: 2;
+  top: 128px;
+  left: 79px;
+  width: 595px;
+}
+
+.o-projektu-students-title,
+.o-projektu-fonis h2 {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-black;
+  line-height: 0.78;
+}
+
+.o-projektu-students-title {
+  color: $color-blue;
+  font-size: 72px;
+  letter-spacing: -2.9px;
+}
+
+.o-projektu-students-title span {
+  display: block;
+}
+
+.o-projektu-students-title span:last-child {
+  color: $color-yellow;
+}
+
+.o-projektu-students-title span:last-child span {
+  color: $color-blue;
+  display: inline;
+}
+
+.o-projektu-copy {
+  position: relative;
+  overflow: hidden;
+}
+
+.o-projektu-copy p {
+  text-align: justify;
+  margin: 0;
+}
+
+.o-projektu-students-copy {
+  width: 595px;
+  height: 210px;
+  margin-top: 25px;
+  font-size: 28px;
+  font-weight: $font-regular;
+  line-height: 1.22;
+  letter-spacing: -0.35px;
+}
+
+.o-projektu-students-copy p + p {
+  display: none;
+}
+
+.o-projektu-students-copy::after,
+.o-projektu-fonis-copy::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 102px;
+  content: '';
+  pointer-events: none;
+}
+
+.o-projektu-students-copy::after {
+  background: linear-gradient(to bottom, transparent, $color-white 88%);
+}
+
+.o-projektu-classroom {
+  position: absolute;
+  z-index: 1;
+  top: 161px;
+  left: 698px;
+  width: 743px;
+  height: 426px;
+}
+
+.o-projektu-arrow {
+  position: absolute;
+  z-index: 3;
+  width: 70px;
+  height: 30px;
+}
+
+.o-projektu-arrow-top {
+  top: 466px;
+  left: 348px;
+}
+
+.o-projektu-computer {
+  position: absolute;
+  z-index: 2;
+  top: 659px;
+  left: 10px;
+  width: 488px;
+  height: 366px;
+}
+
+.o-projektu-fonis {
+  position: absolute;
+  z-index: 2;
+  top: 658px;
+  left: 627px;
+  width: 680px;
+  color: $color-white;
+}
+
+.o-projektu-fonis h2 {
+  color: $color-yellow;
+  font-size: 72px;
+  letter-spacing: -1px;
+  transform: scaleX(1.1);
+  transform-origin: left center;
+}
+
+.o-projektu-fonis-copy {
+  width: 680px;
+  height: 207px;
+  margin-top: 24px;
+  font-size: 28px;
+  line-height: 1.22;
+  letter-spacing: -0.35px;
+}
+
+.o-projektu-fonis-copy p + p {
+  display: none;
+}
+
+.o-projektu-fonis-copy::after {
+  background: linear-gradient(to bottom, transparent, $color-blue 92%);
+}
+
+.o-projektu-arrow-bottom {
+  top: 971px;
+  left: 927px;
+  filter: brightness(0) invert(1);
+}
+
+@media only screen and (min-width: 769px) {
+  .o-projektu {
+    --o-projektu-foreground-width: min(
+      1440px,
+      calc(100vw / var(--o-projektu-desktop-scale))
+    );
+    --o-projektu-foreground-offset: calc((1440px - var(--o-projektu-foreground-width)) / 2);
+  }
+
+  .o-projektu-students {
+    left: calc(
+      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 79 / 1440
+    );
+    width: calc(var(--o-projektu-foreground-width) * 595 / 1440);
+  }
+
+  .o-projektu-students-title,
+  .o-projektu-fonis h2 {
+    font-size: calc(var(--o-projektu-foreground-width) * 72 / 1440);
+  }
+
+  .o-projektu-students-copy {
+    width: 100%;
+  }
+
+  .o-projektu-classroom {
+    left: calc(
+      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 698 / 1440
+    );
+    width: calc(var(--o-projektu-foreground-width) * 743 / 1440);
+    height: calc(var(--o-projektu-foreground-width) * 426 / 1440);
+  }
+
+  .o-projektu-arrow {
+    width: calc(var(--o-projektu-foreground-width) * 70 / 1440);
+    height: calc(var(--o-projektu-foreground-width) * 30 / 1440);
+  }
+
+  .o-projektu-arrow-top {
+    left: calc(
+      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 348 / 1440
+    );
+  }
+
+  .o-projektu-computer {
+    left: calc(
+      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 10 / 1440
+    );
+    width: calc(var(--o-projektu-foreground-width) * 488 / 1440);
+    height: calc(var(--o-projektu-foreground-width) * 366 / 1440);
+  }
+
+  .o-projektu-fonis {
+    left: calc(
+      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 627 / 1440
+    );
+    width: calc(var(--o-projektu-foreground-width) * 680 / 1440);
+  }
+
+  .o-projektu-fonis-copy {
+    width: 100%;
+  }
+
+  .o-projektu-arrow-bottom {
+    left: calc(
+      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 927 / 1440
+    );
+  }
+}
+
+@media #{$desktop}, #{$tablet} {
+  .o-projektu-classroom {
+    top: auto;
+    bottom: 437px;
+  }
+}
+
+@media #{$mobile} {
+  .o-projektu {
+    --o-projektu-white-stage-shift: clamp(0px, calc(9.524vw - 37.144px), 36px);
+    --o-projektu-mobile-split: calc(50.474dvh - var(--o-projektu-white-stage-shift));
+    --o-projektu-bottom-arrow-offset: clamp(50px, calc(7.1dvh + 8vw - 31px), 95px);
+
+    height: 100dvh;
+    min-height: 100dvh;
+    background: transparent;
+  }
+
+  .o-projektu-background {
+    z-index: 2;
+    top: var(--o-projektu-mobile-split);
+    left: -15px;
+    width: 497px;
+    height: calc(100dvh - var(--o-projektu-mobile-split));
+    clip-path: polygon(
+      0 0,
+      35.5px 37px,
+      71px 4px,
+      106.5px 41px,
+      142px 8px,
+      177.5px 45px,
+      213px 12px,
+      248.5px 49px,
+      284px 16px,
+      319.5px 53px,
+      355px 20px,
+      390.5px 57px,
+      426px 24px,
+      461.5px 61px,
+      497px 28px,
+      100% 100%,
+      0 100%
+    );
+  }
+
+  .o-projektu-students {
+    z-index: 1;
+    top: clamp(64px, 12.2dvh, 103px);
+    bottom: 8px;
+    left: 35px;
+    width: 330px;
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .o-projektu-students-title {
+    font-size: 48px;
+    line-height: 0.76;
+    letter-spacing: -1.9px;
+  }
+
+  .o-projektu-students-copy {
+    width: 330px;
+    height: auto;
+    min-height: 0;
+    flex: 1;
+    margin-top: 25px;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.1px;
+  }
+
+  .o-projektu-students-copy p + p {
+    display: block;
+    margin-top: 17px;
+  }
+
+  .o-projektu-classroom {
+    z-index: 1;
+    top: auto;
+    bottom: -23px;
+    left: 50%;
+    width: 475px;
+    height: auto;
+    filter: brightness(0) saturate(100%) invert(83%) sepia(100%) saturate(934%) hue-rotate(343deg)
+      brightness(104%) contrast(101%);
+    opacity: 0.35;
+    transform: translateX(-50%);
+  }
+
+  .o-projektu-arrow-top {
+    z-index: 3;
+    top: auto;
+    bottom: -14px;
+    left: 156px;
+  }
+
+  .o-projektu-computer {
+    z-index: 3;
+    top: clamp(105px, 17.2dvh, 145px);
+    left: 50%;
+    width: 280px;
+    height: auto;
+    filter: brightness(0) saturate(100%) invert(24%) sepia(93%) saturate(1618%) hue-rotate(199deg)
+      brightness(79%) contrast(98%);
+    opacity: 0.58;
+    transform: translateX(-50%);
+  }
+
+  .o-projektu-fonis {
+    z-index: 3;
+    top: clamp(42px, 7.7dvh, 65px);
+    bottom: calc(var(--o-projektu-bottom-arrow-offset) + 42px);
+    left: 31px;
+    width: 330px;
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .o-projektu-fonis h2 {
+    font-size: 48px;
+    line-height: 0.8;
+    letter-spacing: -1px;
+    transform: translateY(4px) scaleX(1.1);
+  }
+
+  .o-projektu-fonis-copy {
+    width: 330px;
+    height: auto;
+    min-height: 0;
+    flex: 1;
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.1px;
+  }
+
+  .o-projektu-fonis-copy p + p {
+    display: block;
+    margin-top: 18px;
+  }
+
+  .o-projektu-arrow-bottom {
+    top: auto;
+    bottom: var(--o-projektu-bottom-arrow-offset);
+    left: 154px;
+  }
+}
+
+@media #{$mobile} {
+  .o-projektu-content {
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    transform: none;
+  }
+
+  .o-projektu-white-stage {
+    z-index: 1;
+    top: 0;
+    height: var(--o-projektu-mobile-split);
+    background: $color-white;
+  }
+
+  .o-projektu-blue-stage {
+    z-index: 3;
+    top: var(--o-projektu-mobile-split);
+    bottom: auto;
+    height: calc(100dvh - var(--o-projektu-mobile-split));
+    overflow: hidden;
+  }
+
+  .o-projektu-students {
+    right: auto;
+    left: 0;
+    width: 100%;
+  }
+
+  .o-projektu-students-copy,
+  .o-projektu-fonis-copy {
+    width: 84.615vw;
+    margin-right: auto;
+    margin-left: auto;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+  }
+
+  .o-projektu-students-copy::after,
+  .o-projektu-fonis-copy::after {
+    content: none;
+  }
+
+  .o-projektu-students-title {
+    margin-left: 35px;
+  }
+
+  .o-projektu-fonis {
+    right: auto;
+    left: 0;
+    width: 100%;
+  }
+
+  .o-projektu-fonis h2 {
+    margin-left: 31px;
+  }
+
+  .o-projektu-arrow-top,
+  .o-projektu-arrow-bottom {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .o-projektu-background {
+    width: 1200px;
+    clip-path: polygon(o-projektu-zigzag(1200px, 71px, 37px, 4px, 17));
+  }
+}
+
+@media #{$small-mobile} {
+  .o-projektu-students-title,
+  .o-projektu-fonis h2 {
+    font-size: calc(48px * 100vw / 390px);
+  }
+
+  .o-projektu-students-title {
+    margin-left: calc(35px * 100vw / 390px);
+    letter-spacing: calc(-1.9px * 100vw / 390px);
+  }
+
+  .o-projektu-fonis h2 {
+    margin-left: calc(31px * 100vw / 390px);
+    letter-spacing: calc(-1px * 100vw / 390px);
+  }
+
+  .o-projektu-classroom {
+    width: calc(475px * 100vw / 390px);
+  }
+
+  .o-projektu-computer {
+    width: calc(280px * 100vw / 390px);
+  }
+
+  .o-projektu-arrow {
+    width: calc(70px * 100vw / 390px);
+    height: calc(30px * 100vw / 390px);
+  }
+}
