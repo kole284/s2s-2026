@@ -39,8 +39,8 @@ const PANEL_DESCRIPTION =
 
 const PanelistVisual = ({ panelist, featured = false, className = '' }: { panelist: Panelist; featured?: boolean; className?: string }) => (
   <div className={`panel-panelist-visual${featured ? ' panel-panelist-visual--featured' : ''}${className ? ` ${className}` : ''}`}>
-    <img className="panel-panelist-picture" src={panelist.picture} alt="" />
-    <img className="panel-panelist-outline" src={panelist.outline} alt="" />
+    <img className="panel-panelist-picture" src={panelist.picture} alt="" draggable={false} />
+    <img className="panel-panelist-outline" src={panelist.outline} alt="" draggable={false} />
   </div>
 );
 
@@ -51,8 +51,8 @@ const SelectedPanelistCard = ({ panelist, previousPanelist, nextPanelist, onPrev
       <PanelistVisual panelist={nextPanelist} className="panel-adjacent-panelist panel-adjacent-panelist--right" />
     </div>
     <div className="panel-flame-circle" />
-    <img className="panel-spark panel-spark--desktop" src={panelSparkDesktop} alt="" />
-    <img className="panel-spark panel-spark--mobile" src={panelSparkMobile} alt="" />
+    <img className="panel-spark panel-spark--desktop" src={panelSparkDesktop} alt="" draggable={false} />
+    <img className="panel-spark panel-spark--mobile" src={panelSparkMobile} alt="" draggable={false} />
     <PanelistVisual panelist={panelist} featured />
     <div className="panel-featured-separator" />
     <div className="panel-featured-plaque-composition">
@@ -63,13 +63,13 @@ const SelectedPanelistCard = ({ panelist, previousPanelist, nextPanelist, onPrev
         <span className="panel-featured-role">Panelista</span>
       </div>
     </div>
-    <img className="panel-microphone" src={microphone} alt="" />
+    <img className="panel-microphone" src={microphone} alt="" draggable={false} />
 
     <button className="panel-arrow panel-arrow--previous" type="button" onClick={onPrevious} aria-label="Previous panelist">
-      <img src={arrow} alt="" />
+      <img src={arrow} alt="" draggable={false} />
     </button>
     <button className="panel-arrow panel-arrow--next" type="button" onClick={onNext} aria-label="Next panelist">
-      <img src={arrow} alt="" />
+      <img src={arrow} alt="" draggable={false} />
     </button>
   </div>
 );
@@ -127,7 +127,7 @@ const Panel = () => {
             {PANEL_DESCRIPTION.split("\n").map((line) => <span key={line}>{line}<br /></span>)}
           </p>
         </div>
-        <img className="panel-question-mark" src={questionMark} alt="" />
+        <img className="panel-question-mark" src={questionMark} alt="" draggable={false} />
       </div>
     </section>
   );
