@@ -39,7 +39,7 @@ const PANEL_DESCRIPTION =
 
 const PanelistVisual = ({ panelist, featured = false, className = '' }: { panelist: Panelist; featured?: boolean; className?: string }) => (
   <div className={`panel-panelist-visual${featured ? ' panel-panelist-visual--featured' : ''}${className ? ` ${className}` : ''}`}>
-    <img className="panel-panelist-picture" src={panelist.picture} alt="" draggable={false} />
+    <img className="panel-panelist-picture" src={panelist.picture} alt={panelist.name} draggable={false} />
     <img className="panel-panelist-outline" src={panelist.outline} alt="" draggable={false} />
   </div>
 );
