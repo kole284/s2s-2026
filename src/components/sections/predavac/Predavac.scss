@@ -1,0 +1,218 @@
+.predavac {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: $color-white;
+  // TODO: zameniti pravim "izgužvani papir" asset-om (background-image),
+  // trenutno je samo puna bela pozadina kao placeholder.
+  border: 4px solid $color-blue;
+  overflow: visible;
+}
+
+.predavac-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: $color-blue;
+  padding: 1rem 1.5rem;
+}
+
+.predavac-title {
+  font-family: $font-accent;
+  color: $color-yellow;
+  font-size: 1.75rem;
+  text-align: center;
+  margin: 0;
+
+  @media #{$mobile} {
+    font-size: 1.25rem;
+  }
+}
+
+.predavac-close {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: $color-white;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.predavac-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2rem 3rem;
+
+  @media #{$mobile} {
+    padding: 1.25rem 1rem 0;
+    flex-wrap: wrap;
+  }
+}
+
+.predavac-nav {
+  background: none;
+  border: none;
+  color: $color-blue;
+  font-size: 3rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.5rem;
+  flex-shrink: 0;
+
+  &:hover {
+    color: $color-blue-dark;
+  }
+}
+
+// Desktop/tablet: strelice su van kartice (levo/desno od content bloka)
+.predavac-nav-prev {
+  margin-right: 1rem;
+}
+
+.predavac-nav-next {
+  margin-left: 1rem;
+}
+
+.predavac-content {
+  flex: 1;
+  display: grid;
+  gap: 1rem 2rem;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas: 'speaker description difficulty-label' 'speaker description difficulty-icon';
+  align-items: start;
+  width: 100%;
+
+  @media #{$mobile} {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'difficulty-label difficulty-label'
+      'speaker difficulty-icon'
+      'description description';
+    gap: 0.75rem 1rem;
+  }
+}
+
+.predavac-speaker {
+  grid-area: speaker;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.predavac-image {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  display: block;
+
+  @media #{$mobile} {
+    max-width: 140px;
+  }
+}
+
+.predavac-name {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: $font-accent;
+  color: $color-white;
+  background-color: $color-blue;
+  padding: 0.15rem 0.75rem;
+  white-space: nowrap;
+  font-size: 1rem;
+
+  @media #{$mobile} {
+    font-size: 0.8rem;
+    padding: 0.1rem 0.5rem;
+  }
+}
+
+.predavac-description {
+  grid-area: description;
+  font-family: $font-body;
+  color: $color-black;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+
+  @media #{$mobile} {
+    font-size: 0.9rem;
+  }
+}
+
+.predavac-difficulty-label {
+  grid-area: difficulty-label;
+  font-family: $font-display;
+  color: $color-blue;
+  font-size: 1.1rem;
+  margin: 0;
+  text-align: right;
+
+  strong {
+    font-weight: $font-black;
+  }
+
+  @media #{$mobile} {
+    text-align: center;
+  }
+}
+
+.predavac-icon {
+  grid-area: difficulty-icon;
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  color: $color-blue;
+  justify-self: end;
+
+  @media #{$mobile} {
+    max-width: 90px;
+    justify-self: center;
+  }
+}
+
+// Mobile: sadržaj ide preko cele širine (red 1), strelice idu ispod
+// njega, jedna levo jedna desno, u plavoj traci (red 2).
+// Ovo je pretpostavljena vizuelizacija bar-a sa slike - nemamo potvrđen
+// asset/boju za tu traku, pa koristim $color-blue radi konzistentnosti.
+@media #{$mobile} {
+  .predavac-content {
+    order: 1;
+    flex-basis: 100%;
+  }
+
+  .predavac-nav {
+    order: 2;
+    margin: 0;
+    background-color: $color-blue;
+    color: $color-white;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+
+    &:hover {
+      color: $color-white;
+      background-color: $color-blue-dark;
+    }
+  }
+
+  .predavac-nav-next {
+    margin-left: auto;
+  }
+
+  .predavac-body {
+    padding-bottom: 1.25rem;
+  }
+}
