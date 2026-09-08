@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Predavac.scss';
+import shieldIcon from '../../../assets/predavac/shield-icon.png';
 
 export interface Speaker {
   id: string;
@@ -89,19 +90,12 @@ const Predavac = ({
             TEŽINA: <strong>{currentSpeaker.difficulty}</strong>
           </p>
 
-          {/* TODO: zameniti pravim SVG asset-om kada bude poslat */}
-          <svg
+          <img
             className="predavac-icon"
-            viewBox="0 0 100 100"
+            src={shieldIcon}
+            alt=""
             aria-hidden="true"
-          >
-            <path
-              d="M50 5 L90 20 V50 C90 75 70 90 50 95 C30 90 10 75 10 50 V20 Z"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-          </svg>
+          />
         </div>
 
         {speakers.length > 1 && (
