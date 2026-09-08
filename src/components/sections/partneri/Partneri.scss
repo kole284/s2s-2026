@@ -1,0 +1,949 @@
+.partneri-page {
+  --partner-u: 0.0694444444vw;
+
+  position: relative;
+
+  width: 100%;
+  height: calc(1454 * var(--partner-u));
+  min-height: 100vh;
+
+  overflow: hidden;
+
+  background: $color-blue;
+}
+
+.partneri-page::after {
+  position: absolute;
+  z-index: 4;
+  top: calc(1319 * var(--partner-u));
+  left: 0;
+
+  width: 100%;
+  height: calc(135 * var(--partner-u));
+
+  background: $color-blue;
+
+  clip-path: polygon(
+    0 27.41%,
+    22.85% 0,
+    47.22% 54.81%,
+    66.81% 0,
+    95% 54.07%,
+    100% 8.15%,
+    100% 100%,
+    0 100%
+  );
+
+  content: "";
+  pointer-events: none;
+}
+
+.partneri-header,
+.partner-section {
+  position: absolute;
+  left: 0;
+
+  width: 100%;
+}
+
+.partneri-header {
+  z-index: 1;
+  top: 0;
+
+  height: calc(303 * var(--partner-u));
+
+  background: $color-blue;
+
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 81.85%,
+    91% 99.67%,
+    76.94% 79.87%,
+    63.47% 98.68%,
+    46.81% 77.56%,
+    34.03% 98.68%,
+    22.08% 81.52%,
+    5.97% 90.1%,
+    0 75.25%
+  );
+}
+
+.partneri-header h1,
+.section-content h2 {
+  margin: 0;
+
+  font-family: $font-display;
+  font-weight: $font-black;
+  line-height: 1;
+}
+
+.partneri-header h1 {
+  position: absolute;
+  top: calc(118 * var(--partner-u));
+  left: 50%;
+
+  color: $color-white;
+
+  font-size: calc(72 * var(--partner-u));
+  letter-spacing: calc(0.4 * var(--partner-u));
+
+  transform: translateX(-50%);
+}
+
+.partner-section {
+  isolation: isolate;
+}
+
+.partner-section::before {
+  position: absolute;
+  z-index: 0;
+
+  inset: 0;
+
+  content: "";
+}
+
+.section-content {
+  position: absolute;
+  z-index: 2;
+
+  inset: 0;
+}
+
+.section-content > h2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  color: $color-white;
+
+  font-size: calc(46 * var(--partner-u));
+  letter-spacing: calc(0.1 * var(--partner-u));
+  white-space: nowrap;
+
+  transform: translate(-50%, -50%);
+}
+
+// Paper geometry follows the measured 1440 × 1454 target vertices.
+.sponsor-section {
+  top: calc(228 * var(--partner-u));
+
+  height: calc(322 * var(--partner-u));
+}
+
+.sponsor-section::before {
+  background: $color-yellow;
+
+  clip-path: polygon(
+    0 0,
+    5.97% 13.98%,
+    22.08% 5.9%,
+    34.03% 22.05%,
+    46.81% 2.17%,
+    63.47% 22.05%,
+    76.94% 4.35%,
+    91% 22.98%,
+    100% 6.21%,
+    100% 94.41%,
+    76.94% 79.5%,
+    63.4% 100%,
+    43.75% 82.61%,
+    29.24% 92.55%,
+    14.65% 76.71%,
+    0 84.47%
+  );
+}
+
+.annual-section {
+  top: calc(475 * var(--partner-u));
+
+  height: calc(289 * var(--partner-u));
+}
+
+.annual-section::before {
+  background: $color-blue;
+
+  clip-path: polygon(
+    0 8.65%,
+    14.65% 0,
+    29.24% 17.65%,
+    43.75% 6.57%,
+    63.4% 25.95%,
+    76.94% 3.11%,
+    100% 19.72%,
+    100% 84.08%,
+    82.43% 94.81%,
+    66.94% 85.81%,
+    51.46% 100%,
+    34.86% 83.39%,
+    14.51% 96.54%,
+    0 78.2%
+  );
+}
+
+.financial-section {
+  top: calc(701 * var(--partner-u));
+
+  height: calc(258 * var(--partner-u));
+}
+
+.financial-section::before {
+  background: $color-white;
+
+  clip-path: polygon(
+    0 0,
+    14.51% 20.54%,
+    34.86% 5.81%,
+    51.46% 24.42%,
+    66.94% 8.53%,
+    82.43% 18.6%,
+    100% 6.59%,
+    100% 77.52%,
+    86.53% 100%,
+    60.76% 82.95%,
+    39.79% 94.96%,
+    19.31% 81.4%,
+    0 89.15%
+  );
+}
+
+.financial-section .section-content > h2,
+.media-section .section-content > h2 {
+  color: $color-blue;
+}
+
+.financial-section .section-content > h2 {
+  top: calc(144 * var(--partner-u));
+}
+
+.goods-section {
+  top: calc(901 * var(--partner-u));
+
+  height: calc(265 * var(--partner-u));
+}
+
+.goods-section::before {
+  background: $color-blue;
+
+  clip-path: polygon(
+    0 11.32%,
+    19.31% 3.77%,
+    39.79% 16.98%,
+    60.76% 5.28%,
+    86.53% 21.89%,
+    100% 0,
+    100% 88.3%,
+    73.75% 81.89%,
+    59.03% 96.23%,
+    39.1% 79.25%,
+    21.04% 100%,
+    0 84.15%
+  );
+}
+
+.media-section {
+  top: calc(1111 * var(--partner-u));
+
+  height: calc(282 * var(--partner-u));
+}
+
+.media-section::before {
+  background: $color-white;
+
+  clip-path: polygon(
+    0 4.61%,
+    21.04% 19.5%,
+    39.1% 0,
+    59.03% 15.96%,
+    73.75% 2.48%,
+    100% 8.51%,
+    100% 77.66%,
+    95% 100%,
+    66.81% 73.76%,
+    47.22% 100%,
+    22.85% 73.76%,
+    0 86.88%
+  );
+}
+
+// Sponsor composition
+.sponsor-label {
+  position: static;
+
+  font-family: $font-display;
+  font-weight: $font-black;
+}
+
+.sponsor-label span {
+  position: absolute;
+  top: calc(137 * var(--partner-u));
+
+  color: #231f20;
+
+  font-size: calc(56 * var(--partner-u));
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.sponsor-label span:first-child {
+  left: calc(121 * var(--partner-u));
+}
+
+.sponsor-label span:last-child {
+  left: calc(910 * var(--partner-u));
+}
+
+// Hexagons remain upright. Only the mobile track is animated.
+.hexagon {
+  position: relative;
+
+  display: block;
+  flex: none;
+
+  width: calc(108 * var(--partner-u));
+  height: calc(126 * var(--partner-u));
+
+  overflow: hidden;
+
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.hexagon-filled {
+  background: #fcfdff;
+}
+
+.hexagon-outline {
+  background: $color-blue;
+}
+
+.hexagon-inner {
+  position: absolute;
+
+  inset: calc(1.1 * var(--partner-u));
+
+  background: #fcfdff;
+
+  clip-path: inherit;
+}
+
+.hexagon-svg {
+  display: none;
+}
+
+.hexagon--sponsor {
+  position: absolute;
+  top: calc(56 * var(--partner-u));
+  left: calc(609 * var(--partner-u));
+
+  width: calc(233 * var(--partner-u));
+  height: calc(199 * var(--partner-u));
+
+  background: $color-blue;
+
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+
+.hexagon--sponsor::after {
+  position: absolute;
+
+  inset: calc(1.1 * var(--partner-u));
+
+  background: #fcfdff;
+
+  clip-path: inherit;
+
+  content: "";
+}
+
+.hexagon-row {
+  position: absolute;
+  top: 50%;
+
+  display: flex;
+
+  gap: calc(77 * var(--partner-u));
+
+  transform: translateY(-50%);
+}
+
+.hexagon-row--left {
+  left: calc(80 * var(--partner-u));
+}
+
+.hexagon-row--right {
+  right: calc(68 * var(--partner-u));
+}
+
+.hexagon-marquee {
+  display: none;
+}
+
+.illustration {
+  position: absolute;
+  z-index: 1;
+
+  display: block;
+
+  max-width: none;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.illustration-project {
+  top: calc(80 * var(--partner-u));
+  right: calc(35 * var(--partner-u));
+
+  width: calc(232 * var(--partner-u));
+}
+
+.illustration-calendar {
+  top: calc(-5 * var(--partner-u));
+  left: calc(25 * var(--partner-u));
+
+  width: calc(300 * var(--partner-u));
+}
+
+.illustration-handshake {
+  top: calc(100 * var(--partner-u));
+  right: calc(-10 * var(--partner-u));
+
+  width: calc(410 * var(--partner-u));
+}
+
+.illustration-can {
+  top: calc(7 * var(--partner-u));
+  left: calc(295 * var(--partner-u));
+
+  width: calc(200 * var(--partner-u));
+}
+
+.illustration-camera {
+  top: calc(-15 * var(--partner-u));
+  right: calc(170 * var(--partner-u));
+
+  width: calc(300 * var(--partner-u));
+}
+
+@keyframes partneri-desktop-hex-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .partner-section {
+    overflow: visible;
+
+    isolation: auto;
+  }
+
+  .media-section .illustration-camera {
+    top: calc(-15 * var(--partner-u));
+  }
+
+  .sponsor-content {
+    z-index: 3;
+
+    display: grid;
+    grid-template-columns:
+      calc(522 * var(--partner-u))
+      calc(87 * var(--partner-u))
+      calc(233 * var(--partner-u))
+      calc(68 * var(--partner-u))
+      1fr;
+    align-items: center;
+  }
+
+  .sponsor-visual {
+    display: contents;
+  }
+
+  .sponsor-label {
+    display: contents;
+
+    transform: none;
+  }
+
+  .sponsor-label span {
+    position: static;
+
+    grid-row: 1;
+  }
+
+  .sponsor-label span:first-child {
+    grid-column: 1;
+    justify-self: end;
+  }
+
+  .sponsor-label span:last-child {
+    grid-column: 5;
+    justify-self: start;
+  }
+
+  .hexagon--sponsor {
+    position: relative;
+    top: auto;
+    left: auto;
+
+    grid-row: 1;
+    grid-column: 3;
+  }
+
+  .hexagon {
+    overflow: visible;
+
+    background: transparent;
+
+    clip-path: none;
+  }
+
+  .hexagon-inner,
+  .hexagon--sponsor::after {
+    display: none;
+  }
+
+  .hexagon-svg {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: visible;
+
+    transform-origin: 50% 50%;
+  }
+
+  .annual-section .hexagon-svg {
+    animation: partneri-desktop-hex-spin 24s linear infinite;
+  }
+
+  .financial-section .hexagon-svg {
+    animation: partneri-desktop-hex-spin 28s linear infinite reverse;
+  }
+
+  .goods-section .hexagon-svg {
+    animation: partneri-desktop-hex-spin 26s linear infinite;
+  }
+
+  .media-section .hexagon-svg {
+    animation: partneri-desktop-hex-spin 30s linear infinite reverse;
+  }
+
+  .hexagon-svg-polygon {
+    fill: #fcfdff;
+    stroke: none;
+  }
+
+  .hexagon-outline .hexagon-svg-polygon,
+  .hexagon--sponsor .hexagon-svg-polygon {
+    stroke: $color-blue;
+    stroke-width: 1.064px;
+    stroke-linejoin: miter;
+  }
+}
+
+@keyframes partner-marquee-left {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes partner-marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media #{$mobile} {
+  .partneri-page {
+    --partner-u: 0.2564102564vw;
+
+    height: calc(1118 * var(--partner-u));
+    min-height: 0;
+  }
+
+  .partneri-header {
+    height: calc(128 * var(--partner-u));
+
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% 74.46%,
+      92.49% 93.99%,
+      71.44% 72.58%,
+      49.74% 93.62%,
+      28.88% 76.62%,
+      11.84% 100%,
+      0 76.62%
+    );
+  }
+
+  .partneri-page::after {
+    top: calc(1029 * var(--partner-u));
+
+    height: calc(89 * var(--partner-u));
+
+    clip-path: polygon(
+      0 34.43%,
+      17.92% 6.39%,
+      34.79% 34.43%,
+      53.08% 0,
+      68.33% 38.42%,
+      88.24% 0.87%,
+      100% 28.48%,
+      100% 100%,
+      0 100%
+    );
+  }
+
+  .partneri-header h1 {
+    top: calc(16 * var(--partner-u));
+
+    font-size: calc(48 * var(--partner-u));
+    letter-spacing: calc(0.2 * var(--partner-u));
+  }
+
+  .sponsor-section {
+    top: calc(92 * var(--partner-u));
+
+    height: calc(237 * var(--partner-u));
+  }
+
+  .sponsor-section::before {
+    clip-path: polygon(
+      0 2.56%,
+      11.84% 15.19%,
+      28.88% 2.56%,
+      49.74% 11.74%,
+      71.44% 0.38%,
+      92.49% 11.95%,
+      100% 1.4%,
+      100% 98.39%,
+      89.43% 92.57%,
+      78.97% 99.95%,
+      58.04% 91.29%,
+      45.34% 99.95%,
+      21.6% 90.3%,
+      0 97.49%
+    );
+  }
+
+  .annual-section {
+    top: calc(306 * var(--partner-u));
+
+    height: calc(204 * var(--partner-u));
+  }
+
+  .annual-section::before {
+    clip-path: polygon(
+      0 8.36%,
+      21.6% 0,
+      45.34% 11.22%,
+      58.04% 1.16%,
+      78.97% 11.22%,
+      89.43% 2.64%,
+      100% 9.41%,
+      100% 92.82%,
+      83.08% 100%,
+      65.33% 89.77%,
+      53.47% 99.34%,
+      32.96% 90.59%,
+      11.6% 100%,
+      0 88.61%
+    );
+  }
+
+  .financial-section {
+    top: calc(486 * var(--partner-u));
+
+    height: calc(212 * var(--partner-u));
+  }
+
+  .financial-section::before {
+    clip-path: polygon(
+      0 0.36%,
+      11.6% 11.32%,
+      32.96% 2.27%,
+      53.47% 11.63%,
+      65.33% 1.48%,
+      83.08% 11.32%,
+      100% 4.41%,
+      100% 92.85%,
+      81.62% 96.41%,
+      61.27% 89.62%,
+      46.77% 99.47%,
+      21.04% 89.62%,
+      0 98.5%
+    );
+  }
+
+  .goods-section {
+    top: calc(676 * var(--partner-u));
+
+    height: calc(202 * var(--partner-u));
+  }
+
+  .goods-section::before {
+    clip-path: polygon(
+      0 9.32%,
+      21.55% 0,
+      46.77% 10.34%,
+      61.27% 0,
+      81.62% 7.12%,
+      100% 3.39%,
+      100% 93.73%,
+      85.25% 100%,
+      65.48% 89.04%,
+      51.96% 95.31%,
+      32.03% 87.17%,
+      15.89% 100%,
+      0 88.81%
+    );
+  }
+
+  .media-section {
+    top: calc(855 * var(--partner-u));
+
+    height: calc(209 * var(--partner-u));
+  }
+
+  .media-section::before {
+    clip-path: polygon(
+      0 0.19%,
+      15.89% 11%,
+      32.03% 0.48%,
+      51.96% 8.38%,
+      65.48% 2.33%,
+      85.25% 11%,
+      100% 4.92%,
+      100% 95.34%,
+      88.24% 83.64%,
+      68.33% 99.62%,
+      53.08% 83.25%,
+      34.79% 98.85%,
+      17.92% 85.02%,
+      0 97.91%
+    );
+  }
+
+  .section-content > h2 {
+    top: calc(48 * var(--partner-u));
+
+    font-size: calc(27 * var(--partner-u));
+
+    transform: translateX(-50%);
+  }
+
+  .annual-section .section-content > h2 {
+    top: calc(50 * var(--partner-u));
+  }
+
+  .financial-section .section-content > h2 {
+    top: calc(48 * var(--partner-u));
+  }
+
+  .media-section .section-content > h2 {
+    top: calc(31 * var(--partner-u));
+  }
+
+  .sponsor-content {
+    display: grid;
+    grid-template-columns: 54% 46%;
+    align-items: start;
+  }
+
+  .sponsor-content > .sponsor-label {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    grid-row: 1;
+    grid-column: 1;
+
+    width: 100%;
+    min-width: 0;
+    margin-top: calc(101 * var(--partner-u));
+
+    gap: calc(11 * var(--partner-u));
+
+    transform: none;
+  }
+
+  .sponsor-label span,
+  .sponsor-label span:last-child {
+    position: static;
+
+    color: $color-black;
+
+    font-size: calc(27 * var(--partner-u));
+    white-space: nowrap;
+  }
+
+  .sponsor-content > .sponsor-visual {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+
+    grid-row: 1;
+    grid-column: 2;
+    justify-self: start;
+
+    width: calc(139 * var(--partner-u));
+    min-width: 0;
+    height: calc(159 * var(--partner-u));
+    margin-top: calc(59 * var(--partner-u));
+    margin-left: calc(5.5 * var(--partner-u));
+
+    transform: none;
+  }
+
+  .sponsor-visual .hexagon--sponsor {
+    top: 0;
+    left: 0;
+
+    width: calc(139 * var(--partner-u));
+    height: calc(159 * var(--partner-u));
+
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  .hexagon-row {
+    display: none;
+  }
+
+  .hexagon-marquee {
+    position: absolute;
+    left: 0;
+
+    display: block;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    pointer-events: none;
+  }
+
+  .annual-section .hexagon-marquee {
+    top: calc(92 * var(--partner-u));
+  }
+
+  .financial-section .hexagon-marquee {
+    top: calc(79 * var(--partner-u));
+  }
+
+  .goods-section .hexagon-marquee {
+    top: calc(83 * var(--partner-u));
+  }
+
+  .media-section .hexagon-marquee {
+    top: calc(83 * var(--partner-u));
+  }
+
+  .hexagon-marquee-track {
+    display: flex;
+
+    width: max-content;
+
+    will-change: transform;
+  }
+
+  .hexagon-marquee--left .hexagon-marquee-track {
+    animation: partner-marquee-left var(--marquee-duration) linear infinite;
+  }
+
+  .hexagon-marquee--right .hexagon-marquee-track {
+    animation: partner-marquee-right var(--marquee-duration) linear infinite;
+  }
+
+  .hexagon-marquee-group {
+    display: flex;
+    flex: none;
+
+    gap: calc(37 * var(--partner-u));
+
+    padding-right: calc(37 * var(--partner-u));
+  }
+
+  .hexagon {
+    width: calc(65 * var(--partner-u));
+    height: calc(76 * var(--partner-u));
+  }
+
+  .hexagon-inner {
+    inset: calc(1.1 * var(--partner-u));
+  }
+
+  .sponsor-visual .illustration-project {
+    top: calc(-48 * var(--partner-u));
+    right: auto;
+    bottom: auto;
+    left: 50%;
+
+    width: calc(77 * var(--partner-u));
+
+    transform: translateX(-50%);
+  }
+
+  .illustration-calendar {
+    top: calc(23 * var(--partner-u));
+    right: calc(-10 * var(--partner-u));
+    left: auto;
+
+    width: calc(166 * var(--partner-u));
+  }
+
+  .illustration-handshake {
+    top: calc(80 * var(--partner-u));
+    right: auto;
+    left: calc(39 * var(--partner-u));
+
+    width: calc(352 * var(--partner-u));
+  }
+
+  .illustration-can {
+    top: calc(-3 * var(--partner-u));
+    left: calc(-20 * var(--partner-u));
+
+    width: calc(193 * var(--partner-u));
+  }
+
+  .illustration-camera {
+    top: calc(15 * var(--partner-u));
+    right: calc(-2 * var(--partner-u));
+
+    width: calc(176 * var(--partner-u));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .annual-section .hexagon-svg,
+  .financial-section .hexagon-svg,
+  .goods-section .hexagon-svg,
+  .media-section .hexagon-svg,
+  .hexagon-marquee-track {
+    animation: none !important;
+  }
+}

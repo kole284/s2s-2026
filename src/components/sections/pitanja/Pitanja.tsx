@@ -71,13 +71,6 @@ const Pitanja = () => {
             aria-expanded={isOpen}
             aria-controls={answerId}
           >
-            <img
-              className="pitanja__question-outline"
-              src="/pitanja/question-outline.svg"
-              alt=""
-              aria-hidden="true"
-            />
-
             <span className="pitanja__question-text">{item.question}</span>
 
             <img
@@ -96,13 +89,6 @@ const Pitanja = () => {
             aria-hidden={!isOpen}
           >
             <div className="pitanja__answer">
-              <img
-                className="pitanja__answer-outline"
-                src="/pitanja/answer-outline.svg"
-                alt=""
-                aria-hidden="true"
-              />
-
               <p className="pitanja__answer-text">{item.answer}</p>
             </div>
           </div>
@@ -112,26 +98,15 @@ const Pitanja = () => {
 
   return (
     <section className="pitanja" id="pitanja">
-      <img
-        className="pitanja__left-zigzag"
-        src="/pitanja/left-zigzag.svg"
-        alt=""
-        aria-hidden="true"
-      />
+      <div className="pitanja__left-zigzag" aria-hidden="true" />
 
-      <img
-        className="pitanja__bottom-paper--desktop"
-        src="/pitanja/bottom-paper.svg"
-        alt=""
-        aria-hidden="true"
-      />
+      <div className="pitanja__bottom-paper--desktop" aria-hidden="true">
+        {Array.from({ length: 40 }, (_, index) => (
+          <span className="pitanja__bottom-segment" key={index} />
+        ))}
+      </div>
 
-      <img
-        className="pitanja__bottom-paper--mobile"
-        src="/pitanja/bottom-mobile-combined.svg"
-        alt=""
-        aria-hidden="true"
-      />
+      <div className="pitanja__bottom-paper--mobile" aria-hidden="true" />
 
       {/* =====================================================
           DESKTOP

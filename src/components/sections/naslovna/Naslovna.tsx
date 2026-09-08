@@ -1,191 +1,223 @@
-import './Naslovna.scss';
+import "./Naslovna.scss";
 
-import ctaDesktop from '@/assets/naslovna/naslovna-cta-desktop.svg';
-import ctaLightningMobile from '@/assets/naslovna/naslovna-cta-lightning-mobile.svg';
-import ctaMobile from '@/assets/naslovna/naslovna-cta-mobile.svg';
-import headlineBlob from '@/assets/naslovna/naslovna-headline-blob.svg';
-import lightningBottomDesktop from '@/assets/naslovna/naslovna-lightning-bottom-desktop.svg';
-import lightningBottomMobile from '@/assets/naslovna/naslovna-lightning-bottom-mobile.svg';
-import lightningCenterDesktop from '@/assets/naslovna/naslovna-lightning-center-desktop.svg';
-import lightningLogoDesktop from '@/assets/naslovna/naslovna-lightning-logo-desktop.svg';
-import lightningRightDesktop from '@/assets/naslovna/naslovna-lightning-right-desktop.svg';
-import lightningTopDesktop from '@/assets/naslovna/naslovna-lightning-top-desktop.svg';
-import lightningUpperDesktop from '@/assets/naslovna/naslovna-lightning-upper-desktop.svg';
-import logo from '@/assets/naslovna/naslovna-logo.png';
-import logoOutlineMobile from '@/assets/naslovna/naslovna-logo-outline-mobile.svg';
+import crackLogoCta from "@/assets/naslovna/desktop/crack-logo-cta.svg";
+import crackLowerRight from "@/assets/naslovna/desktop/crack-lower-right.svg";
+import crackTop from "@/assets/naslovna/desktop/crack-top.svg";
+import crackUpperRight from "@/assets/naslovna/desktop/crack-upper-right.svg";
+import logoBackdrop from "@/assets/naslovna/desktop/logo-backdrop.svg";
+import crackCtaSide from "@/assets/naslovna/mobile/crack-cta-side.svg";
+import logoOutline from "@/assets/naslovna/mobile/logo-outline.svg";
+import ctaPaper from "@/assets/naslovna/shared/cta-paper.svg";
+import dateZigzag from "@/assets/naslovna/shared/date-zigzag.svg";
+import date from "@/assets/naslovna/shared/date.svg";
+import headline from "@/assets/naslovna/shared/headline.svg";
+import s2sLogo from "@/assets/naslovna/shared/s2s-logo.svg";
 
-import NaslovnaDesktopBand from './NaslovnaDesktopBand';
-import NaslovnaMobileBand from './NaslovnaMobileBand';
-import { useEffect, useState } from 'react';
+const S2S_GLYPHS = Array.from({ length: 8 }, (_, index) =>
+  index % 2 === 0 ? "S" : "2",
+);
+
+const MOBILE_S2S_SEQUENCE = "S2".repeat(10);
 
 const scrollToPrijava = () => {
-  document.getElementById('prijava')?.scrollIntoView({
-    behavior: 'smooth',
+  document.getElementById("prijava")?.scrollIntoView({
+    behavior: "smooth",
   });
 };
 
-const BAND_SPEED = 80; // pixels per second
-
 const Naslovna = () => {
-  const [animationOffset, setAnimationOffset] = useState(0)
-  const [bandRepeatDistance, setBandRepeatDistance] = useState(0);
-
-  useEffect(() => {
-    let frameId: number;
-    let lastTime: number | null = null;
-
-    const animate = (currentTime: number) => {
-      if (lastTime !== null) {
-        const delta = (currentTime - lastTime) / 1000;
-
-        setAnimationOffset(
-          (previous) => previous + BAND_SPEED * delta
-        );
-      }
-
-      lastTime = currentTime;
-
-      frameId = requestAnimationFrame(animate);
-    };
-
-    frameId = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(frameId);
-    };
-  }, []);
-
-  const visibleBandOffset =
-  bandRepeatDistance > 0
-    ? animationOffset % bandRepeatDistance
-    : 0;
-
   return (
-    <section className="naslovna-section">
-      <div className="naslovna-stage">
-        <NaslovnaDesktopBand offset={visibleBandOffset} onRepeatDistanceChange={setBandRepeatDistance}/>
-        <NaslovnaMobileBand />
+    <section className="naslovna" aria-labelledby="naslovna-title">
+      <img
+        className="naslovna__small-logo"
+        src={s2sLogo}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+      />
 
-        <div className="naslovna-desktop-lightning-cluster">
-          <img
-            className="naslovna-lightning naslovna-lightning-top-desktop"
-            src={lightningTopDesktop}
-            alt=""
-            draggable={false}
-          />
-          <img
-            className="naslovna-lightning naslovna-lightning-upper-desktop"
-            src={lightningUpperDesktop}
-            alt=""
-            draggable={false}
-          />
-          <div className="naslovna-desktop-logo-group">
-            <img
-              className="naslovna-lightning naslovna-lightning-logo-desktop"
-              src={lightningLogoDesktop}
-              alt=""
-              draggable={false}
-            />
-            <img
-              className="naslovna-logo naslovna-logo-desktop"
-              src={logo}
-              alt="S2S"
-              draggable={false}
-            />
-          </div>
-        </div>
+      <div className="naslovna__mobile-top-logo" aria-hidden="true">
         <img
-          className="naslovna-lightning naslovna-lightning-center-desktop"
-          src={lightningCenterDesktop}
+          className="naslovna__mobile-logo-outline"
+          src={logoOutline}
           alt=""
           draggable={false}
         />
-        <img
-          className="naslovna-lightning naslovna-lightning-right-desktop"
-          src={lightningRightDesktop}
-          alt=""
-          draggable={false}
-        />
-        <img
-          className="naslovna-lightning naslovna-lightning-bottom-desktop"
-          src={lightningBottomDesktop}
-          alt=""
-          draggable={false}
-        />
-        <div className="naslovna-mobile-logo-group">
-          <img
-            className="naslovna-mobile-logo-outline"
-            src={logoOutlineMobile}
-            alt=""
-            draggable={false}
-          />
-          <img
-            className="naslovna-mobile-logo"
-            src={logo}
-            alt="S2S"
-            draggable={false}
-          />
-        </div>
 
-        <div className="naslovna-mobile-middle">
-          <h1
-            className="naslovna-headline-art"
-            aria-label="Where learning begins"
-          >
-            <img
-              className="naslovna-headline-blob"
-              src={headlineBlob}
-              alt=""
+        <img
+          className="naslovna__mobile-logo"
+          src={s2sLogo}
+          alt=""
+          draggable={false}
+        />
+      </div>
+
+      <div
+        className="naslovna__mobile-fullbleed-decoration"
+        aria-hidden="true"
+      >
+        <div className="naslovna__mobile-s2s-marquee">
+          <div className="naslovna__mobile-s2s-track">
+            <span className="naslovna__mobile-s2s-sequence">
+              {MOBILE_S2S_SEQUENCE}
+            </span>
+
+            <span
+              className="naslovna__mobile-s2s-sequence"
               aria-hidden="true"
-              draggable={false}
-            />
-            <span className="naslovna-headline-word naslovna-headline-where">
-              Where
-            </span>
-            <span className="naslovna-headline-word naslovna-headline-learning">
-              Learning
-            </span>
-            <span className="naslovna-headline-word naslovna-headline-begins">
-              Begins
-            </span>
-          </h1>
-
-          <div className="naslovna-mobile-cta-composition">
-            <img
-              className="naslovna-cta-lightning-mobile"
-              src={ctaLightningMobile}
-              alt=""
-              draggable={false}
-            />
-
-            <button
-              className="naslovna-cta"
-              onClick={scrollToPrijava}
-              type="button"
             >
-              <picture className="naslovna-cta-art" aria-hidden="true">
-                <img src={ctaDesktop} alt="" draggable={false} />
-              </picture>
-              <img
-                className="naslovna-cta-art-mobile"
-                src={ctaMobile}
-                alt=""
-                draggable={false}
-              />
-              <span>Prijavi se</span>
-            </button>
+              {MOBILE_S2S_SEQUENCE}
+            </span>
           </div>
         </div>
 
-        <div className="naslovna-mobile-bottom">
-          <p className="naslovna-date">
-            <strong>17.</strong> <span>&amp;</span> <strong>18.</strong>{' '}
-            <span>okt</span>
-          </p>
+        <div className="naslovna__mobile-band" />
+      </div>
+
+      <div className="naslovna__canvas">
+        {/* DESKTOP LEFT DECORATION */}
+        <div className="naslovna__left-decoration" aria-hidden="true">
+          <div className="naslovna__s2s-marquee">
+            <div className="naslovna__s2s-path">
+              <div className="naslovna__s2s-track">
+                {[0, 1].map((cycleIndex) => (
+                  <div className="naslovna__s2s-cycle" key={cycleIndex}>
+                    {S2S_GLYPHS.map((glyph, glyphIndex) => (
+                      <span
+                        className="naslovna__s2s-item"
+                        key={`${cycleIndex}-${glyphIndex}`}
+                      >
+                        <span className="naslovna__s2s-glyph">{glyph}</span>
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="naslovna__left-band" />
+        </div>
+
+        {/* MOBILE DECORATION */}
+        <div className="naslovna__mobile-decoration" aria-hidden="true">
           <img
-            className="naslovna-lightning-bottom-mobile"
-            src={lightningBottomMobile}
+            className="
+              naslovna__mobile-cta-crack
+              naslovna__mobile-cta-crack--left
+            "
+            src={crackCtaSide}
             alt=""
+            draggable={false}
+          />
+
+          <img
+            className="
+              naslovna__mobile-cta-crack
+              naslovna__mobile-cta-crack--right
+            "
+            src={crackCtaSide}
+            alt=""
+            draggable={false}
+          />
+        </div>
+
+        {/* DESKTOP RIGHT DECORATION */}
+        <div className="naslovna__right-decoration" aria-hidden="true">
+          <img
+            className="naslovna__crack-upper-right"
+            src={crackUpperRight}
+            alt=""
+            draggable={false}
+          />
+
+          <img
+            className="naslovna__crack-lower-right"
+            src={crackLowerRight}
+            alt=""
+            draggable={false}
+          />
+        </div>
+
+        {/* SEMANTIC TITLE */}
+        <h1 className="naslovna__title" id="naslovna-title">
+          Where Learning Begins
+        </h1>
+
+        {/* HEADLINE */}
+        <img
+          className="naslovna__headline"
+          src={headline}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+        />
+
+        {/* DESKTOP LOGO COMPOSITION */}
+        <div className="naslovna__logo-composition" aria-hidden="true">
+          <img
+            className="naslovna__crack-top-start"
+            src={crackTop}
+            alt=""
+            draggable={false}
+          />
+
+          <img
+            className="naslovna__logo-cta-crack"
+            src={crackLogoCta}
+            alt=""
+            draggable={false}
+          />
+
+          <img
+            className="naslovna__logo-backdrop"
+            src={logoBackdrop}
+            alt=""
+            draggable={false}
+          />
+
+          <img
+            className="naslovna__large-logo"
+            src={s2sLogo}
+            alt=""
+            draggable={false}
+          />
+        </div>
+
+        {/* CTA */}
+        <button
+          className="naslovna__cta"
+          onClick={scrollToPrijava}
+          type="button"
+        >
+          <img
+            className="naslovna__cta-paper"
+            src={ctaPaper}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+          />
+
+          <span>PRIJAVI SE</span>
+        </button>
+
+        {/* DATE */}
+        <div className="naslovna__date-composition">
+          <span className="naslovna__date-text">17. &amp; 18. OKT</span>
+
+          <img
+            className="naslovna__date"
+            src={date}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+          />
+
+          <img
+            className="naslovna__date-zigzag"
+            src={dateZigzag}
+            alt=""
+            aria-hidden="true"
             draggable={false}
           />
         </div>

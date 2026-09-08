@@ -1,782 +1,505 @@
-@use 'sass:list';
-
-@font-face {
-  font-family: 'Jost';
-  src: url('@/assets/o-projektu/Jost-Variable.ttf') format('truetype-variations');
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
-
-@function o-projektu-zigzag($strip-width, $tooth-width, $tooth-height, $step, $count) {
-  $points: ();
-
-  @for $index from 0 through $count {
-    $peak-x: $index * $tooth-width;
-    $peak-y: $index * $step;
-    $points: list.append($points, $peak-x $peak-y, comma);
-    $points: list.append(
-      $points,
-      ($peak-x + ($tooth-width * 0.5)) ($peak-y + $tooth-height),
-      comma
-    );
-  }
-
-  $points: list.append($points, $strip-width 100%, comma);
-  $points: list.append($points, 0 100%, comma);
-
-  @return $points;
-}
-
 .o-projektu {
-  --o-projektu-desktop-scale: calc(100dvh / 1024px);
+  --o-projektu-design-width: min(100vw, 140.625dvh);
 
   position: relative;
   width: 100%;
-  height: 100dvh;
-  overflow: hidden;
+  height: auto;
+  overflow-x: clip;
+  overflow-y: visible;
   color: $color-black;
-  background: $color-white;
   font-family: $font-body;
-}
-
-.o-projektu-content {
-  position: absolute;
-  inset: 0 auto auto 50%;
-  width: 1440px;
-  height: 1024px;
-  transform: translateX(-50%) scale(var(--o-projektu-desktop-scale));
-  transform-origin: top center;
+  background: $color-white;
 }
 
 .o-projektu-white-stage,
 .o-projektu-blue-stage {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  width: 100%;
+  height: auto;
 }
 
-.o-projektu-background {
+.o-projektu-white-stage {
+  background: $color-white;
+}
+
+/*
+ * Desktop/tablet:
+ * The original zig-zag SVG already contains the complete blue body for the
+ * collapsed 437/1440 stage. Keeping the stage itself transparent is important:
+ * a solid blue background starting at y=0 would fill the transparent gaps in
+ * the descending SVG teeth and make the teeth progressively disappear on the
+ * right-hand side.
+ *
+ * When FONIS expands, ::before fills only the additional area below the
+ * collapsed design height. It therefore cannot interfere with the zig-zag.
+ */
+.o-projektu-blue-stage {
+  isolation: isolate;
+  background: transparent;
+}
+
+.o-projektu-blue-stage::before {
   position: absolute;
   z-index: 0;
-  top: 448px;
-  left: -1104px;
-  width: 4096px;
-  height: 576px;
+  top: calc(var(--o-projektu-design-width) * 437 / 1440);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: "";
+  pointer-events: none;
   background: $color-blue;
-  clip-path: polygon(o-projektu-zigzag(4096px, 102px, 53px, 5px, 40));
 }
 
-.o-projektu-students {
-  position: absolute;
+.o-projektu-design-space {
+  position: relative;
   z-index: 2;
-  top: 128px;
-  left: 79px;
-  width: 595px;
+  box-sizing: border-box;
+  width: var(--o-projektu-design-width);
+  height: auto;
+  margin-inline: auto;
 }
 
-.o-projektu-students-title,
-.o-projektu-fonis h2 {
+.o-projektu-white-design {
+  min-height: calc(var(--o-projektu-design-width) * 587 / 1440);
+  padding-top: calc(var(--o-projektu-design-width) * 136 / 1440);
+  padding-bottom: calc(var(--o-projektu-design-width) * 106 / 1440);
+}
+
+.o-projektu-blue-design {
+  min-height: calc(var(--o-projektu-design-width) * 437 / 1440);
+  padding-top: calc(var(--o-projektu-design-width) * 72 / 1440);
+  padding-bottom: calc(var(--o-projektu-design-width) * 74 / 1440);
+}
+
+.o-projektu-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.o-projektu-title {
   margin: 0;
-  font-family: $font-display;
-  font-weight: $font-black;
-  line-height: 0.78;
+  line-height: 0;
 }
 
-.o-projektu-students-title {
-  color: $color-blue;
-  font-size: 72px;
-  letter-spacing: -2.9px;
-}
-
-.o-projektu-students-title span {
+.o-projektu-title img,
+.o-projektu img {
   display: block;
+  max-width: none;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
-.o-projektu-students-title span:last-child {
-  color: $color-yellow;
+.o-projektu-students-content {
+  position: relative;
+  z-index: 2;
+  width: calc(var(--o-projektu-design-width) * 595 / 1440);
+  margin-left: calc(var(--o-projektu-design-width) * 80 / 1440);
 }
 
-.o-projektu-students-title span:last-child span {
-  color: $color-blue;
-  display: inline;
+.o-projektu-students-title img {
+  width: calc(var(--o-projektu-design-width) * 499 / 1440);
+  height: auto;
 }
 
 .o-projektu-copy {
   position: relative;
+  height: var(--o-projektu-copy-collapsed-height);
   overflow: hidden;
+  font-size: calc(var(--o-projektu-design-width) * 29 / 1440);
+  font-weight: $font-regular;
+  line-height: 1.2;
+  letter-spacing: calc(var(--o-projektu-design-width) * -0.25 / 1440);
+  transition: height 380ms ease;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 64%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to bottom, #000 0%, #000 64%, transparent 100%);
 }
 
 .o-projektu-copy p {
-  text-align: justify;
   margin: 0;
 }
 
-.o-projektu-students-copy {
-  width: 595px;
-  height: 210px;
-  margin-top: 25px;
-  font-size: 28px;
-  font-weight: $font-regular;
-  line-height: 1.22;
-  letter-spacing: -0.35px;
+.o-projektu-copy p + p {
+  margin-top: 1em;
 }
 
-.o-projektu-students-copy p + p {
+.o-projektu-students-copy {
+  --o-projektu-copy-collapsed-height: calc(
+    var(--o-projektu-design-width) * 210 / 1440
+  );
+
+  width: 100%;
+  margin-top: calc(var(--o-projektu-design-width) * 23 / 1440);
+}
+
+.o-projektu-white-illustration {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.o-projektu-teacher,
+.o-projektu-students,
+.o-projektu-computer {
+  position: absolute;
+  height: auto;
+  pointer-events: none;
+}
+
+.o-projektu-teacher {
+  top: calc(var(--o-projektu-design-width) * 165 / 1440);
+  left: calc(var(--o-projektu-design-width) * 698 / 1440);
+  width: calc(var(--o-projektu-design-width) * 394 / 1440);
+}
+
+.o-projektu-students {
+  top: calc(var(--o-projektu-design-width) * 300 / 1440);
+  left: calc(var(--o-projektu-design-width) * 1105 / 1440);
+  width: calc(var(--o-projektu-design-width) * 335 / 1440);
+}
+
+.o-projektu .o-projektu-mobile-teacher,
+.o-projektu .o-projektu-mobile-students,
+.o-projektu .o-projektu-mobile-computer,
+.o-projektu .o-projektu-zigzag-image--mobile {
   display: none;
 }
 
-.o-projektu-students-copy::after,
-.o-projektu-fonis-copy::after {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 102px;
-  content: '';
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 380ms ease;
-}
+/*
+ * Original Figma SVG: 1440 x 688.
+ * Its internal zig-zag begins at y=166.804. The formula keeps the visible
+ * edge at the same design-space offset while the SVG remains full-bleed.
+ */
+.o-projektu-zigzag {
+  --o-projektu-zigzag-width: 100vw;
 
-.o-projektu-students-copy::after {
-  background: linear-gradient(to bottom, transparent, $color-white 88%);
-}
-
-.o-projektu-classroom {
   position: absolute;
   z-index: 1;
-  top: 161px;
-  left: 698px;
-  width: 743px;
-  height: 426px;
+  top: calc(
+    var(--o-projektu-design-width) * -84.196 / 1440 +
+      var(--o-projektu-zigzag-width) * -166.804 / 1440
+  );
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
 }
 
-.o-projektu-arrow {
-  position: absolute;
-  z-index: 3;
-  width: 70px;
-  height: 30px;
-}
-
-.o-projektu-arrow-top {
-  top: 466px;
-  left: 348px;
+.o-projektu-zigzag-image {
+  width: 100%;
+  height: auto;
 }
 
 .o-projektu-computer {
-  position: absolute;
-  z-index: 2;
-  top: 659px;
-  left: 10px;
-  width: 488px;
-  height: 366px;
+  z-index: 1;
+  top: calc(var(--o-projektu-design-width) * 72 / 1440);
+  left: 0;
+  width: calc(var(--o-projektu-design-width) * 488 / 1440);
 }
 
-.o-projektu-fonis {
-  position: absolute;
+.o-projektu-fonis-content {
+  position: relative;
   z-index: 2;
-  top: 658px;
-  left: 627px;
-  width: 680px;
+  width: calc(var(--o-projektu-design-width) * 680 / 1440);
+  margin-left: calc(var(--o-projektu-design-width) * 628 / 1440);
   color: $color-white;
 }
 
-.o-projektu-fonis h2 {
-  color: $color-yellow;
-  font-size: 72px;
-  letter-spacing: -1px;
-  transform: scaleX(1.1);
-  transform-origin: left center;
+.o-projektu-fonis-title img {
+  width: calc(var(--o-projektu-design-width) * 228 / 1440);
+  height: auto;
 }
 
 .o-projektu-fonis-copy {
-  width: 680px;
-  height: 207px;
-  margin-top: 24px;
-  font-size: 28px;
-  line-height: 1.22;
-  letter-spacing: -0.35px;
-}
+  --o-projektu-copy-collapsed-height: calc(
+    var(--o-projektu-design-width) * 207 / 1440
+  );
 
-.o-projektu-fonis-copy p + p {
-  display: none;
-}
-
-.o-projektu-fonis-copy::after {
-  background: linear-gradient(to bottom, transparent, $color-blue 92%);
-}
-
-.o-projektu-arrow-bottom {
-  top: 971px;
-  left: 927px;
-  filter: brightness(0) invert(1);
-}
-
-@media only screen and (min-width: 769px) {
-  .o-projektu {
-    --o-projektu-foreground-width: min(
-      1440px,
-      calc(100vw / var(--o-projektu-desktop-scale))
-    );
-    --o-projektu-foreground-offset: calc((1440px - var(--o-projektu-foreground-width)) / 2);
-  }
-
-  .o-projektu-students {
-    left: calc(
-      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 79 / 1440
-    );
-    width: calc(var(--o-projektu-foreground-width) * 595 / 1440);
-  }
-
-  .o-projektu-students-title,
-  .o-projektu-fonis h2 {
-    font-size: calc(var(--o-projektu-foreground-width) * 72 / 1440);
-  }
-
-  .o-projektu-students-copy {
-    width: 100%;
-  }
-
-  .o-projektu-classroom {
-    left: calc(
-      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 698 / 1440
-    );
-    width: calc(var(--o-projektu-foreground-width) * 743 / 1440);
-    height: calc(var(--o-projektu-foreground-width) * 426 / 1440);
-  }
-
-  .o-projektu-arrow {
-    width: calc(var(--o-projektu-foreground-width) * 70 / 1440);
-    height: calc(var(--o-projektu-foreground-width) * 30 / 1440);
-  }
-
-  .o-projektu-arrow-top {
-    left: calc(
-      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 348 / 1440
-    );
-  }
-
-  .o-projektu-computer {
-    left: calc(
-      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 10 / 1440
-    );
-    width: calc(var(--o-projektu-foreground-width) * 488 / 1440);
-    height: calc(var(--o-projektu-foreground-width) * 366 / 1440);
-  }
-
-  .o-projektu-fonis {
-    left: calc(
-      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 627 / 1440
-    );
-    width: calc(var(--o-projektu-foreground-width) * 680 / 1440);
-  }
-
-  .o-projektu-fonis-copy {
-    width: 100%;
-  }
-
-  .o-projektu-arrow-bottom {
-    left: calc(
-      var(--o-projektu-foreground-offset) + var(--o-projektu-foreground-width) * 927 / 1440
-    );
-  }
-}
-
-@media #{$desktop}, #{$tablet} {
-  .o-projektu-classroom {
-    top: auto;
-    bottom: 437px;
-  }
-}
-
-@media #{$mobile} {
-  .o-projektu {
-    --o-projektu-white-stage-shift: clamp(0px, calc(9.524vw - 37.144px), 36px);
-    --o-projektu-mobile-split: calc(50.474dvh - var(--o-projektu-white-stage-shift));
-    --o-projektu-bottom-arrow-offset: clamp(50px, calc(7.1dvh + 8vw - 31px), 95px);
-
-    height: 100dvh;
-    min-height: 100dvh;
-    background: transparent;
-  }
-
-  .o-projektu-background {
-    z-index: 2;
-    top: var(--o-projektu-mobile-split);
-    left: -15px;
-    width: 497px;
-    height: calc(100dvh - var(--o-projektu-mobile-split));
-    clip-path: polygon(
-      0 0,
-      35.5px 37px,
-      71px 4px,
-      106.5px 41px,
-      142px 8px,
-      177.5px 45px,
-      213px 12px,
-      248.5px 49px,
-      284px 16px,
-      319.5px 53px,
-      355px 20px,
-      390.5px 57px,
-      426px 24px,
-      461.5px 61px,
-      497px 28px,
-      100% 100%,
-      0 100%
-    );
-  }
-
-  .o-projektu-students {
-    z-index: 1;
-    top: clamp(64px, 12.2dvh, 103px);
-    bottom: 8px;
-    left: 35px;
-    width: 330px;
-    display: flex;
-    min-height: 0;
-    flex-direction: column;
-  }
-
-  .o-projektu-students-title {
-    font-size: 48px;
-    line-height: 0.76;
-    letter-spacing: -1.9px;
-  }
-
-  .o-projektu-students-copy {
-    width: 330px;
-    height: auto;
-    min-height: 0;
-    flex: 1;
-    margin-top: 25px;
-    font-size: 14px;
-    line-height: 18px;
-    letter-spacing: -0.1px;
-  }
-
-  .o-projektu-students-copy p + p {
-    display: block;
-    margin-top: 17px;
-  }
-
-  .o-projektu-classroom {
-    z-index: 1;
-    top: auto;
-    bottom: -23px;
-    left: 50%;
-    width: 475px;
-    height: auto;
-    filter: brightness(0) saturate(100%) invert(83%) sepia(100%) saturate(934%) hue-rotate(343deg)
-      brightness(104%) contrast(101%);
-    opacity: 0.35;
-    transform: translateX(-50%);
-  }
-
-  .o-projektu-arrow-top {
-    z-index: 3;
-    top: auto;
-    bottom: -14px;
-    left: 156px;
-  }
-
-  .o-projektu-computer {
-    z-index: 3;
-    top: clamp(105px, 17.2dvh, 145px);
-    left: 50%;
-    width: 280px;
-    height: auto;
-    filter: brightness(0) saturate(100%) invert(24%) sepia(93%) saturate(1618%) hue-rotate(199deg)
-      brightness(79%) contrast(98%);
-    opacity: 0.58;
-    transform: translateX(-50%);
-  }
-
-  .o-projektu-fonis {
-    z-index: 3;
-    top: clamp(42px, 7.7dvh, 65px);
-    bottom: calc(var(--o-projektu-bottom-arrow-offset) + 42px);
-    left: 31px;
-    width: 330px;
-    display: flex;
-    min-height: 0;
-    flex-direction: column;
-  }
-
-  .o-projektu-fonis h2 {
-    font-size: 48px;
-    line-height: 0.8;
-    letter-spacing: -1px;
-    transform: translateY(4px) scaleX(1.1);
-  }
-
-  .o-projektu-fonis-copy {
-    width: 330px;
-    height: auto;
-    min-height: 0;
-    flex: 1;
-    margin-top: 14px;
-    font-size: 14px;
-    line-height: 18px;
-    letter-spacing: -0.1px;
-  }
-
-  .o-projektu-fonis-copy p + p {
-    display: block;
-    margin-top: 18px;
-  }
-
-  .o-projektu-arrow-bottom {
-    top: auto;
-    bottom: var(--o-projektu-bottom-arrow-offset);
-    left: 154px;
-  }
-}
-
-@media #{$mobile} {
-  .o-projektu-content {
-    left: 0;
-    width: 100%;
-    height: 100dvh;
-    transform: none;
-  }
-
-  .o-projektu-white-stage {
-    z-index: auto;
-    top: 0;
-    height: var(--o-projektu-mobile-split);
-    background: $color-white;
-  }
-
-  .o-projektu-blue-stage {
-    z-index: 3;
-    top: var(--o-projektu-mobile-split);
-    bottom: auto;
-    height: calc(100dvh - var(--o-projektu-mobile-split));
-    overflow: hidden;
-  }
-
-  .o-projektu-students {
-    right: auto;
-    left: 0;
-    width: 100%;
-  }
-
-  .o-projektu-students-copy,
-  .o-projektu-fonis-copy {
-    width: 84.615vw;
-    margin-right: auto;
-    margin-left: auto;
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
-  }
-
-  .o-projektu-students-copy::after,
-  .o-projektu-fonis-copy::after {
-    content: none;
-  }
-
-  .o-projektu-students-title {
-    margin-left: 35px;
-  }
-
-  .o-projektu-fonis {
-    right: auto;
-    left: 0;
-    width: 100%;
-  }
-
-  .o-projektu-fonis h2 {
-    margin-left: 31px;
-  }
-
-  .o-projektu-arrow-top,
-  .o-projektu-arrow-bottom {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .o-projektu-background {
-    width: 1200px;
-    clip-path: polygon(o-projektu-zigzag(1200px, 71px, 37px, 4px, 17));
-  }
-}
-
-@media #{$small-mobile} {
-  .o-projektu-students-title,
-  .o-projektu-fonis h2 {
-    font-size: calc(48px * 100vw / 390px);
-  }
-
-  .o-projektu-students-title {
-    margin-left: calc(35px * 100vw / 390px);
-    letter-spacing: calc(-1.9px * 100vw / 390px);
-  }
-
-  .o-projektu-fonis h2 {
-    margin-left: calc(31px * 100vw / 390px);
-    letter-spacing: calc(-1px * 100vw / 390px);
-  }
-
-  .o-projektu-classroom {
-    width: calc(475px * 100vw / 390px);
-  }
-
-  .o-projektu-computer {
-    width: calc(280px * 100vw / 390px);
-  }
-
-  .o-projektu-arrow {
-    width: calc(70px * 100vw / 390px);
-    height: calc(30px * 100vw / 390px);
-  }
+  width: 100%;
+  margin-top: calc(var(--o-projektu-design-width) * 28 / 1440);
 }
 
 .o-projektu-arrow-button {
   position: absolute;
   z-index: 3;
-  width: 70px;
-  height: 30px;
   padding: 0;
   border: 0;
+  color: inherit;
   background: transparent;
   cursor: pointer;
 }
 
-.o-projektu-arrow-button .o-projektu-arrow {
-  display: block;
-  position: static;
+.o-projektu-arrow-button img {
   width: 100%;
   height: 100%;
   transition: transform 380ms ease;
 }
 
-.o-projektu-arrow-button[aria-expanded='true'] .o-projektu-arrow {
+.o-projektu-arrow-button[aria-expanded="true"] img {
   transform: rotate(180deg);
 }
 
-.o-projektu-expanded {
-  height: max(100dvh, var(--o-projektu-content-height));
-  overflow: visible;
-}
-
-.o-projektu-content {
-  height: auto;
-  min-height: 1024px;
-}
-
-.o-projektu-white-stage {
-  position: relative;
-  inset: auto;
-  box-sizing: border-box;
-  min-height: 587px;
-  padding-top: 128px;
-  padding-bottom: 111.6875px;
-}
-
-.o-projektu-students {
-  position: relative;
-  top: auto;
-}
-
-.o-projektu-blue-stage {
-  position: relative;
-  inset: auto;
-  box-sizing: border-box;
-  min-height: 437px;
-  padding-top: 71px;
-  padding-bottom: 78.84375px;
-}
-
-.o-projektu-background {
-  top: -139px;
-  height: calc(100% + 139px);
-}
-
-.o-projektu-computer {
-  top: 72px;
-}
-
-.o-projektu-fonis {
-  position: relative;
-  top: auto;
+.o-projektu-arrow-button:focus-visible {
+  outline: 3px solid currentcolor;
+  outline-offset: 6px;
 }
 
 .o-projektu-arrow-top {
-  top: auto;
-  bottom: 91px;
+  bottom: calc(var(--o-projektu-design-width) * 91 / 1440);
+  left: calc(var(--o-projektu-design-width) * 348 / 1440);
+  width: calc(var(--o-projektu-design-width) * 70 / 1440);
+  height: calc(var(--o-projektu-design-width) * 30 / 1440);
+  color: $color-blue;
 }
 
 .o-projektu-arrow-bottom {
-  top: auto;
-  bottom: 23px;
-}
-
-.o-projektu-copy {
-  interpolate-size: allow-keywords;
-  transition: height 380ms ease, mask-image 380ms ease, -webkit-mask-image 380ms ease;
-  user-select: none;
-}
-
-.o-projektu img {
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-.o-projektu-white-stage.is-expanded:not(.is-collapsing) .o-projektu-students-copy,
-.o-projektu-blue-stage.is-expanded:not(.is-collapsing) .o-projektu-fonis-copy {
-  user-select: text;
+  bottom: calc(var(--o-projektu-design-width) * 14 / 1440);
+  left: calc(var(--o-projektu-design-width) * 927 / 1440);
+  width: calc(var(--o-projektu-design-width) * 89 / 1440);
+  height: calc(var(--o-projektu-design-width) * 37 / 1440);
+  color: $color-white;
 }
 
 .o-projektu-white-stage.is-expanded .o-projektu-students-copy,
 .o-projektu-blue-stage.is-expanded .o-projektu-fonis-copy {
   height: auto;
   overflow: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
-.o-projektu-white-stage.is-expanded .o-projektu-students-copy::after,
-.o-projektu-blue-stage.is-expanded .o-projektu-fonis-copy::after {
-  opacity: 0;
-}
-
-.o-projektu-white-stage.is-collapsing .o-projektu-students-copy,
-.o-projektu-blue-stage.is-collapsing .o-projektu-fonis-copy {
+.o-projektu-white-stage.is-animating .o-projektu-students-copy,
+.o-projektu-blue-stage.is-animating .o-projektu-fonis-copy {
   overflow: hidden;
 }
 
-.o-projektu-white-stage.is-collapsing .o-projektu-students-copy::after,
-.o-projektu-blue-stage.is-collapsing .o-projektu-fonis-copy::after {
-  opacity: 1;
-}
-
-.o-projektu-white-stage.is-expanded .o-projektu-students-copy p + p,
-.o-projektu-blue-stage.is-expanded .o-projektu-fonis-copy p + p {
-  display: block;
-  margin-top: 18px;
-}
-
-@media only screen and (min-width: 769px) {
-  .o-projektu-arrow-button .o-projektu-arrow {
-    width: calc(var(--o-projektu-foreground-width) * 70 / 1440);
-    height: calc(var(--o-projektu-foreground-width) * 30 / 1440);
-  }
-
-  .o-projektu-classroom {
-    bottom: 0;
-  }
-}
-
 @media #{$mobile} {
-  .o-projektu-content {
-    height: auto;
-    min-height: 100dvh;
+  .o-projektu {
+    --o-projektu-design-width: 100vw;
   }
 
-  .o-projektu-white-stage {
-    min-height: var(--o-projektu-mobile-split);
-    height: auto;
-    padding-top: clamp(64px, 12.2dvh, 103px);
-    padding-bottom: 8px;
-    display: flex;
-    flex-direction: column;
+  /*
+   * Mobile target reference: 390 x 844.
+   * White stage: 430 design px.
+   * Blue stage: 414 design px.
+   * Everything below scales from the viewport width, never from viewport
+   * height, so short/tall phones keep the same composition instead of
+   * stretching it.
+   */
+  .o-projektu-design-space {
+    width: 100%;
+  }
+
+  .o-projektu-white-design {
+    box-sizing: border-box;
+    min-height: calc(100vw * 430 / 390);
+    padding: calc(100vw * 205 / 390) 0 calc(100vw * 15 / 390);
+  }
+
+  .o-projektu-blue-design {
+    box-sizing: border-box;
+    min-height: calc(100vw * 414 / 390);
+    padding: calc(100vw * 117 / 390) 0 calc(100vw * 89 / 390);
+  }
+
+  .o-projektu-students-content {
+    width: calc(100vw * 320 / 390);
+    margin-left: calc(100vw * 35 / 390);
+  }
+
+  .o-projektu-fonis-content {
+    width: calc(100vw * 330 / 390);
+    margin-left: calc(100vw * 30 / 390);
+  }
+
+  /* Titles are intentionally absent in the supplied mobile target. */
+  .o-projektu-title {
+    display: none;
+  }
+
+  .o-projektu-copy {
+    font-size: calc(100vw * 14 / 390);
+    line-height: calc(100vw * 18 / 390);
+    letter-spacing: 0;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 64%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(to bottom, #000 0%, #000 64%, transparent 100%);
+  }
+
+  .o-projektu-copy p:first-child {
+    max-height: calc(100vw * 108 / 390);
+    overflow: hidden;
+  }
+
+  .o-projektu-copy p + p {
+    margin-top: calc(100vw * 18 / 390);
+  }
+
+  .o-projektu-students-copy {
+    --o-projektu-copy-collapsed-height: calc(100vw * 210 / 390);
+
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .o-projektu-fonis-copy {
+    --o-projektu-copy-collapsed-height: calc(100vw * 207 / 390);
+
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .o-projektu-white-stage.is-expanded .o-projektu-students-copy p:first-child,
+  .o-projektu-blue-stage.is-expanded .o-projektu-fonis-copy p:first-child {
+    max-height: none;
     overflow: visible;
-    transition: padding-bottom 380ms ease;
   }
 
-  .o-projektu-students {
-    top: auto;
-    bottom: auto;
-    flex: 1 1 0;
+  /*
+   * The mobile illustration assets were exported specifically for the
+   * 390px-wide target. Their native positions are preserved here.
+   */
+  .o-projektu-white-illustration {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    display: block;
+    width: 100%;
+    margin: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 66%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(to bottom, #000 0%, #000 66%, transparent 100%);
   }
 
+  .o-projektu .o-projektu-teacher,
+  .o-projektu .o-projektu-students,
+  .o-projektu .o-projektu-computer {
+    display: none;
+  }
+
+  .o-projektu .o-projektu-mobile-teacher,
+  .o-projektu .o-projektu-mobile-students,
+  .o-projektu .o-projektu-mobile-computer {
+    position: absolute;
+    display: block;
+    height: auto;
+    pointer-events: none;
+  }
+
+  .o-projektu-mobile-teacher {
+    top: calc(100vw * 176 / 390);
+    left: 0;
+    width: calc(100vw * 193 / 390);
+  }
+
+  .o-projektu-mobile-students {
+    top: calc(100vw * 224 / 390);
+    left: calc(100vw * 207 / 390);
+    width: calc(100vw * 183 / 390);
+  }
+
+  /*
+   * Mobile blue stage uses the exact 389 x 414 exported Figma shape.
+   * The stage stays transparent so the SVG's white cut-outs remain visible.
+   * ::before only fills extra height created by an expanded FONIS copy.
+   */
   .o-projektu-blue-stage {
-    top: auto;
-    min-height: calc(100dvh - var(--o-projektu-mobile-split));
-    height: auto;
-    padding: clamp(42px, 7.7dvh, 65px) 0 calc(var(--o-projektu-bottom-arrow-offset) + 42px);
-    display: flex;
-    flex-direction: column;
-    overflow: visible;
+    isolation: isolate;
+    background: transparent;
   }
 
-  .o-projektu-background {
+  .o-projektu-blue-stage::before {
+    top: calc(100vw * 414 / 390);
+  }
+
+  .o-projektu-zigzag {
+    position: absolute;
+    z-index: 1;
     top: 0;
-    height: 100%;
+    left: 0;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
   }
 
-  .o-projektu-fonis {
-    top: auto;
-    bottom: auto;
-    flex: 1 1 0;
+  .o-projektu .o-projektu-zigzag-image--desktop {
+    display: none;
   }
 
-  .o-projektu-computer {
-    top: clamp(105px, 17.2dvh, 145px);
+  .o-projektu .o-projektu-zigzag-image--mobile {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .o-projektu-mobile-computer {
+    z-index: 1;
+    top: calc(100vw * 133 / 390);
+    left: calc(100vw * 144 / 390);
+    width: calc(100vw * 245 / 390);
   }
 
   .o-projektu-arrow-button {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .o-projektu-arrow-button::before {
     position: absolute;
-    top: -10%;
-    left: -10%;
-    width: 120%;
-    height: 120%;
-    content: '';
+    display: block;
+    margin: 0;
   }
 
   .o-projektu-arrow-top {
     z-index: 4;
-    bottom: -14px;
+    top: auto;
+    right: auto;
+    bottom: calc(100vw * -5 / 390);
+    left: 50%;
+    width: calc(100vw * 70 / 390);
+    height: calc(100vw * 30 / 390);
+    transform: translateX(-50%);
   }
 
   .o-projektu-arrow-bottom {
-    bottom: var(--o-projektu-bottom-arrow-offset);
-    filter: none;
-  }
-
-  .o-projektu-arrow-bottom .o-projektu-arrow {
-    filter: brightness(0) invert(1);
-  }
-
-  .o-projektu-white-stage.is-expanded .o-projektu-students-copy,
-  .o-projektu-blue-stage.is-expanded .o-projektu-fonis-copy {
-    flex: 0 0 auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .o-projektu-white-stage.is-collapsing .o-projektu-students-copy,
-  .o-projektu-blue-stage.is-collapsing .o-projektu-fonis-copy {
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
-  }
-
-  .o-projektu-white-stage.is-expanded .o-projektu-students,
-  .o-projektu-blue-stage.is-expanded .o-projektu-fonis {
-    flex: none;
-  }
-
-  .o-projektu-white-stage.is-expanded:not(.is-collapsing) {
-    padding-bottom: 30px;
+    z-index: 4;
+    top: auto;
+    right: auto;
+    bottom: calc(100vw * 35 / 390);
+    left: 50%;
+    width: calc(100vw * 89 / 390);
+    height: calc(100vw * 37 / 390);
+    transform: translateX(-50%);
   }
 }
 
 @media #{$small-mobile} {
-  .o-projektu-arrow-button {
-    width: calc(70px * 100vw / 390px);
-    height: calc(30px * 100vw / 390px);
-  }
+  /*
+   * Keep the 390px target geometry proportional on smaller phones.
+   * No separate layout is required; all mobile coordinates already scale
+   * from 100vw.
+   */
 }
 
 @media (prefers-reduced-motion: reduce) {
   .o-projektu-copy,
-  .o-projektu-white-stage,
-  .o-projektu-arrow-button .o-projektu-arrow,
-  .o-projektu-copy::after {
+  .o-projektu-arrow-button img {
     transition-duration: 1ms;
   }
 }
