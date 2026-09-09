@@ -1,0 +1,631 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mediaqueries' as *;
+
+.prijava {
+  min-height: 100vh;
+  background: $color-blue;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+
+  &_stage {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  // === ZAGLAVLJE ===
+  &_zaglavlje {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 340 / 195;
+    margin-bottom: -45px;
+    z-index: 1;
+    overflow: visible;
+  }
+
+  &_dekor {
+    position: absolute;
+    pointer-events: none;
+
+    &--plavi-levo {
+      top: 57%;
+      left: -5%;
+      width: 32%;
+      z-index: 1;
+    }
+
+    &--plavi-desno {
+      top: 57%;
+      right: -5%;
+      width: 32%;
+      z-index: 1;
+    }
+
+    &--zuti-levo {
+      top: 95%;
+      left: -10%;
+      width: 30%;
+      z-index: 0;
+      height: 40%;
+    }
+
+    &--zuti-desno {
+      top: 95%;
+      right: -10%;
+      width: 30%;
+      z-index: 0;
+      height: 40%;
+    }
+  }
+
+  &_zvezda {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    width: auto;
+    height: auto;
+
+    &--levo {
+      top: 54%;
+      left: 0%;
+      width: 14%;
+      z-index: 100;
+    }
+
+    &--desno {
+      top: 54%;
+      right: 11%;
+      width: 14%;
+      z-index: 100;
+    }
+  }
+
+  &_naslov-img {
+    position: absolute;
+    z-index: 4;
+    top: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    height: auto;
+  }
+
+  &_napomena-img {
+    position: absolute;
+    z-index: 4;
+    top: 60%;
+    left: 50%;
+    width: 22%;
+    height: auto;
+  }
+
+  // === BELI PAPIR SA RECKAMA ===
+  &_card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 580px;
+    box-sizing: border-box;
+    padding: 32px 28px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background-color: $color-white;
+    border-style: solid;
+    border-width: 0 18px;
+    border-image-source: url('@/assets/prijava/decor/bela_pozadina_sa_reckama.svg');
+    border-image-slice: 0 60 0 60 fill;
+    border-image-width: 0 18px;
+    border-image-repeat: repeat;
+
+    &--uspeh {
+      text-align: center;
+    }
+  }
+
+  // Kontejner unutar kartice
+  .form_step {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  // Tri tačke u sredini druge kartice
+  &_prazno-tri-tacke {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    min-height: 220px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: $color-black;
+    letter-spacing: 12px;
+  }
+
+  &_uspeh_tekst {
+    font-family: $font-body;
+    font-size: 1.2rem;
+    line-height: 1.5;
+  }
+
+  &_naslov {
+    font-family: $font-display;
+    font-weight: $font-black;
+    font-size: 2.5rem;
+    color: $color-black;
+    margin: 0 0 8px;
+    text-align: center;
+    transform: rotate(2deg);
+    position: relative;
+    display: inline-block;
+    z-index: 4;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 10% -8% 10% -8%;
+      background: $color-yellow;
+      transform: rotate(-1.5deg);
+      z-index: -1;
+    }
+  }
+
+  &_napomena {
+    font-family: $font-accent;
+    font-size: 0.8rem;
+    text-align: center;
+    margin: 0 0 20px;
+    color: $color-black;
+  }
+
+  &_zvezdica {
+    font-family: $font-accent;
+    color: inherit;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  &_labela {
+    display: inline-block;
+    padding: 4px 12px;
+    background: $color-blue;
+    color: $color-white;
+    font-family: $font-display;
+    font-weight: $font-black;
+    font-size: 1rem;
+    transform: rotate(-2deg);
+    margin-bottom: 6px;
+  }
+
+  &_opis {
+    font-family: $font-body;
+    font-size: 0.85rem;
+    color: $color-black;
+    margin: 0 0 10px;
+    opacity: 0.75;
+  }
+
+  &_input,
+  &_select,
+  &_textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid $color-black;
+    font-family: $font-body;
+    font-size: 1rem;
+    background: $color-white;
+    box-sizing: border-box;
+    outline: none;
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+
+  &_greska {
+    position: absolute;
+    bottom: -15px;
+    left: 6px;
+    color: #d90429;
+    font-family: $font-body;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  // === CUSTOM COMBOBOX STILOVI ===
+  &_combobox {
+    position: relative;
+    width: 100%;
+
+    &-okvir {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid $color-black;
+      background: $color-white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-sizing: border-box;
+      outline: none;
+
+      &:focus,
+      &:focus-visible {
+        outline: none;
+      }
+    }
+
+    &-tekst {
+      font-family: $font-body;
+      font-size: 1rem;
+      color: $color-black;
+    }
+
+    &-strelica {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-black;
+      transition: transform 0.25s ease;
+
+      &--otvoreno {
+        transform: rotate(180deg);
+      }
+    }
+
+    &-meni-wrap {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-6px);
+      overflow: hidden;
+      transition: max-height 0.28s ease, opacity 0.22s ease, transform 0.22s ease;
+      pointer-events: none;
+
+      &[data-otvoreno='true'] {
+        max-height: 260px;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+    }
+
+    &-meni {
+      background-color: $color-white;
+      border-style: solid;
+      border-width: 12px 0;
+      border-image-source: url('@/assets/prijava/decor/bela_pozadina_sa_reckama.svg');
+      border-image-slice: 40 0 40 0 fill;
+      border-image-width: 12px 0;
+      border-image-repeat: repeat;
+      max-height: 200px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    &-opcija {
+      padding: 10px 12px;
+      font-family: $font-body;
+      font-size: 0.95rem;
+      color: $color-black;
+      text-align: center;
+      cursor: pointer;
+      border-bottom: 1px dashed $color-black;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover,
+      &--izabrana {
+        background: $color-yellow;
+        font-weight: bold;
+      }
+    }
+  }
+
+  &_polje {
+    position: relative;
+    margin-bottom: 16px;
+    width: 100%;
+
+    &--checkbox {
+      margin-top: 8px;
+    }
+  }
+
+  &_razdelnik {
+    border: none;
+    border-top: 2px dashed $color-black;
+    margin: 20px 0;
+    opacity: 0.3;
+  }
+
+  &_checkbox_labela {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-family: $font-body;
+    font-size: 0.9rem;
+    cursor: pointer;
+
+    input[type='checkbox'] {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      accent-color: $color-blue;
+      cursor: pointer;
+    }
+  }
+
+  &_opcije {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &_opcija {
+    min-width: 48px;
+    padding: 8px 12px;
+    border: 2px solid $color-black;
+    background: $color-white;
+    font-family: $font-body;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    position: relative;
+    outline: none;
+
+    &:hover {
+      background: lighten($color-yellow, 20%);
+    }
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+    }
+
+    &-aktivna {
+      background: $color-yellow;
+      font-weight: bold;
+    }
+  }
+
+  &_navigacija {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 16px;
+  }
+
+  &_dugme {
+    padding: 12px 24px;
+    font-family: $font-display;
+    font-weight: $font-black;
+    font-size: 1rem;
+    border: 2px solid $color-black;
+    background: $color-white;
+    cursor: pointer;
+    transition: background 0.2s;
+    outline: none;
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+    }
+
+    &--nazad {
+      background: $color-white;
+
+      &:hover {
+        background: $color-yellow;
+      }
+    }
+
+    &--napred,
+    &--posalji {
+      margin-left: auto;
+      padding: 0;
+      border: none;
+      color: transparent;
+
+      width: 55%;
+      aspect-ratio: 168 / 58;
+      height: auto;
+
+      background-image: url('@/assets/prijava/buttons/dugme_naredna.svg') !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+      background-color: transparent !important;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: transparent !important;
+        background-image: url('@/assets/prijava/buttons/dugme_naredna.svg') !important;
+        transform: scale(1.03);
+      }
+    }
+  }
+
+  &_polje-slika {
+    position: relative;
+    width: 100%;
+
+    &--greska {
+      filter: drop-shadow(0px 0px 5px rgba(217, 4, 41, 0.8));
+    }
+  }
+
+  &_polje-pozadina {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  &_polje-input {
+    position: absolute;
+    border: none;
+    background: transparent;
+    font-family: $font-body;
+    font-size: 1rem;
+    color: $color-black;
+    box-sizing: border-box;
+    padding: 0 12px;
+    top: 32%;
+    left: 4%;
+    width: 92%;
+    height: 55%;
+    
+    display: flex;
+    align-items: center; 
+    outline: none;
+
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  }
+
+  &_godina-naslov-slika {
+    display: block;
+    width: 100%;
+    max-width: 90%;
+    height: auto;
+    margin: 0 auto 16px auto;
+  }
+
+  &_godina-kontejner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+  }
+
+  &_godina-mrezica-brojevi {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    justify-items: center;
+  }
+
+  &_godina-mrezica-ostalo {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+  }
+
+  &_godina-polje-vertikalno {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  &_godina-polje-horizontalno {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  &_godina-box-wrapper {
+    position: relative;
+    width: 34px;  
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &_godina-romb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  &_godina-tekst {
+    font-family: $font-display; 
+    font-size: 1rem;
+    color: $color-black;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  &_godina-bolt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 130%;
+    height: 130%;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 2;
+  }
+}
+
+/* Media Queries */
+@media #{$tablet} {
+  .prijava {
+    align-items: center;
+    padding: 40px;
+
+    &_stage {
+      max-width: 500px;
+    }
+
+    &_card {
+      padding: 32px;
+      min-height: 560px;
+    }
+  }
+}
+
+@media #{$desktop} {
+  .prijava {
+    padding: 60px;
+
+    &_stage {
+      max-width: 600px;
+    }
+
+    &_card {
+      padding: 40px 60px;
+      min-height: 600px;
+    }
+  }
+}
