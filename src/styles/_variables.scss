@@ -13,3 +13,7 @@ $font-accent: 'Mansalva', cursive;
 // Font weights
 $font-regular: 400;
 $font-black: 900;
+
+// Shared page/section heading scale
+$section-heading-font-size: calc(var(--section-design-width) * 72 / 1440);
+$section-heading-line-height: 1;

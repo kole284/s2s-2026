@@ -1,11 +1,14 @@
 .agenda {
+  --section-design-width: min(100vw, 140.625dvh);
+
   position: relative;
 
   width: 100%;
 
-  overflow: hidden;
+  overflow: clip;
+  overflow-clip-margin: 1px;
 
-  background: $color-white;
+  background: transparent;
 }
 
 .agenda__desktop,
@@ -13,6 +16,12 @@
   position: relative;
 
   width: 100%;
+}
+
+@media (min-width: 769px) {
+  .agenda {
+    height: 95.5dvh;
+  }
 }
 
 /* =========================================================
@@ -40,9 +49,10 @@
   margin: 0;
 
   font-family: $font-display;
+  font-size: $section-heading-font-size;
   font-weight: $font-black;
 
-  line-height: 1;
+  line-height: $section-heading-line-height;
 
   color: $color-blue;
 }
@@ -80,7 +90,7 @@
 
   overflow: hidden;
 
-  background: $color-white;
+  background: transparent;
 }
 
 /* =========================================================
@@ -92,8 +102,9 @@
 
   position: absolute;
   inset: 0;
+  bottom: -1px;
 
-  z-index: 0;
+  z-index: 3;
 
   background-color: $color-blue;
   background-image: url("/agenda/paper-texture.webp");
@@ -165,7 +176,7 @@
 .agenda__desktop-canvas {
   position: relative;
 
-  z-index: 1;
+  z-index: 4;
 
   width: min(100%, calc(100dvh * 1.40625));
 
@@ -197,11 +208,6 @@
   left: 50%;
 
   transform: translateX(-50%);
-
-  /*
-   * 50px na originalnih 1440px.
-   */
-  font-size: 3.4722cqw;
 
   text-align: center;
 }
@@ -433,7 +439,7 @@
 
   overflow: hidden;
 
-  background: $color-white;
+  background: transparent;
 }
 
 /* =========================================================
@@ -448,8 +454,9 @@
 
   position: absolute;
   inset: 0;
+  bottom: -1px;
 
-  z-index: 0;
+  z-index: 3;
 
   background-color: $color-blue;
   background-image: url("/agenda/paper-texture-mobile.webp");
@@ -493,7 +500,7 @@
 .agenda__mobile-canvas {
   position: relative;
 
-  z-index: 1;
+  z-index: 4;
 
   width: min(100%, 430px);
 
@@ -717,7 +724,7 @@
 
 @media #{$mobile} {
   .agenda {
-    overflow: visible;
+    height: calc(min(100vw, 430px) * 1472 / 390 * 0.972);
   }
 
   .agenda__desktop {

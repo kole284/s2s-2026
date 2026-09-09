@@ -114,10 +114,12 @@ const Pitanja = () => {
 
       <div className="pitanja__desktop">
         <div className="pitanja__desktop-canvas">
-          <h2 className="pitanja__desktop-title">PITANJA</h2>
+          <div className="pitanja__desktop-content">
+            <h2 className="pitanja__desktop-title">PITANJA</h2>
 
-          <div className="pitanja__desktop-faq">
-            {renderQuestions(faqItems.slice(0, 3))}
+            <div className="pitanja__desktop-faq">
+              {renderQuestions(faqItems.slice(0, 3))}
+            </div>
           </div>
         </div>
 

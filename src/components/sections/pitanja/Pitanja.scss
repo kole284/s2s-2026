@@ -1,6 +1,9 @@
 @use "sass:math";
 
 .pitanja {
+  --pitanja-design-width: min(100vw, 140.625dvh);
+  --section-design-width: var(--pitanja-design-width);
+
   position: relative;
 
   width: 100%;
@@ -227,38 +230,46 @@
   container-type: inline-size;
 }
 
-.pitanja__desktop-title {
-  position: absolute;
-
-  z-index: 10;
-
-  top: 3.1cqw;
-  left: 50%;
-
-  margin: 0;
-
-  font-family: $font-display;
-  font-size: 6.6667cqw;
-  font-weight: $font-black;
-
-  line-height: 1;
-
-  color: $color-blue;
-
-  white-space: nowrap;
-
-  transform: translateX(-50%);
-}
-
-.pitanja__desktop-faq {
+.pitanja__desktop-content {
   position: absolute;
 
   z-index: 5;
 
-  top: 9.7cqw;
+  top: 3.1cqw;
   left: 10.8333%;
 
+  display: flex;
+  flex-direction: column;
+
   width: 79.3056%;
+
+  gap: 1.6667cqw;
+}
+
+.pitanja__desktop-title {
+  z-index: 10;
+
+  align-self: center;
+
+  margin: 0;
+
+  font-family: $font-display;
+  font-size: $section-heading-font-size;
+  font-weight: $font-black;
+
+  line-height: $section-heading-line-height;
+
+  color: $color-blue;
+
+  white-space: nowrap;
+}
+
+.pitanja__desktop-faq {
+  position: relative;
+
+  z-index: 5;
+
+  width: 100%;
 }
 
 /* =========================================================
@@ -538,13 +549,106 @@
   z-index: 4;
 
   top: 25%;
-  right: 0;
+  right: 5%;
 
   width: min(16.8vw, 24dvh);
   height: auto;
 
   pointer-events: none;
   user-select: none;
+}
+
+@media (min-width: 769px) and (orientation: landscape), (min-width: 1025px) {
+  .pitanja {
+    overflow: visible;
+  }
+
+  .pitanja__left-zigzag {
+    width: calc(var(--pitanja-design-width) * 42 / 1440);
+  }
+
+  .pitanja__left-zigzag::before {
+    position: absolute;
+
+    top: calc(var(--pitanja-design-width) * -172 / 1440);
+    left: 0;
+
+    display: block;
+
+    width: calc(var(--pitanja-design-width) * 94 / 1440);
+    height: calc(var(--pitanja-design-width) * 172 / 1440 + 1px);
+
+    background-image:
+      linear-gradient(#ffd107 0 0),
+      conic-gradient(
+        from 212deg at 100% 50%,
+        #ffd107 0deg 116deg,
+        transparent 116deg
+      );
+    background-repeat: no-repeat, repeat-y;
+    background-position: left top, right top;
+    background-size:
+      calc(var(--pitanja-design-width) * 42 / 1440) 100%,
+      calc(var(--pitanja-design-width) * 52 / 1440)
+        calc(var(--pitanja-design-width) * 172 / 1440);
+
+    content: "";
+
+    pointer-events: none;
+  }
+
+  .pitanja__left-zigzag::after {
+    width: calc(var(--pitanja-design-width) * 52 / 1440);
+
+    background-size: 100% calc(var(--pitanja-design-width) * 172 / 1440);
+  }
+
+  .pitanja__bottom-paper--desktop {
+    left: calc(var(--pitanja-design-width) * -48.03125 / 1440);
+
+    height: calc(var(--pitanja-design-width) * 69 / 1440);
+  }
+
+  .pitanja__bottom-segment:nth-child(6n + 1) {
+    flex-basis: calc(var(--pitanja-design-width) * 310 / 1440);
+  }
+
+  .pitanja__bottom-segment:nth-child(6n + 2) {
+    flex-basis: calc(var(--pitanja-design-width) * 285 / 1440);
+  }
+
+  .pitanja__bottom-segment:nth-child(6n + 3) {
+    flex-basis: calc(var(--pitanja-design-width) * 340 / 1440);
+  }
+
+  .pitanja__bottom-segment:nth-child(6n + 4) {
+    flex-basis: calc(var(--pitanja-design-width) * 300 / 1440);
+  }
+
+  .pitanja__bottom-segment:nth-child(6n + 5) {
+    flex-basis: calc(var(--pitanja-design-width) * 325 / 1440);
+  }
+
+  .pitanja__bottom-segment:nth-child(6n + 6) {
+    flex-basis: calc(var(--pitanja-design-width) * 290 / 1440);
+  }
+
+  .pitanja__bottom-segment + .pitanja__bottom-segment {
+    margin-left: calc(var(--pitanja-design-width) * -4 / 1440);
+  }
+
+  .pitanja__question-mark {
+    top: calc(
+      (100dvh - var(--pitanja-design-width) * 1024 / 1440) / 2 +
+        var(--pitanja-design-width) * 256 / 1440
+    );
+    right: calc(
+      (100vw - var(--pitanja-design-width)) / 2 - var(--pitanja-design-width) *
+        20 / 1440
+    );
+
+    width: calc(var(--pitanja-design-width) * 241.92 / 1440);
+  }
 }
 
 .pitanja__question:focus-visible {
@@ -617,6 +721,8 @@
      * To je jedini namerni prazan prostor na dnu.
      */
     padding: clamp(12px, 2.1dvh, 20px) 0 clamp(82px, 24.6154vw, 106px);
+
+    gap: clamp(16px, 4.1026vw, 20px);
 
     overflow: hidden;
 
@@ -720,7 +826,7 @@
 
     width: 100%;
 
-    margin: 0 0 14px;
+    margin: 0;
 
     padding-left: clamp(12px, 4.6154cqw, 18px);
   }
@@ -732,7 +838,7 @@
     font-size: clamp(44px, min(14.8718cqw, 7.1dvh), 58px);
     font-weight: $font-black;
 
-    line-height: 0.95;
+    line-height: $section-heading-line-height;
 
     color: $color-blue;
 
@@ -964,10 +1070,8 @@
   .pitanja__mobile-canvas {
     padding-top: 10px;
     padding-bottom: 72px;
-  }
 
-  .pitanja__mobile-title-wrapper {
-    margin-bottom: 10px;
+    gap: 10px;
   }
 
   .pitanja__mobile-title {
@@ -1017,6 +1121,8 @@
     width: min(100%, 680px);
 
     padding: clamp(28px, 2.8dvh, 36px) 0 clamp(128px, 11.8dvh, 150px);
+
+    gap: clamp(18px, 2dvh, 26px);
   }
 
   .pitanja__bottom-paper--mobile {
@@ -1035,8 +1141,6 @@
   }
 
   .pitanja__mobile-title-wrapper {
-    margin-bottom: clamp(18px, 2dvh, 26px);
-
     padding-left: 0;
   }
 

@@ -1,5 +1,6 @@
 .partneri-page {
   --partner-u: 0.0694444444vw;
+  --section-design-width: min(100vw, 140.625dvh);
 
   position: relative;
 
@@ -85,7 +86,8 @@
 
   color: $color-white;
 
-  font-size: calc(72 * var(--partner-u));
+  font-size: $section-heading-font-size;
+  line-height: $section-heading-line-height;
   letter-spacing: calc(0.4 * var(--partner-u));
 
   transform: translateX(-50%);

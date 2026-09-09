@@ -5,6 +5,8 @@ $panel-yellow: #ffd100;
    ========================================================= */
 
 .panel-section {
+  --section-design-width: min(100vw, 140.625dvh);
+
   position: relative;
 
   width: 100%;
@@ -532,10 +534,10 @@ $panel-yellow: #ffd100;
   color: $color-blue;
 
   font-family: $font-display;
-  font-size: 5cqw;
+  font-size: $section-heading-font-size;
   font-weight: $font-black;
 
-  line-height: 1;
+  line-height: $section-heading-line-height;
 
   white-space: nowrap;
 
