@@ -1,7 +1,7 @@
-import Example from '@/components/Example/Example';
+import Prijava from '@/components/sections/prijava/Prijava';
 
 const Test = () => {
-  return <Example />;
+  return <Prijava />;
 };
 
 export default Test;
