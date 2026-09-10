@@ -1,0 +1,198 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mediaqueries' as *;
+
+// ============================================================
+// Lokalna podešavanja (nisu globalni tokeni)
+// ============================================================
+$rd-tranzicija: 0.6s ease;
+
+// Dubina cik-cak zubaca na ivicama trake
+$rd-zigzag-mobile: 36px;
+$rd-zigzag-desktop: 64px;
+
+// Mobile: 2 zupca gore i dole
+$rd-zigzag-mobilni: polygon(
+  0 #{$rd-zigzag-mobile},
+  25% 0,
+  50% #{$rd-zigzag-mobile},
+  75% 0,
+  100% #{$rd-zigzag-mobile},
+  100% calc(100% - #{$rd-zigzag-mobile}),
+  75% 100%,
+  50% calc(100% - #{$rd-zigzag-mobile}),
+  25% 100%,
+  0 calc(100% - #{$rd-zigzag-mobile})
+);
+
+// Desktop: 4 šira zupca gore i dole
+$rd-zigzag-desktopski: polygon(
+  0 #{$rd-zigzag-desktop},
+  12.5% 0,
+  25% #{$rd-zigzag-desktop},
+  37.5% 0,
+  50% #{$rd-zigzag-desktop},
+  62.5% 0,
+  75% #{$rd-zigzag-desktop},
+  87.5% 0,
+  100% #{$rd-zigzag-desktop},
+  100% calc(100% - #{$rd-zigzag-desktop}),
+  87.5% 100%,
+  75% calc(100% - #{$rd-zigzag-desktop}),
+  62.5% 100%,
+  50% calc(100% - #{$rd-zigzag-desktop}),
+  37.5% 100%,
+  25% calc(100% - #{$rd-zigzag-desktop}),
+  12.5% 100%,
+  0 calc(100% - #{$rd-zigzag-desktop})
+);
+
+// ============================================================
+// Stranica: bela pozadina, na njoj naslov + traka
+// ============================================================
+.radionice-page {
+  background-color: $color-white;
+  // TODO: uskladi razmak ispod shared navbara
+  padding-bottom: 64px;
+}
+
+// Na mobilnom je naslov deo navbara, pa ga tu ne prikazujemo
+.radionice-title {
+  display: none;
+  margin: 0;
+  padding: 40px 24px 32px;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: clamp(40px, 5.5vw, 72px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  color: $color-blue;
+}
+
+// ============================================================
+// Traka — slojevi odozgo nadole:
+// 1. providan_papir.svg (tekstura, ugrađen fill-opacity 0.4)
+// 2. plavi sloj (gradient sa dve iste boje, jer background-image
+//    prima samo slike, ne čiste boje)
+// 3. bela podloga (background-color)
+// overflow: hidden je obavezan — bočne ikonice namerno izlaze
+// van ekrana, pa bi bez njega pravile horizontalni scroll.
+// ============================================================
+.radionice-band {
+  position: relative;
+  overflow: hidden;
+  background-color: $color-white;
+  background-image:
+    url('@/assets/providan_papir.svg'),
+    linear-gradient(rgba($color-blue, 0.92), rgba($color-blue, 0.92));
+  background-size: cover, auto;
+  background-position: center;
+  clip-path: $rd-zigzag-mobilni;
+}
+
+// ============================================================
+// Scena: fiksna visina, slotovi su absolute u njoj.
+// Custom properties se menjaju u media query-ju.
+// ============================================================
+.radionice-stage {
+  --rd-razmak: 150px; // rastojanje između centara susednih ikonica
+  --rd-bocna-skala: 0.6; // veličina bočnih ikonica u odnosu na centralnu
+
+  position: relative;
+  height: 480px;
+}
+
+// ============================================================
+// Slot = ikonica + naziv. Svi stoje u centru scene, a
+// --rd-pomeraj (postavlja ga TSX) ih razmiče levo/desno.
+// Pri smeni se svakom slotu promeni pomeraj za -1, pa
+// tranzicija na transform "otklizne" ceo red ulevo.
+// ============================================================
+.radionice-slot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  transform: translate(-50%, -50%)
+    translateX(calc(var(--rd-pomeraj) * var(--rd-razmak)))
+    scale(var(--rd-bocna-skala));
+  transition: transform $rd-tranzicija;
+
+  &--centar {
+    z-index: 2; // centralna preko bočnih dok red klizi
+    transform: translate(-50%, -50%)
+      translateX(calc(var(--rd-pomeraj) * var(--rd-razmak))) scale(1);
+  }
+}
+
+// max-width/max-height kao kod .predavaci-shield:
+// SVG-ovi imaju različite proporcije, ovako su vizuelno ujednačeni
+.radionice-ikonica {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 140px;
+  max-height: 150px;
+}
+
+// Naziv postoji u svakom slotu (da svi slotovi budu iste visine,
+// pa se ikonice poravnaju), ali je vidljiv samo na centralnom
+.radionice-naziv {
+  margin: 0;
+  max-width: 200px;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  text-align: center;
+  color: $color-yellow;
+  opacity: 0;
+  transition: opacity $rd-tranzicija;
+
+  .radionice-slot--centar & {
+    opacity: 1;
+  }
+}
+
+// ============================================================
+// Tablet + desktop
+// ============================================================
+@media #{$tablet}, #{$desktop} {
+  .radionice-title {
+    display: block;
+  }
+
+  .radionice-band {
+    clip-path: $rd-zigzag-desktopski;
+  }
+
+  .radionice-stage {
+    --rd-razmak: 240px;
+    --rd-bocna-skala: 0.65;
+
+    height: 620px;
+  }
+
+  .radionice-ikonica {
+    max-width: 230px;
+    max-height: 250px;
+  }
+
+  .radionice-naziv {
+    max-width: 260px;
+    font-size: 30px;
+  }
+}
+
+// Korisnicima koji su isključili animacije prelaz je trenutan
+@media (prefers-reduced-motion: reduce) {
+  .radionice-slot,
+  .radionice-naziv {
+    transition: none;
+  }
+}
