@@ -17,6 +17,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
   }
 
   // === ZAGLAVLJE ===
@@ -108,25 +109,71 @@
   // === BELI PAPIR SA RECKAMA ===
   &_card {
     position: relative;
-    z-index: 2;
     width: 100%;
-    min-height: 580px;
     box-sizing: border-box;
-    padding: 32px 28px 24px 28px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
 
-    background-color: $color-white;
-    border-style: solid;
-    border-width: 0 18px;
-    border-image-source: url('@/assets/prijava/decor/bela_pozadina_sa_reckama.svg');
-    border-image-slice: 0 60 0 60 fill;
-    border-image-width: 0 18px;
-    border-image-repeat: repeat;
+    &__vrh {
+      display: block;
+      width: 100%;
+      height: auto;
+      flex-shrink: 0;
+      pointer-events: none;
+      position: relative;
+      z-index: 2;
 
-    &--uspeh {
-      text-align: center;
+      margin-bottom: -1px; // Spaja vrh sa telom bez procepa
+    }
+
+    &__dno {
+      display: block;
+      width: 100%;
+      height: auto;
+      flex-shrink: 0;
+      pointer-events: none;
+      position: relative;
+      z-index: 1;
+      margin-top: -2px; // Spaja dno sa telom bez procepa
+    }
+
+    &__telo {
+      position: relative;
+      width: 100%;
+      height: auto; 
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    &__sredina-stog {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: flex;
+      flex-direction: column;
+      pointer-events: none;
+    }
+
+    &__sredina-tajl {
+      width: 100%;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+
+    &__sadrzaj {
+      position: relative;
+      z-index: 3;
+      padding: 0 28px 10px 28px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      flex: 0 0 auto;
+
+      background-repeat: repeat-y;
+      background-position: top center;
+      background-size: 100% auto;
     }
   }
 
@@ -135,16 +182,14 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    flex: 1;
+    height: auto;
   }
-
+  
   // Tri tačke u sredini druge kartice
   &_prazno-tri-tacke {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1;
-    min-height: 220px;
     font-size: 2.5rem;
     font-weight: bold;
     color: $color-black;
@@ -249,40 +294,61 @@
   &_combobox {
     position: relative;
     width: 100%;
+    z-index: 5;
+    box-sizing: border-box;
+    overflow: visible; // dropdown mora da se vidi van, ali roditelj ne sme da beži
 
     &-okvir {
+      position: relative;
+      display: block;
       width: 100%;
-      padding: 10px 12px;
-      border: 2px solid $color-black;
-      background: $color-white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 0;
+      border: none;
+      background: none;
       cursor: pointer;
-      box-sizing: border-box;
       outline: none;
-
-      &:focus,
-      &:focus-visible {
-        outline: none;
-      }
     }
 
-    &-tekst {
-      font-family: $font-body;
-      font-size: 1rem;
-      color: $color-black;
+    &-okvir-img {
+      display: block;
+      width: 100%;
+      height: auto; // prati pravi SVG — ovo rešava i "sićušno" i "strelica izašla"
     }
 
-    &-strelica {
+    &-tekst-zona {
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: $color-black;
+      // TODO: podesi % da tačno prati širinu crne zastavice (levo) i strelice (desno) na tvom assetu
+      padding: 0 16% 0 26%;
+      transform: translateY(-12%); // podigni tekst bliže vizuelnom centru trake
+      pointer-events: none;
+    }
+
+    &-tekst-img {
+      height: 42%;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    &-strelica {
+      position: absolute;
+      top: 50%;
+      right: 5%;
+      width: 8%;
+      aspect-ratio: 1;
+      transform: translateY(-50%);
+      background-image: url('@/assets/prijava/decor/kukica_za_izaberi_radionicu.svg');
+      background-repeat: no-repeat;
+      background-size: contain;
       transition: transform 0.25s ease;
+      pointer-events: none;
 
       &--otvoreno {
-        transform: rotate(180deg);
+        transform: translateY(-50%) rotate(180deg);
       }
     }
 
@@ -298,9 +364,10 @@
       overflow: hidden;
       transition: max-height 0.28s ease, opacity 0.22s ease, transform 0.22s ease;
       pointer-events: none;
+      z-index: 1000;
 
       &[data-otvoreno='true'] {
-        max-height: 260px;
+        max-height: 300px;
         opacity: 1;
         transform: translateY(0);
         pointer-events: auto;
@@ -308,35 +375,49 @@
     }
 
     &-meni {
-      background-color: $color-white;
-      border-style: solid;
-      border-width: 12px 0;
-      border-image-source: url('@/assets/prijava/decor/bela_pozadina_sa_reckama.svg');
-      border-image-slice: 40 0 40 0 fill;
-      border-image-width: 12px 0;
-      border-image-repeat: repeat;
-      max-height: 200px;
+      display: flex;
+      flex-direction: column;
+      max-height: 300px;
       overflow-y: auto;
       box-sizing: border-box;
+
+      // sakriva scrollbar, ali skrol ostaje funkcionalan
+      scrollbar-width: none;       // Firefox
+      -ms-overflow-style: none;    // starije Edge/IE
+
+      &::-webkit-scrollbar {
+        display: none;             // Chrome, Safari, noviji Edge
+      }
     }
 
     &-opcija {
-      padding: 10px 12px;
-      font-family: $font-body;
-      font-size: 0.95rem;
-      color: $color-black;
-      text-align: center;
+      position: relative;
+      width: 100%;
+      margin-top: -1px;
       cursor: pointer;
-      border-bottom: 1px dashed $color-black;
 
-      &:last-child {
-        border-bottom: none;
+      &:first-child { margin-top: 0; }
+
+      &-img {
+        display: block;
+        width: 100%;
+        height: auto;
       }
 
-      &:hover,
-      &--izabrana {
-        background: $color-yellow;
-        font-weight: bold;
+      &-tekst-zona {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        transform: translateY(-6%); // manja korekcija za stavke u meniju (ravnije su)
+        pointer-events: none;
+      }
+
+      &:hover &-img,
+      &--izabrana &-img {
+        filter: brightness(0.93);
       }
     }
   }
@@ -411,7 +492,7 @@
   &_navigacija {
     display: flex;
     gap: 12px;
-    margin-top: auto;
+    margin-top: 24px;
     padding-top: 16px;
   }
 
@@ -596,6 +677,89 @@
     pointer-events: none;
     z-index: 2;
   }
+
+  &_checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+
+    &--vertikalno { flex-direction: column; }
+    &--horizontalno { flex-direction: row; }
+  }
+
+  &_checkbox-box {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+  }
+
+  &_checkbox-romb { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    pointer-events: none; 
+  }
+
+  &_checkbox-munjica {
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 130%; 
+    height: 130%;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  &_checkbox-tekst {
+    font-family: $font-display;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: $color-black;
+  }
+  &-ocisti {
+    position: absolute;
+    top: 50%;
+    right: 14%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: $color-black;
+    z-index: 2;
+  }
+  &_polje-textarea-input {
+    position: absolute;
+    top: 8%;
+    left: 4%;
+    width: 92%;
+    height: 84%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    font-family: $font-body;
+    font-size: 1rem;
+    color: $color-black;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    overflow-y: auto;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+
+    &:focus, &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  }
 }
 
 /* Media Queries */
@@ -604,28 +768,31 @@
     align-items: center;
     padding: 40px;
 
-    &_stage {
+    _stage {
       max-width: 500px;
     }
 
-    &_card {
-      padding: 32px;
-      min-height: 560px;
+    // Uklonjen min-height odavde!
+    _card {
+      padding: 0; // Padding ide na _sadrzaj, ne na celo karticu
     }
   }
+
+
+  
 }
 
 @media #{$desktop} {
   .prijava {
     padding: 60px;
 
-    &_stage {
+    _stage {
       max-width: 600px;
     }
 
-    &_card {
-      padding: 40px 60px;
-      min-height: 600px;
+    // Uklonjen min-height i odavde!
+    _card {
+      padding: 0;
     }
   }
 }

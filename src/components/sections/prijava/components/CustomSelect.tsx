@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import okvirBezTeksta from '@/assets/prijava/decor/izaberi_radionicu_combobox_bez_teksta.svg';
+import stavkaPozadina from '@/assets/prijava/decor/combobox_item.svg';
 
 interface CustomSelectProps {
   labela?: string;
@@ -8,6 +10,8 @@ interface CustomSelectProps {
   onChange: (val: string) => void;
   placeholder?: string;
   greska?: string;
+  opcijaAsseti: Record<string, string>;
+  placeholderAsset: string;
 }
 
 const CustomSelect = ({
@@ -18,6 +22,8 @@ const CustomSelect = ({
   onChange,
   placeholder = 'Izaberi radionicu',
   greska,
+  opcijaAsseti,
+  placeholderAsset,
 }: CustomSelectProps) => {
   const [otvoreno, setOtvoreno] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
@@ -32,6 +38,8 @@ const CustomSelect = ({
     return () => document.removeEventListener('mousedown', obradiKlikVan);
   }, []);
 
+  const trenutniTekstAsset = value ? opcijaAsseti[value] : placeholderAsset;
+
   return (
     <div className="prijava_polje" ref={selectRef}>
       {labela && (
@@ -43,24 +51,34 @@ const CustomSelect = ({
       <div className="prijava_combobox">
         <button
           type="button"
-          className={`prijava_combobox-okvir ${otvoreno ? 'prijava_combobox-okvir--otvoreno' : ''}`}
+          className="prijava_combobox-okvir"
           onClick={() => setOtvoreno((prev) => !prev)}
         >
-          <span className="prijava_combobox-tekst">
-            {value || placeholder}
+          <img src={okvirBezTeksta} alt="" className="prijava_combobox-okvir-img" />
+
+          <span className="prijava_combobox-tekst-zona">
+            <img src={trenutniTekstAsset} alt={value || placeholder} className="prijava_combobox-tekst-img" />
           </span>
-          <span className={`prijava_combobox-strelica ${otvoreno ? 'prijava_combobox-strelica--otvoreno' : ''}`}>
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path
-                d="M6 9l6 6 6-6"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </svg>
-          </span>
+
+          {value && (
+            <button
+              type="button"
+              className="prijava_combobox-ocisti"
+              aria-label="Ukloni izbor"
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange('');
+                setOtvoreno(false);
+              }}
+            >
+              ✕
+            </button>
+          )}
+
+          <span
+            className={`prijava_combobox-strelica ${otvoreno ? 'prijava_combobox-strelica--otvoreno' : ''}`}
+            aria-hidden="true"
+          />
         </button>
 
         <div className="prijava_combobox-meni-wrap" data-otvoreno={otvoreno}>
@@ -74,7 +92,10 @@ const CustomSelect = ({
                   setOtvoreno(false);
                 }}
               >
-                {opt}
+                <img src={stavkaPozadina} alt="" className="prijava_combobox-opcija-img" />
+                <span className="prijava_combobox-opcija-tekst-zona">
+                  <img src={opcijaAsseti[opt]} alt={opt} className="prijava_combobox-tekst-img" />
+                </span>
               </div>
             ))}
           </div>

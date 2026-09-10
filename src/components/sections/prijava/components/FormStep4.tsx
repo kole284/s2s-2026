@@ -1,4 +1,8 @@
+// FormStep4.tsx
 import type { PrijavaForma } from '../types';
+import CustomCheckbox from './CustomCheckbox';
+import PoljeTextareaSaSlikom from './PoljeTextareaSaSlikom';
+import textareaImg from '@/assets/prijava/fields/textarea.svg';
 
 interface Props {
   forma: PrijavaForma;
@@ -17,20 +21,18 @@ const FormStep4 = ({ forma, promeniPolje, greske }: Props) => {
           Da li si ranije učestvovao/la na S2S-u? <span className="prijava_zvezdica">*</span>
         </label>
         <div className="prijava_opcije">
-          <button
-            type="button"
-            className={`prijava_opcija ${forma.ranijeUcestvovao === true ? 'prijava_opcija-aktivna' : ''}`}
+          <CustomCheckbox
+            label="Da"
+            smer="horizontalno"
+            izabrano={forma.ranijeUcestvovao === true}
             onClick={() => promeniPolje('ranijeUcestvovao', true)}
-          >
-            Da
-          </button>
-          <button
-            type="button"
-            className={`prijava_opcija ${forma.ranijeUcestvovao === false ? 'prijava_opcija-aktivna' : ''}`}
+          />
+          <CustomCheckbox
+            label="Ne"
+            smer="horizontalno"
+            izabrano={forma.ranijeUcestvovao === false}
             onClick={() => promeniPolje('ranijeUcestvovao', false)}
-          >
-            Ne
-          </button>
+          />
         </div>
         {greske.ranijeUcestvovao && <p className="prijava_greska">{greske.ranijeUcestvovao}</p>}
       </div>
@@ -41,14 +43,14 @@ const FormStep4 = ({ forma, promeniPolje, greske }: Props) => {
             Šta ti se posebno dopalo, a šta bi voleo/la da bude drugačije ove godine?{' '}
             <span className="prijava_zvezdica">*</span>
           </label>
-          <textarea
-            className="prijava_textarea"
-            rows={4}
+          <PoljeTextareaSaSlikom
+            pozadinaSlika={textareaImg}
             value={forma.s2sIskustvo}
-            onChange={(e) => promeniPolje('s2sIskustvo', e.target.value)}
+            onChange={(v) => promeniPolje('s2sIskustvo', v)}
+            ariaLabel="Iskustvo sa prethodnog S2S-a"
             placeholder="Upiši..."
+            greska={greske.s2sIskustvo}
           />
-          {greske.s2sIskustvo && <p className="prijava_greska">{greske.s2sIskustvo}</p>}
         </div>
       )}
 
@@ -56,11 +58,11 @@ const FormStep4 = ({ forma, promeniPolje, greske }: Props) => {
         <label className="prijava_labela">
           Da li imaš predlog za radionicu koja do sad nije bila održana?
         </label>
-        <textarea
-          className="prijava_textarea"
-          rows={3}
+        <PoljeTextareaSaSlikom
+          pozadinaSlika={textareaImg}
           value={forma.predlogRadionice}
-          onChange={(e) => promeniPolje('predlogRadionice', e.target.value)}
+          onChange={(v) => promeniPolje('predlogRadionice', v)}
+          ariaLabel="Predlog radionice"
           placeholder="Upiši..."
         />
       </div>

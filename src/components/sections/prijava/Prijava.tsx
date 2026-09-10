@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import './Prijava.scss';
 
 import FormStep1 from './components/FormStep1';
@@ -16,6 +16,17 @@ import zutiLevi from '@/assets/prijava/decor/zuti_levi_detalj.svg';
 import zutiDesni from '@/assets/prijava/decor/zuti_desni_detalj.svg';
 import naslovPrijaviSe from '@/assets/prijava/decor/prijavi_se_tekst_i_zuta_pozadina.svg';
 import napomenaObavezna from '@/assets/prijava/decor/pitanja_sa_zvezdicom_su_obavezna.svg';
+
+import papirVrhCrni from '@/assets/prijava/decor/reckavi_papir_vrh_crni.svg';
+import papirDnoCrni from '@/assets/prijava/decor/reckavi_papir_dno_crni.svg';
+import papirVrhPlavi from '@/assets/prijava/decor/reckavi_papir_vrh_plavi.svg';
+import papirDnoPlavi from '@/assets/prijava/decor/reckavi_papir_dno_plavi.svg';
+import naslovRadionice from '@/assets/prijava/decor/naslov_radionice.svg';
+import naslovPanel from '@/assets/prijava/decor/naslov_panel.svg';
+import naslovIskustva from '@/assets/prijava/decor/naslov_iskustva.svg';
+import papirSredinaCrni from '@/assets/prijava/decor/reckavi_papir_sredina_crni.svg';
+import papirSredinaPlavi from '@/assets/prijava/decor/reckavi_papir_sredina_plavi.svg';
+import { usePapirTajlovi } from './usePapirTajlovi';
 
 const praznaForma: PrijavaForma = {
   imePrezime: '',
@@ -134,7 +145,7 @@ const Prijava = () => {
   const [korak, setKorak] = useState(1);
   const [poslato, setPoslato] = useState(false);
   const [greske, setGreske] = useState<Record<string, string>>({});
-
+  const jeSenkaCrna = korak === 1;
   const [status, setStatus] = useState<
     'idle' | 'submitting' | 'error'
   >('idle');
@@ -143,12 +154,18 @@ const Prijava = () => {
   const [duplicatePrompt, setDuplicatePrompt] =
     useState<DuplicatePrompt | null>(null);
 
-  const promeniPolje = <K extends keyof PrijavaForma>(
+  const sadrzajRef = useRef<HTMLDivElement>(null);       // spoljni, dobija min-height
+  const sadrzajUnutraRef = useRef<HTMLDivElement>(null); // unutrašnji, za merenje
+
+  const trenutnaSredina = jeSenkaCrna ? papirSredinaCrni : papirSredinaPlavi;
+  const { brojTajlova, visinaTajla } = usePapirTajlovi(sadrzajRef, sadrzajUnutraRef, trenutnaSredina);
+
+  const promeniPolje = useCallback(<K extends keyof PrijavaForma>(
     polje: K,
     vrednost: PrijavaForma[K],
   ) => {
     setForma((prev) => ({ ...prev, [polje]: vrednost }));
-  };
+  }, []);
 
   const validirajKorak = (): boolean => {
     const greskeKorak: Record<string, string> = {};
@@ -434,7 +451,6 @@ const Prijava = () => {
 
     const payload = buildPayload(forma);
 
-    // CV je opcion, ali ako je unet mora biti Google Drive link.
     if (
       payload.cv_drive_link &&
       !isGoogleDriveLink(payload.cv_drive_link)
@@ -597,17 +613,13 @@ const Prijava = () => {
           />
 
           {korak === 1 ? (
+            <img src={naslovPrijaviSe} alt="Prijavi se" className="prijava_naslov-img" />
+          ) : (
             <img
-              src={naslovPrijaviSe}
-              alt="Prijavi se"
+              src={korak === 2 ? naslovRadionice : korak === 3 ? naslovPanel : naslovIskustva}
+              alt={korak === 2 ? 'Radionice' : korak === 3 ? 'Panel' : 'Iskustva'}
               className="prijava_naslov-img"
             />
-          ) : (
-            <h1 className="prijava_naslov">
-              {korak === 2 && 'RADIONICE'}
-              {korak === 3 && 'PANEL'}
-              {korak === 4 && 'ISKUSTVA'}
-            </h1>
           )}
 
           <img
@@ -617,50 +629,52 @@ const Prijava = () => {
           />
         </div>
 
-        <div className="prijava_card">
-          <div className="prijava_sadrzaj">
-            {korak === 1 && (
-              <FormStep1
-                forma={forma}
-                promeniPolje={promeniPolje}
-                greske={greske}
-              />
-            )}
+        <div className={`prijava_card ${poslato ? 'prijava_card--uspeh' : ''}`}>
+          <img
+            src={jeSenkaCrna ? papirVrhCrni : papirVrhPlavi}
+            alt=""
+            className="prijava_card__vrh"
+          />
 
-            {korak === 2 && (
-              <FormStep2
-                forma={forma}
-                promeniPolje={promeniPolje}
-                greske={greske}
-              />
-            )}
+          <div className="prijava_card__telo">
+            <div className="prijava_card__sredina-stog" aria-hidden="true">
+              {Array.from({ length: brojTajlova }).map((_, i) => (
+                <div
+                  key={i}
+                  className="prijava_card__sredina-tajl"
+                  style={{ backgroundImage: `url(${trenutnaSredina})`, height: visinaTajla, flex: 'none' }}
+                />
+              ))}
+            </div>
+            <div
+              className="prijava_card__sadrzaj"
+              ref={sadrzajRef}
+              style={{
+                backgroundImage: `url(${jeSenkaCrna ? papirSredinaCrni : papirSredinaPlavi})`,
+              }}
+            >
+              <div className="prijava_card__sadrzaj-unutra" ref={sadrzajUnutraRef}>
+                {korak === 1 && <FormStep1 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
+                {korak === 2 && <FormStep2 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
+                {korak === 3 && <FormStep3 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
+                {korak === 4 && <FormStep4 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
 
-            {korak === 3 && (
-              <FormStep3
-                forma={forma}
-                promeniPolje={promeniPolje}
-                greske={greske}
-              />
-            )}
+                {status === 'error' && errorMessage && <p role="alert">{errorMessage}</p>}
 
-            {korak === 4 && (
-              <FormStep4
-                forma={forma}
-                promeniPolje={promeniPolje}
-                greske={greske}
-              />
-            )}
-
-            {status === 'error' && errorMessage && (
-              <p role="alert">{errorMessage}</p>
-            )}
+                <FormNavigacija
+                  korak={korak}
+                  onPrethodni={prethodniKorak}
+                  onSledeci={sledeciKorak}
+                  onPosalji={posaljiPrijavu}
+                />
+              </div>
+            </div>
           </div>
 
-          <FormNavigacija
-            korak={korak}
-            onPrethodni={prethodniKorak}
-            onSledeci={sledeciKorak}
-            onPosalji={posaljiPrijavu}
+          <img
+            src={jeSenkaCrna ? papirDnoCrni : papirDnoPlavi}
+            alt=""
+            className="prijava_card__dno"
           />
         </div>
 
