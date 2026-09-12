@@ -3,6 +3,9 @@
     box-sizing: border-box;
   background-color: $color-blue;
   padding: 120px 24px 80px;
+  position: relative;
+isolation: isolate;
+overflow: hidden;
 }
 
 .team-content {
@@ -14,6 +17,8 @@
   width: 100%;
   max-width: 1100px;
   margin-inline: auto;
+  position: relative;
+z-index: 1;
 }
 
 .team-coordinator,
@@ -140,6 +145,56 @@
 }
 .team-coordinator{
 transform: translateY(20px);
+}
+
+.team-decorations {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.team-circle-striped,
+.team-circle-solid {
+  position: absolute;
+  display: block;
+  height: auto;
+}
+
+.team-circle-striped {
+  top: 0;
+  right: -20px;
+  width: 110px;
+}
+
+.team-circle-solid {
+  top: 210px;
+  right: 0px;
+  width: 50px;
+}
+
+.team-star {
+  position: absolute;
+  display: block;
+  height: auto;
+}
+
+.team-star-small {
+  right: -10px;
+  bottom: -10px;
+  width: 210px;
+}
+
+.team-star-large {
+  right: -30px;
+  bottom: -20px;
+  width: 190px;
+}
+
+.team-star-top {
+  right: -10px;
+  bottom: 130px;
+  width: 120px;
 }
 
 @media #{$mobile} {
