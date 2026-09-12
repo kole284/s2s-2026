@@ -1,4 +1,5 @@
 import "./Tim.scss";
+const TEAM_LABEL = "CR";
 
 const Tim = () => {
   return (
@@ -9,8 +10,6 @@ const Tim = () => {
           src="/tim/circle-striped.svg"
           alt=""
         />
-
-       
 
         <img
           className="team-star team-star-small"
@@ -32,9 +31,39 @@ const Tim = () => {
       </div>
 
       <div className="team-stage">
+        <div className="team-ribbon" aria-hidden="true">
+          <div className="team-ribbon-track">
+            {[0, 1].map((copy) => (
+              <div className="team-ribbon-group" key={copy}>
+                <div className="team-ribbon-labels">
+                  {Array.from({ length: 10 }, (_, index) => (
+                    <span key={index}>{TEAM_LABEL}</span>
+                  ))}
+                </div>
+
+                <img
+                  className="team-ribbon-decoration"
+                  src="/tim/decorative-text.svg"
+                  alt=""
+                />
+
+                <img
+                  className="team-ribbon-decoration team-ribbon-decoration-second"
+                  src="/tim/decorative-text.svg"
+                  alt=""
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="team-lightnings" aria-hidden="true">
-           <img className="team-circle-solid" src="/tim/circle-solid.svg" alt="" />
-           
+          <img
+            className="team-circle-solid"
+            src="/tim/circle-solid.svg"
+            alt=""
+          />
+
           <img
             className="team-lightning team-lightning-left"
             src="/tim/lightning-left.svg"

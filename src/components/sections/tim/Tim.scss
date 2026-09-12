@@ -254,6 +254,94 @@
   width: team-size(170);
 }
 
+.team-ribbon {
+  position: absolute;
+  top: team-size(-100);
+  left: team-size(-87);
+  z-index: -1;
+
+  width: team-size(1100);
+  height: team-size(255);
+  overflow: hidden;
+
+  transform: rotate(46.9deg);
+  transform-origin: left top;
+  pointer-events: none;
+}
+
+.team-ribbon-track {
+  display: flex;
+  width: max-content;
+  animation: team-ribbon-scroll 45s linear infinite;
+  //animation-play-state: paused;
+}
+
+.team-ribbon-group {
+  position: relative;
+  flex: 0 0 auto;
+  width: team-size(1400);
+  height: team-size(255);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: team-size(65);
+    left: 0;
+    width: 100%;
+    height: team-size(182.405);
+
+    background-image: url('/tim/ribbon-segment.svg');
+    background-repeat: round no-repeat;
+    background-position: left top;
+    background-size: team-size(700) team-size(182.405);
+  }
+}
+
+.team-ribbon-labels {
+  position: relative;
+  display: flex;
+  width: 100%;
+
+  span {
+    flex: 0 0 10%;
+    color: $color-blue-dark;
+    font-family: $font-display;
+    font-size: team-size(80);
+    font-weight: $font-black;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+}
+
+.team-ribbon-decoration {
+  position: absolute;
+  top: team-size(80);
+  left: 0;
+  width: team-size(680);
+  height: auto;
+}
+
+.team-ribbon-decoration-second {
+  left: team-size(700);
+}
+
+@keyframes team-ribbon-scroll {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-ribbon-track {
+    animation: none;
+  }
+}
+
 @media #{$mobile} {
   .team-section {
     --team-unit: min(1px, calc((100vw - 48px) / 420));
@@ -298,6 +386,9 @@
   }
 
   .team-lightnings {
+  display: none;
+}
+.team-ribbon {
   display: none;
 }
 }
