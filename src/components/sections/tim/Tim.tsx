@@ -5,6 +5,23 @@ const Tim = () => {
     <section className="team-section" id="tim" aria-label="Organizacioni tim">
       <div className="team-content">
         <div className="team-coordinator">
+          <button
+  className="team-arrow team-arrow-left"
+  type="button"
+  aria-label="Prethodni tim"
+  disabled
+>
+  <img src="/tim/arrow-left.svg" alt="" />
+</button>
+
+<button
+  className="team-arrow team-arrow-right"
+  type="button"
+  aria-label="Sledeći tim"
+  disabled
+>
+  <img src="/tim/arrow-left.svg" alt="" />
+</button>
           <img
             className="team-coordinator-photo"
             src="/tim/coordinator.png"
