@@ -41,6 +41,14 @@
   width: team-size(718);
 }
 
+.team-group-photo {
+  aspect-ratio: 568 / 384;
+}
+
+.team-group-frame {
+  fill: $color-white;
+}
+
 .team-coordinator,
 .team-group {
   position: relative;
@@ -50,6 +58,10 @@
 
 .team-coordinator {
   transform: translateY(team-size(20));
+}
+
+.team-coordinator-frame {
+  fill: $color-white;
 }
 
 .team-coordinator-photo,
@@ -65,6 +77,21 @@
   margin-inline: auto;
 }
 
+.team-coordinator-filter {
+  position: absolute;
+  pointer-events: none;
+}
+
+.team-coordinator-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.team-coordinator-outline-color {
+  flood-color: $color-white;
+}
+
 .team-group {
   width: 100%;
   justify-self: center;
@@ -74,7 +101,6 @@
 .team-coordinator-caption,
 .team-group-caption {
   position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,12 +111,31 @@
 }
 
 .team-coordinator-caption {
-  width: 112%;
+  width: 100%;
   min-height: team-size(120);
-  margin: team-size(-50) 0 0 -6%;
+  margin: team-size(-62) 0 0 0%;
   padding: team-size(24) team-size(16);
-  transform: translateX(team-size(-38));
-  background-image: url('/tim/coordinator-name-background.svg');
+  left: team-size(-38);
+  z-index: auto;
+  background-image: none;
+
+  flex-direction: column;
+  gap: team-size(5);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: url('/tim/coordinator-name-background.svg')
+      center / 100% 100% no-repeat;
+  }
+}
+
+
+.team-coordinator-name {
+  position: relative;
+  z-index: 3;
 }
 
 .team-group-caption {
@@ -101,7 +146,6 @@
   background-image: url('/tim/team-name-background.svg');
 }
 
-.team-coordinator-role,
 .team-group-title {
   margin: 0;
   color: $color-blue;
@@ -110,9 +154,24 @@
   text-transform: uppercase;
 }
 
-.team-coordinator-role {
-  font-size: team-size(20);
-  line-height: 1.15;
+.team-coordinator-label {
+  position: relative;
+  z-index: 3;
+  display: block;
+  flex-shrink: 0;
+  width: team-size(200);
+  max-width: 100%;
+  height: auto;
+}
+
+.team-coordinator-name {
+  margin: 0;
+  color: $color-black;
+  font-family: $font-display;
+  font-size: team-size(25);
+  font-weight: $font-black;
+  line-height: 1.05;
+  text-transform: uppercase;
 }
 
 .team-group-title {
@@ -152,11 +211,11 @@
 }
 
 .team-arrow-left {
-  left: team-size(-75);
+  left: team-size(-90);
 }
 
 .team-arrow-right {
-  right: team-size(15);
+  right: team-size(0);
 
   img {
     transform: rotate(180deg);
