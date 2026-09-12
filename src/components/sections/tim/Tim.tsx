@@ -10,7 +10,7 @@ const Tim = () => {
           alt=""
         />
 
-        <img className="team-circle-solid" src="/tim/circle-solid.svg" alt="" />
+       
 
         <img
           className="team-star team-star-small"
@@ -30,8 +30,35 @@ const Tim = () => {
           alt=""
         />
       </div>
-      
+
       <div className="team-stage">
+        <div className="team-lightnings" aria-hidden="true">
+           <img className="team-circle-solid" src="/tim/circle-solid.svg" alt="" />
+           
+          <img
+            className="team-lightning team-lightning-left"
+            src="/tim/lightning-left.svg"
+            alt=""
+          />
+
+          <img
+            className="team-lightning team-lightning-between"
+            src="/tim/lightning-between-cards.svg"
+            alt=""
+          />
+
+          <img
+            className="team-lightning team-lightning-right-small"
+            src="/tim/lightning-right-small.svg"
+            alt=""
+          />
+
+          <img
+            className="team-lightning team-lightning-right-large"
+            src="/tim/lightning-right-large.svg"
+            alt=""
+          />
+        </div>
         <div className="team-content">
           <div className="team-coordinator">
             <button

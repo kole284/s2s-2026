@@ -22,8 +22,10 @@
 .team-stage {
   position: relative;
   isolation: isolate;
+  z-index: 1;
   width: team-size(1000);
   height: team-size(650);
+  transform: translateY(team-size(25));
 }
 
 .team-content {
@@ -66,6 +68,7 @@
 .team-group {
   width: 100%;
   justify-self: center;
+  transform: translateX(team-size(15));
 }
 
 .team-coordinator-caption,
@@ -163,7 +166,7 @@
 .team-decorations {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   pointer-events: none;
 }
 
@@ -176,14 +179,14 @@
 
 .team-circle-striped {
   top: 0;
-  right: -20px;
-  width: 110px;
+  right: team-size(-20);
+  width: team-size(110);
 }
 
 .team-circle-solid {
-  top: 210px;
-  right: 0;
-  width: 50px;
+  top: team-size(190);
+  right: team-size(-20);
+  width: team-size(50);
 }
 
 .team-star {
@@ -197,19 +200,58 @@
 .team-star-small {
   right: team-size(-10);
   bottom: team-size(-30);
-  width: team-size(210);
+  width: team-size(350);
 }
 
 .team-star-large {
   right: team-size(-30);
   bottom: team-size(-40);
-  width: team-size(190);
+  width: team-size(250);
 }
 
 .team-star-top {
   right: team-size(-10);
-  bottom: team-size(110);
-  width: team-size(120);
+  bottom: team-size(150);
+  width: team-size(130);
+  
+}
+
+
+.team-lightnings {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.team-lightning {
+  position: absolute;
+  display: block;
+  height: auto;
+}
+
+.team-lightning-left {
+  top: team-size(340);
+  left: team-size(-30);
+  width: team-size(318);
+}
+
+.team-lightning-between {
+  top: team-size(155);
+  left: team-size(318);
+  width: team-size(190);
+}
+
+.team-lightning-right-small {
+  top: team-size(135);
+  right: team-size(-22);
+  width: team-size(158);
+}
+
+.team-lightning-right-large {
+  top: team-size(239);
+  right: team-size(-17);
+  width: team-size(170);
 }
 
 @media #{$mobile} {
@@ -222,6 +264,7 @@
   .team-stage {
     width: 100%;
     height: auto;
+    z-index: 1;
   }
 
   .team-content {
@@ -253,4 +296,8 @@
   .team-star {
     display: none;
   }
+
+  .team-lightnings {
+  display: none;
+}
 }
