@@ -1,24 +1,42 @@
+@function team-size($value) {
+  @return calc(var(--team-unit) * #{$value});
+}
+
 .team-section {
-    min-height: 100vh;
-    box-sizing: border-box;
-  background-color: $color-blue;
-  padding: 120px 24px 80px;
+  --team-unit: min(
+  1.4px,
+  calc((100vw - 48px) / 1000)
+);
+
   position: relative;
-isolation: isolate;
-overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  box-sizing: border-box;
+  padding: 40px 24px;
+  overflow: hidden;
+  background-color: $color-blue;
+}
+
+.team-stage {
+  position: relative;
+  isolation: isolate;
+  width: team-size(1000);
+  height: team-size(650);
 }
 
 .team-content {
+  position: absolute;
+  top: team-size(110);
+  left: team-size(140);
+  z-index: 1;
+
   display: grid;
-  grid-template-columns: minmax(0, 290px) minmax(0, 380px);
-  justify-content: center;
+  grid-template-columns: team-size(290) team-size(380);
   align-items: start;
-  gap: 48px;
-  width: 100%;
-  max-width: 1100px;
-  margin-inline: auto;
-  position: relative;
-z-index: 1;
+  gap: team-size(48);
+  width: team-size(718);
 }
 
 .team-coordinator,
@@ -28,28 +46,26 @@ z-index: 1;
   text-align: center;
 }
 
-.team-coordinator-photo {
-  position: relative;
-  z-index: 2;
-  display: block;
-  width: 100%;
-  max-width: 320px;
-  height: auto;
-  margin-inline: auto;
+.team-coordinator {
+  transform: translateY(team-size(20));
 }
 
-.team-group {
-  width: 100%;
-  max-width: 420px;
-  justify-self: center;
-}
-
+.team-coordinator-photo,
 .team-group-photo {
   position: relative;
   z-index: 2;
   display: block;
   width: 100%;
   height: auto;
+}
+
+.team-coordinator-photo {
+  margin-inline: auto;
+}
+
+.team-group {
+  width: 100%;
+  justify-self: center;
 }
 
 .team-coordinator-caption,
@@ -67,18 +83,18 @@ z-index: 1;
 
 .team-coordinator-caption {
   width: 112%;
-  min-height: 120px;
-  margin: -50px 0 0 -6%;
-  padding: 24px 16px;
-  transform: translateX(-38px);
+  min-height: team-size(120);
+  margin: team-size(-50) 0 0 -6%;
+  padding: team-size(24) team-size(16);
+  transform: translateX(team-size(-38));
   background-image: url('/tim/coordinator-name-background.svg');
 }
 
 .team-group-caption {
   width: 105%;
-  min-height: 115px;
-  margin: -31px 0 0 -2px;
-  padding: 20px 28px;
+  min-height: team-size(115);
+  margin: team-size(-32) 0 0 team-size(-2);
+  padding: team-size(20) team-size(28);
   background-image: url('/tim/team-name-background.svg');
 }
 
@@ -92,12 +108,12 @@ z-index: 1;
 }
 
 .team-coordinator-role {
-  font-size: 20px;
+  font-size: team-size(20);
   line-height: 1.15;
 }
 
 .team-group-title {
-  font-size: 22px;
+  font-size: team-size(22);
   line-height: 1.35;
 }
 
@@ -112,9 +128,9 @@ z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  padding: 6px;
+  width: team-size(56);
+  height: team-size(56);
+  padding: team-size(6);
   border: 0;
   background: transparent;
   transform: translateY(-50%);
@@ -133,18 +149,15 @@ z-index: 1;
 }
 
 .team-arrow-left {
-  left: -75px;
+  left: team-size(-75);
 }
 
 .team-arrow-right {
-  right: 15px;
+  right: team-size(15);
 
   img {
     transform: rotate(180deg);
   }
-}
-.team-coordinator{
-transform: translateY(20px);
 }
 
 .team-decorations {
@@ -169,38 +182,64 @@ transform: translateY(20px);
 
 .team-circle-solid {
   top: 210px;
-  right: 0px;
+  right: 0;
   width: 50px;
 }
 
 .team-star {
   position: absolute;
+  z-index: 0;
   display: block;
   height: auto;
+  pointer-events: none;
 }
 
 .team-star-small {
-  right: -10px;
-  bottom: -10px;
-  width: 210px;
+  right: team-size(-10);
+  bottom: team-size(-30);
+  width: team-size(210);
 }
 
 .team-star-large {
-  right: -30px;
-  bottom: -20px;
-  width: 190px;
+  right: team-size(-30);
+  bottom: team-size(-40);
+  width: team-size(190);
 }
 
 .team-star-top {
-  right: -10px;
-  bottom: 130px;
-  width: 120px;
+  right: team-size(-10);
+  bottom: team-size(110);
+  width: team-size(120);
 }
 
 @media #{$mobile} {
+  .team-section {
+    --team-unit: min(1px, calc((100vw - 48px) / 420));
+
+    padding: 80px 24px;
+  }
+
+  .team-stage {
+    width: 100%;
+    height: auto;
+  }
+
   .team-content {
-    grid-template-columns: 1fr;
+    position: relative;
+    top: auto;
+    left: auto;
+    grid-template-columns: minmax(0, 1fr);
     gap: 40px;
+    width: 100%;
+  }
+
+  .team-coordinator {
+    width: team-size(290);
+    justify-self: center;
+  }
+
+  .team-group {
+    width: team-size(380);
   }
 
   .team-arrow-left {
@@ -209,5 +248,9 @@ transform: translateY(20px);
 
   .team-arrow-right {
     right: 0;
+  }
+
+  .team-star {
+    display: none;
   }
 }
