@@ -1,0 +1,107 @@
+.team-section {
+  background-color: $color-blue;
+  padding: 80px 24px;
+}
+
+.team-content {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 420px);
+  justify-content: center;
+  align-items: start;
+  gap: 48px;
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+.team-coordinator,
+.team-group {
+  min-width: 0;
+  text-align: center;
+}
+
+.team-coordinator-photo {
+
+    position: relative;
+z-index: 2;
+
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin-inline: auto;
+}
+
+.team-group {   
+  width: 100%;
+  max-width: 420px;
+  min-width: 0;
+  justify-self: center;
+  text-align: center;
+}
+
+.team-group-photo {
+
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.team-coordinator-caption,
+.team-group-caption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.team-coordinator-caption {
+   position: relative;
+    z-index: 1;
+    margin: -50px auto 0;
+    transform: translateX(-38px);
+    
+  width: 100%;
+  min-height: 120px;
+  margin: -50px a20o 0;
+  padding: 24px 16px;
+  background-image: url('/tim/coordinator-name-background.svg');
+}
+
+.team-group-caption {
+  min-height: 130px;
+  margin-top: -40px;
+  padding: 24px 32px;
+  background-image: url('/tim/team-name-background.svg');
+}
+
+.team-coordinator-role,
+.team-group-title {
+  margin: 0;
+  color: $color-blue;
+  font-family: $font-display;
+  font-size: 28px;
+  font-weight: $font-black;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.team-group-title span {
+  color: $color-black;
+}
+
+.team-coordinator-role {
+  font-size: 22px;
+}
+
+@media #{$mobile} {
+  .team-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
