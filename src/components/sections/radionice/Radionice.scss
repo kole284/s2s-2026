@@ -1,16 +1,14 @@
 @use '@/styles/variables' as *;
 @use '@/styles/mediaqueries' as *;
 
-// ============================================================
-// Lokalna podešavanja (nisu globalni tokeni)
-// ============================================================
+
 $rd-tranzicija: 0.6s ease;
 
-// Dubina cik-cak zubaca na ivicama trake
+
 $rd-zigzag-mobile: 36px;
 $rd-zigzag-desktop: 64px;
 
-// Mobile: 2 zupca gore i dole
+
 $rd-zigzag-mobilni: polygon(
   0 #{$rd-zigzag-mobile},
   25% 0,
@@ -24,7 +22,7 @@ $rd-zigzag-mobilni: polygon(
   0 calc(100% - #{$rd-zigzag-mobile})
 );
 
-// Desktop: 4 šira zupca gore i dole
+
 $rd-zigzag-desktopski: polygon(
   0 #{$rd-zigzag-desktop},
   12.5% 0,
@@ -46,16 +44,12 @@ $rd-zigzag-desktopski: polygon(
   0 calc(100% - #{$rd-zigzag-desktop})
 );
 
-// ============================================================
-// Stranica: bela pozadina, na njoj naslov + traka
-// ============================================================
+
 .radionice-page {
   background-color: $color-white;
-  // TODO: uskladi razmak ispod shared navbara
   padding-bottom: 64px;
 }
 
-// Na mobilnom je naslov deo navbara, pa ga tu ne prikazujemo
 .radionice-title {
   display: none;
   margin: 0;
@@ -69,15 +63,7 @@ $rd-zigzag-desktopski: polygon(
   color: $color-blue;
 }
 
-// ============================================================
-// Traka — slojevi odozgo nadole:
-// 1. providan_papir.svg (tekstura, ugrađen fill-opacity 0.4)
-// 2. plavi sloj (gradient sa dve iste boje, jer background-image
-//    prima samo slike, ne čiste boje)
-// 3. bela podloga (background-color)
-// overflow: hidden je obavezan — bočne ikonice namerno izlaze
-// van ekrana, pa bi bez njega pravile horizontalni scroll.
-// ============================================================
+
 .radionice-band {
   position: relative;
   overflow: hidden;
@@ -90,24 +76,16 @@ $rd-zigzag-desktopski: polygon(
   clip-path: $rd-zigzag-mobilni;
 }
 
-// ============================================================
-// Scena: fiksna visina, slotovi su absolute u njoj.
-// Custom properties se menjaju u media query-ju.
-// ============================================================
+
 .radionice-stage {
-  --rd-razmak: 150px; // rastojanje između centara susednih ikonica
-  --rd-bocna-skala: 0.6; // veličina bočnih ikonica u odnosu na centralnu
+  --rd-razmak: 150px; 
+  --rd-bocna-skala: 0.6; 
 
   position: relative;
   height: 480px;
 }
 
-// ============================================================
-// Slot = ikonica + naziv. Svi stoje u centru scene, a
-// --rd-pomeraj (postavlja ga TSX) ih razmiče levo/desno.
-// Pri smeni se svakom slotu promeni pomeraj za -1, pa
-// tranzicija na transform "otklizne" ceo red ulevo.
-// ============================================================
+
 .radionice-slot {
   position: absolute;
   top: 50%;
@@ -122,14 +100,13 @@ $rd-zigzag-desktopski: polygon(
   transition: transform $rd-tranzicija;
 
   &--centar {
-    z-index: 2; // centralna preko bočnih dok red klizi
+    z-index: 2; 
     transform: translate(-50%, -50%)
       translateX(calc(var(--rd-pomeraj) * var(--rd-razmak))) scale(1);
   }
 }
 
-// max-width/max-height kao kod .predavaci-shield:
-// SVG-ovi imaju različite proporcije, ovako su vizuelno ujednačeni
+
 .radionice-ikonica {
   display: block;
   width: auto;
@@ -138,8 +115,7 @@ $rd-zigzag-desktopski: polygon(
   max-height: 150px;
 }
 
-// Naziv postoji u svakom slotu (da svi slotovi budu iste visine,
-// pa se ikonice poravnaju), ali je vidljiv samo na centralnom
+
 .radionice-naziv {
   margin: 0;
   max-width: 200px;
@@ -159,9 +135,7 @@ $rd-zigzag-desktopski: polygon(
   }
 }
 
-// ============================================================
-// Tablet + desktop
-// ============================================================
+
 @media #{$tablet}, #{$desktop} {
   .radionice-title {
     display: block;
@@ -187,12 +161,22 @@ $rd-zigzag-desktopski: polygon(
     max-width: 260px;
     font-size: 30px;
   }
+
+  .radionice-title {
+  font-family: $font-display;   
+  font-weight: $font-black;     
 }
 
-// Korisnicima koji su isključili animacije prelaz je trenutan
+.radionice-naziv {
+  font-family: $font-body;      
+}
+}
+
+
 @media (prefers-reduced-motion: reduce) {
   .radionice-slot,
   .radionice-naziv {
     transition: none;
   }
+  
 }

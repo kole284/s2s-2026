@@ -1,0 +1,335 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mediaqueries' as *;
+
+$pd-chevron: 28px; 
+$pd-zigzag: 36px; 
+
+$pd-chevron-bottom: polygon(
+  0 0,
+  100% 0,
+  100% calc(100% - #{$pd-chevron}),
+  50% 100%,
+  0 calc(100% - #{$pd-chevron})
+);
+
+
+$pd-chevron-top: polygon(
+  0 0,
+  50% #{$pd-chevron},
+  100% 0,
+  100% 100%,
+  0 100%
+);
+
+$pd-zigzag-bottom: polygon(
+  0 0,
+  100% 0,
+  100% calc(100% - #{$pd-zigzag}),
+  93.75% 100%,
+  87.5% calc(100% - #{$pd-zigzag}),
+  81.25% 100%,
+  75% calc(100% - #{$pd-zigzag}),
+  68.75% 100%,
+  62.5% calc(100% - #{$pd-zigzag}),
+  56.25% 100%,
+  50% calc(100% - #{$pd-zigzag}),
+  43.75% 100%,
+  37.5% calc(100% - #{$pd-zigzag}),
+  31.25% 100%,
+  25% calc(100% - #{$pd-zigzag}),
+  18.75% 100%,
+  12.5% calc(100% - #{$pd-zigzag}),
+  6.25% 100%,
+  0 calc(100% - #{$pd-zigzag})
+);
+
+$pd-zigzag-top: polygon(
+  0 #{$pd-zigzag},
+  6.25% 0,
+  12.5% #{$pd-zigzag},
+  18.75% 0,
+  25% #{$pd-zigzag},
+  31.25% 0,
+  37.5% #{$pd-zigzag},
+  43.75% 0,
+  50% #{$pd-zigzag},
+  56.25% 0,
+  62.5% #{$pd-zigzag},
+  68.75% 0,
+  75% #{$pd-zigzag},
+  81.25% 0,
+  87.5% #{$pd-zigzag},
+  93.75% 0,
+  100% #{$pd-zigzag},
+  100% 100%,
+  0 100%
+);
+
+
+.predavac-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
+  background-color: $color-white;
+  background-image: url('@/assets/providan_papir.svg');
+  background-size: cover;
+  background-position: center;
+}
+
+
+.predavac-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 64px ($pd-chevron + 20px);
+  background-color: rgba($color-blue, 0.92);
+  clip-path: $pd-chevron-bottom;
+}
+
+.predavac-title {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  color: $color-yellow;
+}
+
+.predavac-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.predavac-close-icon {
+  width: 24px;
+  height: auto;
+}
+
+
+.predavac-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 32px 24px 40px;
+}
+
+.predavac-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto; 
+}
+
+.predavac-tezina {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: 26px;
+  color: $color-blue;
+}
+
+.predavac-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.predavac-photo-block {
+  position: relative;
+  margin: 0;
+}
+
+.predavac-photo {
+  display: block;
+  width: 150px;
+  height: 185px;
+  object-fit: cover;
+
+  &--placeholder {
+    background-color: rgba($color-blue-dark, 0.15);
+  }
+}
+
+.predavac-name {
+  position: absolute;
+  left: -8px;
+  bottom: -10px;
+  transform: skewX(-6deg);
+  padding: 5px 12px;
+  white-space: nowrap;
+  background-color: $color-blue;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: 18px;
+  color: $color-yellow;
+}
+
+
+.predavac-shield {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 150px;
+  max-height: 130px;
+}
+
+.predavac-text {
+  max-width: 560px;
+  font-family: $font-body;
+  font-size: 16px;
+  line-height: 1.5;
+  color: $color-black;
+  text-align: left;
+
+  p + p {
+    margin-top: 16px;
+  }
+}
+
+
+.predavac-arrow {
+  position: absolute;
+  bottom: 28px;
+  z-index: 1; // iznad futera
+  border: none;
+  background: none;
+  padding: 8px;
+  cursor: pointer;
+
+  img {
+    display: block;
+    width: 24px;
+    height: auto;
+    filter: brightness(0) invert(1); 
+  }
+
+  &--prev {
+    left: 24px;
+
+    img {
+      transform: scaleX(-1); 
+    }
+  }
+
+  &--next {
+    right: 24px;
+  }
+}
+
+
+.predavac-footer {
+  height: 104px;
+  background-color: rgba($color-blue, 0.92);
+  clip-path: $pd-chevron-top;
+}
+
+
+@media #{$tablet}, #{$desktop} {
+  .predavac-header {
+    padding: 32px 64px ($pd-zigzag + 32px);
+    clip-path: $pd-zigzag-bottom;
+  }
+
+  .predavac-close {
+    top: 24px;
+    right: 32px;
+  }
+
+  .predavac-content {
+    padding: 48px 24px;
+  }
+
+
+  .predavac-visual {
+    display: contents;
+  }
+
+  .predavac-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'photo text tezina'
+      'photo text shield';
+    align-items: center;
+    column-gap: 48px;
+    row-gap: 20px;
+  }
+
+  .predavac-photo-block {
+    grid-area: photo;
+  }
+
+  .predavac-text {
+    grid-area: text;
+  }
+
+  .predavac-tezina {
+    grid-area: tezina;
+    align-self: end;
+    justify-self: center;
+    font-size: 24px;
+  }
+
+  .predavac-shield {
+    grid-area: shield;
+    align-self: start;
+    justify-self: center;
+    max-width: 160px;
+    max-height: 150px;
+  }
+
+  .predavac-photo {
+    width: 200px;
+    height: 240px;
+  }
+
+  .predavac-name {
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%) skewX(-6deg);
+    padding: 6px 16px;
+    font-size: 22px;
+    color: $color-white;
+  }
+
+  .predavac-arrow {
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%);
+
+    img {
+      width: 28px;
+      filter: none; // na desktopu strelice ostaju plave
+    }
+  }
+
+  .predavac-footer {
+    height: 90px;
+    clip-path: $pd-zigzag-top;
+  }
+
+  .predavac-title {
+  font-family: $font-display;
+  font-weight: $font-black;
+}
+
+.predavac-name {
+  font-family: $font-accent;    
+}
+}

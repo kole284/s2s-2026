@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import { useNavigate } from 'react-router-dom';
 import shieldIcon from '@/assets/Group.svg';
 import brainIcon from '@/assets/brain.svg';
 import lupaIcon from '@/assets/lupa.svg';
@@ -8,43 +9,41 @@ interface Radionica {
   id: number;
   naziv: string;
   ikonica: string;
+  predavacId: number; 
 }
 
-// TODO: proveri prave nazive radionica
+
 const RADIONICE: Radionica[] = [
-  { id: 1, naziv: 'Cyber Security', ikonica: shieldIcon },
-  { id: 2, naziv: 'Web Development', ikonica: lupaIcon },
-  { id: 3, naziv: 'Machine Learning', ikonica: brainIcon },
+  { id: 1, naziv: 'Cyber Security', ikonica: shieldIcon, predavacId: 1 }, // Petar Nikolić
+  { id: 2, naziv: 'Web Development', ikonica: lupaIcon, predavacId: 2 }, // Ana Jovanović
+  { id: 3, naziv: 'Machine Learning', ikonica: brainIcon, predavacId: 3 }, // Marko Petrović
 ];
 
 const INTERVAL_ROTACIJE_MS = 3000;
 
-// Koliko ikonica renderujemo levo i desno od centralne.
-// 5 sa svake strane pokriva i vrlo široke ekrane;
-// višak seče overflow: hidden na traci.
+
 const VIDLJIVI_POMERAJI = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
 
 const Radionice = () => {
-  // Namerno bez modula: indeks samo raste, a ikonica se računa
-  // iz njega. Tako svaki slot ima stabilan key (virtuelni indeks),
-  // pa CSS tranzicija "klizne" ceo red ulevo pri svakoj smeni.
+
   const [aktivniIndeks, setAktivniIndeks] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const tajmer = setInterval(() => {
       setAktivniIndeks((indeks) => indeks + 1);
     }, INTERVAL_ROTACIJE_MS);
 
-    // čišćenje intervala kad se komponenta ukloni
+
     return () => clearInterval(tajmer);
   }, []);
 
   return (
     <section className="radionice-page">
-      {/* Na mobilnom je sakriven — naslov je tamo deo shared navbara */}
+      
       <h1 className="radionice-title">Radionice</h1>
 
-      {/* Traka: bela podloga + plavi sloj + providan_papir.svg preko */}
+      
       <div className="radionice-band">
         <div className="radionice-stage">
           {VIDLJIVI_POMERAJI.map((pomeraj) => {
@@ -55,14 +54,33 @@ const Radionice = () => {
                   RADIONICE.length
               ];
 
+            
+            const jeCentar = pomeraj === 0;
+
+            const otvoriPredavaca = () =>
+              navigate(`/predavac/${radionica.predavacId}`);
+
             return (
               <div
                 key={virtuelniIndeks}
                 className={`radionice-slot${
-                  pomeraj === 0 ? ' radionice-slot--centar' : ''
+                  jeCentar ? ' radionice-slot--centar' : ''
                 }`}
-                // --rd-pomeraj čita SCSS i iz njega računa poziciju slota
+                
                 style={{ '--rd-pomeraj': pomeraj } as CSSProperties}
+                onClick={jeCentar ? otvoriPredavaca : undefined}
+                role={jeCentar ? 'button' : undefined}
+                tabIndex={jeCentar ? 0 : undefined}
+                onKeyDown={
+                  jeCentar
+                    ? (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          otvoriPredavaca();
+                        }
+                      }
+                    : undefined
+                }
               >
                 <img
                   src={radionica.ikonica}
