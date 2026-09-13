@@ -152,6 +152,8 @@
   font-family: $font-display;
   font-weight: $font-black;
   text-transform: uppercase;
+  transform: translateY(team-size(10));
+  transform: translateX(team-size(-10));
 }
 
 .team-coordinator-label {
@@ -207,6 +209,15 @@
   &:disabled {
     opacity: 1;
     cursor: default;
+  }
+  
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-yellow;
+    outline-offset: 4px;
   }
 }
 
@@ -296,9 +307,10 @@
 }
 
 .team-lightning-between {
-  top: team-size(155);
-  left: team-size(318);
-  width: team-size(190);
+  top: team-size(140);
+  left: team-size(308);
+  width: team-size(200);
+  transform: rotate(8deg);
 }
 
 .team-lightning-right-small {

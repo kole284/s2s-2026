@@ -1,6 +1,112 @@
-import { useId } from "react";
+import { useId, useState } from "react";
 import "./Tim.scss";
-const TEAM_LABEL = "IT";
+type Team = {
+  id: string;
+  label: string;
+  titlePrefix: string;
+  titleFirstLine: string;
+  titleSecondLine: string;
+  image: string;
+  coordinator: {
+    firstName: string;
+    lastName: string;
+    image: string;
+  };
+};
+
+const TEAMS: Team[] = [
+  {
+    id: "koordinatori",
+    label: "KT",
+    titlePrefix: "Tim",
+    titleFirstLine: "koordinatora",
+    titleSecondLine: "",
+    image: "/tim/koordinator-team.JPG",
+    coordinator: {
+      firstName: "Stefan",
+      lastName: "Mrkela",
+      image: "/tim/koordinator.png",
+    },
+  },
+  {
+    id: "dizajn",
+    label: "DT",
+    titlePrefix: "Tim za",
+    titleFirstLine: "dizajn",
+    titleSecondLine: "",
+    image: "/tim/IT-team.jpg",
+    coordinator: {
+      firstName: "Stefan",
+      lastName: "Petrović",
+      image: "/tim/IT.png",
+    },
+  },
+  {
+    id: "it",
+    label: "IT",
+    titlePrefix: "Tim za",
+    titleFirstLine: "informacione",
+    titleSecondLine: "tehnologije",
+    image: "/tim/IT-team.jpg",
+    coordinator: {
+      firstName: "Nikola",
+      lastName: "Kostić",
+      image: "/tim/IT.png",
+    },
+  },
+  {
+    id: "cr",
+    label: "CR",
+    titlePrefix: "Tim za",
+    titleFirstLine: "odnose",
+    titleSecondLine: "sa kompanijama",
+    image: "/tim/IT-team.jpg",
+    coordinator: {
+      firstName: "Iva",
+      lastName: "Vukoičić",
+      image: "/tim/IT.png",
+    },
+  },
+  {
+    id: "hr",
+    label: "HR",
+    titlePrefix: "Tim za",
+    titleFirstLine: "ljudske",
+    titleSecondLine: "resurse",
+    image: "/tim/IT-team.jpg",
+    coordinator: {
+      firstName: "Milena",
+      lastName: "Rodić",
+      image: "/tim/IT.png",
+    },
+  },
+  {
+    id: "pr",
+    label: "PR",
+    titlePrefix: "Tim za",
+    titleFirstLine: "odnose",
+    titleSecondLine: "s javnošću",
+    image: "/tim/IT-team.jpg",
+    coordinator: {
+      firstName: "Damnjan",
+      lastName: "Ilić",
+      image: "/tim/IT.png",
+    },
+  },
+  {
+    id: "log",
+    label: "LT",
+    titlePrefix: "Tim za",
+    titleFirstLine: "logistiku",
+    titleSecondLine: "",
+    image: "/tim/IT-team.jpg",
+    coordinator: {
+      firstName: "Angelina",
+      lastName: "Spasić",
+      image: "/tim/IT.png",
+    },
+  },
+];
 const COORDINATOR_FRAME_PATH = `
   M0 297.39
   L30.4236 260.882
@@ -40,10 +146,93 @@ const COORDINATOR_FRAME_PATH = `
   Z
 `;
 
+const TEAM_PHOTO_CLIP_PATH = `
+  M27.27 65.2179
+  L69.4282 33.9605
+  L137.183 47.9499
+  L171.479 65.2179
+  L208.285 47.9499
+  L265.166 61.8995
+  L312.009 38.478
+  L366.38 43.4969
+  L409.041 27.4321
+  L440.978 47.9499
+  L488.507 29.2753
+  L519.801 33.9605
+  L526.933 59.1193
+  L534.513 99.5413
+  L531.624 124.636
+  L519.801 143.078
+  L543.715 163.951
+  L526.933 197.41
+  L534.513 233.379
+  L547.061 286.529
+  L534.513 315.354
+  L516.111 327.902
+  L465.085 315.354
+  L395.657 345.458
+  L360.525 336.132
+  L332.084 358.515
+  L279.386 353.833
+  L254.291 345.458
+  L227.524 336.132
+  L190.718 336.132
+  L179.008 358.515
+  L123.8 370.562
+  L103.024 345.458
+  L78.6296 336.132
+  L41.8243 345.458
+  L30.7083 301.134
+  L38.4783 254.291
+  L30.7083 204.102
+  L48.5162 148.057
+  L30.7083 124.636
+  Z
+`;
+
+const TEAM_FRAME_PATH = `
+  M5.61951 52.6934
+  L49.4516 20.7176
+  L141.612 20.7176
+  L158.47 35.6397
+  L219.161 28.1787
+  L248.382 38.8372
+  L307.949 12.1908
+  L339.418 28.1787
+  L369.763 12.1908
+  L462.57 20.7176
+  L515.543 0
+  L567.57 38.8372
+  L554.083 136.896
+  L567.57 240.285
+  L548.181 347
+  L432.702 344.739
+  L330.427 368.188
+  L219.161 353.266
+  L150.603 383.11
+  L78.6731 368.188
+  L25.8497 357.529
+  L0 263.734
+  L25.8497 133.699
+  Z
+`;
+
 const Tim = () => {
   const teamPhotoClipId = useId();
-  //const coordinatorOutlineId = useId();
   const coordinatorClipId = useId();
+
+  const [activeTeamIndex, setActiveTeamIndex] = useState(0);
+
+  const activeTeam = TEAMS[activeTeamIndex]!;
+  const hasMultipleTeams = TEAMS.length > 1;
+
+  const showPreviousTeam = () => {
+    setActiveTeamIndex((index) => (index - 1 + TEAMS.length) % TEAMS.length);
+  };
+
+  const showNextTeam = () => {
+    setActiveTeamIndex((index) => (index + 1) % TEAMS.length);
+  };
 
   return (
     <section className="team-section" id="tim" aria-label="Organizacioni tim">
@@ -80,7 +269,7 @@ const Tim = () => {
               <div className="team-ribbon-group" key={copy}>
                 <div className="team-ribbon-labels">
                   {Array.from({ length: 10 }, (_, index) => (
-                    <span key={index}>{TEAM_LABEL}</span>
+                    <span key={index}>{activeTeam.label}</span>
                   ))}
                 </div>
 
@@ -137,7 +326,8 @@ const Tim = () => {
               className="team-arrow team-arrow-left"
               type="button"
               aria-label="Prethodni tim"
-              disabled
+              onClick={showPreviousTeam}
+              disabled={!hasMultipleTeams}
             >
               <img src="/tim/arrow-left.svg" alt="" />
             </button>
@@ -146,7 +336,8 @@ const Tim = () => {
               className="team-arrow team-arrow-right"
               type="button"
               aria-label="Sledeći tim"
-              disabled
+              onClick={showNextTeam}
+              disabled={!hasMultipleTeams}
             >
               <img src="/tim/arrow-left.svg" alt="" />
             </button>
@@ -154,7 +345,7 @@ const Tim = () => {
               className="team-coordinator-photo"
               viewBox="0 0 485 298"
               role="img"
-              aria-label="Koordinator IT tima"
+              aria-label={`Koordinator — ${activeTeam.coordinator.firstName} ${activeTeam.coordinator.lastName}`}
             >
               <defs>
                 <clipPath id={coordinatorClipId} clipPathUnits="userSpaceOnUse">
@@ -171,7 +362,7 @@ const Tim = () => {
               />
 
               <image
-                href="/tim/IT.png"
+                href={activeTeam.coordinator.image}
                 x="36"
                 y="15"
                 width="257.749"
@@ -189,9 +380,9 @@ const Tim = () => {
               />
 
               <p className="team-coordinator-name">
-                Nikola
+                {activeTeam.coordinator.firstName}
                 <br />
-                Kostić
+                {activeTeam.coordinator.lastName}
               </p>
             </div>
           </div>
@@ -201,90 +392,18 @@ const Tim = () => {
               className="team-group-photo"
               viewBox="0 0 568 384"
               role="img"
-              aria-label="Članovi IT tima"
+              aria-label={`Članovi tima — ${activeTeam.label}`}
             >
               <defs>
                 <clipPath id={teamPhotoClipId} clipPathUnits="userSpaceOnUse">
-                  <path
-                    d="
-          M27.27 65.2179
-          L69.4282 33.9605
-          L137.183 47.9499
-          L171.479 65.2179
-          L208.285 47.9499
-          L265.166 61.8995
-          L312.009 38.478
-          L366.38 43.4969
-          L409.041 27.4321
-          L440.978 47.9499
-          L488.507 29.2753
-          L519.801 33.9605
-          L526.933 59.1193
-          L534.513 99.5413
-          L531.624 124.636
-          L519.801 143.078
-          L543.715 163.951
-          L526.933 197.41
-          L534.513 233.379
-          L547.061 286.529
-          L534.513 315.354
-          L516.111 327.902
-          L465.085 315.354
-          L395.657 345.458
-          L360.525 336.132
-          L332.084 358.515
-          L279.386 353.833
-          L254.291 345.458
-          L227.524 336.132
-          L190.718 336.132
-          L179.008 358.515
-          L123.8 370.562
-          L103.024 345.458
-          L78.6296 336.132
-          L41.8243 345.458
-          L30.7083 301.134
-          L38.4783 254.291
-          L30.7083 204.102
-          L48.5162 148.057
-          L30.7083 124.636
-          Z
-        "
-                  />
+                  <path d={TEAM_PHOTO_CLIP_PATH} />
                 </clipPath>
               </defs>
 
-              <path
-                className="team-group-frame"
-                d="
-      M5.61951 52.6934
-      L49.4516 20.7176
-      L141.612 20.7176
-      L158.47 35.6397
-      L219.161 28.1787
-      L248.382 38.8372
-      L307.949 12.1908
-      L339.418 28.1787
-      L369.763 12.1908
-      L462.57 20.7176
-      L515.543 0
-      L567.57 38.8372
-      L554.083 136.896
-      L567.57 240.285
-      L548.181 347
-      L432.702 344.739
-      L330.427 368.188
-      L219.161 353.266
-      L150.603 383.11
-      L78.6731 368.188
-      L25.8497 357.529
-      L0 263.734
-      L25.8497 133.699
-      Z
-    "
-              />
+              <path className="team-group-frame" d={TEAM_FRAME_PATH} />
 
               <image
-                href="/tim/IT-team.jpg"
+                href={activeTeam.image}
                 x="27.27"
                 y="27.4321"
                 width="519.791"
@@ -295,11 +414,20 @@ const Tim = () => {
             </svg>
 
             <div className="team-group-caption">
-              <h2 className="team-group-title">
-                <span>Tim za </span>
-                informacione
-                <br />
-                tehnologije
+              <h2
+                className="team-group-title"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                <span>{activeTeam.titlePrefix} </span>
+                {activeTeam.titleFirstLine}
+
+                {activeTeam.titleSecondLine && (
+                  <>
+                    <br />
+                    {activeTeam.titleSecondLine}
+                  </>
+                )}
               </h2>
             </div>
           </div>
