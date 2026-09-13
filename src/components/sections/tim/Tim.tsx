@@ -264,6 +264,27 @@ const Tim = () => {
       </div>
 
       <div className="team-stage">
+        
+        {["top", "bottom"].map((position) => (
+          <div
+            className={`team-mobile-ribbon team-mobile-ribbon-${position}`}
+            aria-hidden="true"
+            key={position}
+          >
+            <div className="team-ribbon-track">
+              {[0, 1].map((copy) => (
+                <div className="team-ribbon-group" key={copy}>
+                  <div className="team-ribbon-labels">
+                    {Array.from({ length: 10 }, (_, index) => (
+                      <span key={index}>{activeTeam.label}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
         <div className="team-ribbon" aria-hidden="true">
           <div className="team-ribbon-track">
             {[0, 1].map((copy) => (
@@ -291,11 +312,7 @@ const Tim = () => {
         </div>
 
         <div className="team-lightnings" aria-hidden="true">
-          <img
-            className="team-circle-solid"
-            src="/tim/circle-solid.svg"
-            alt=""
-          />
+          <div className="team-circle-solid" />
 
           <img
             className="team-lightning team-lightning-left"
@@ -323,6 +340,12 @@ const Tim = () => {
         </div>
         <div className="team-content">
           <div className="team-coordinator">
+            <img
+              className="team-mobile-lightning team-mobile-lightning-top"
+              src="/tim/lightning-mobile-top.svg"
+              alt=""
+              aria-hidden="true"
+            />
             <button
               className="team-arrow team-arrow-left"
               type="button"
@@ -409,6 +432,12 @@ const Tim = () => {
           </div>
 
           <div className="team-group">
+            <img
+              className="team-mobile-lightning team-mobile-lightning-bottom"
+              src="/tim/lightning-mobile-bottom.svg"
+              alt=""
+              aria-hidden="true"
+            />
             <svg
               className="team-group-photo"
               viewBox="0 0 568 384"
