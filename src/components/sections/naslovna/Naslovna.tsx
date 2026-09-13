@@ -1,4 +1,5 @@
 import "./Naslovna.scss";
+import { useNavigate } from "react-router-dom";
 
 import crackLogoCta from "@/assets/naslovna/desktop/crack-logo-cta.svg";
 import crackLowerRight from "@/assets/naslovna/desktop/crack-lower-right.svg";
@@ -19,13 +20,9 @@ const S2S_GLYPHS = Array.from({ length: 8 }, (_, index) =>
 
 const MOBILE_S2S_SEQUENCE = "S2".repeat(10);
 
-const scrollToPrijava = () => {
-  document.getElementById("prijava")?.scrollIntoView({
-    behavior: "smooth",
-  });
-};
-
 const Naslovna = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="naslovna" aria-labelledby="naslovna-title">
       <img
@@ -187,7 +184,7 @@ const Naslovna = () => {
         {/* CTA */}
         <button
           className="naslovna__cta"
-          onClick={scrollToPrijava}
+          onClick={() => navigate("/prijava")}
           type="button"
         >
           <img

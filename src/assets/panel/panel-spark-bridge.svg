@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="39.86" viewBox="0 0 120 39.86" preserveAspectRatio="none">
+  <!-- Section at x=206.79 of the original arm: y=97.98 to 110.74.
+       Continue its upper-edge slope (10.23 / 45.30) for 120 units. -->
+  <path d="M0 0L120 27.10V39.86L0 12.76Z" fill="#FFD100"/>
+</svg>
