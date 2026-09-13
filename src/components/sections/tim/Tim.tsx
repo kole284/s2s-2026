@@ -236,6 +236,7 @@ const Tim = () => {
 
   return (
     <section className="team-section" id="tim" aria-label="Organizacioni tim">
+      <h2 className="team-mobile-heading">Naš tim</h2>
       <div className="team-decorations" aria-hidden="true">
         <img
           className="team-circle-striped"
@@ -329,7 +330,17 @@ const Tim = () => {
               onClick={showPreviousTeam}
               disabled={!hasMultipleTeams}
             >
-              <img src="/tim/arrow-left.svg" alt="" />
+              <img
+                className="team-arrow-icon-desktop"
+                src="/tim/arrow-left.svg"
+                alt=""
+              />
+
+              <img
+                className="team-arrow-icon-mobile"
+                src="/tim/arrow-left-mobile.svg"
+                alt=""
+              />
             </button>
 
             <button
@@ -339,7 +350,17 @@ const Tim = () => {
               onClick={showNextTeam}
               disabled={!hasMultipleTeams}
             >
-              <img src="/tim/arrow-left.svg" alt="" />
+              <img
+                className="team-arrow-icon-desktop"
+                src="/tim/arrow-left.svg"
+                alt=""
+              />
+
+              <img
+                className="team-arrow-icon-mobile"
+                src="/tim/arrow-left-mobile.svg"
+                alt=""
+              />
             </button>
             <svg
               className="team-coordinator-photo"

@@ -210,7 +210,7 @@
     opacity: 1;
     cursor: default;
   }
-  
+
   &:not(:disabled) {
     cursor: pointer;
   }
@@ -413,53 +413,148 @@
   }
 }
 
+
+
+
+.team-mobile-heading {
+  display: none;
+}
+.team-arrow img.team-arrow-icon-mobile {
+  display: none;
+}
+
 @media #{$mobile} {
   .team-section {
-    --team-unit: min(1px, calc((100vw - 48px) / 420));
+    --team-unit: min(1px, calc((100vw - 32px) / 390));
 
-    padding: 80px 24px;
+    display: block;
+    min-height: 100svh;
+    padding: 24px 16px 120px;
+  }
+
+  .team-mobile-heading {
+    position: relative;
+    z-index: 3;
+    display: block;
+    width: 100%;
+    max-width: 390px;
+    margin: 0 auto 70px;
+
+    color: $color-white;
+    font-family: $font-display;
+    font-size: team-size(42);
+    font-weight: $font-black;
+    line-height: 1;
+    text-transform: uppercase;
   }
 
   .team-stage {
     width: 100%;
     height: auto;
-    z-index: 1;
+    transform: none;
   }
 
   .team-content {
     position: relative;
     top: auto;
     left: auto;
+
+    display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
+    justify-items: center;
+    gap: 0;
+
     width: 100%;
+    margin-inline: auto;
   }
 
   .team-coordinator {
-    width: team-size(290);
-    justify-self: center;
+    width: team-size(340);
+    transform: translateY(team-size(38));;
   }
+
+  .team-coordinator-caption {
+  left: 5px;
+}
+.team-coordinator-photo {
+  transform: translateX(team-size(50));
+}
 
   .team-group {
     width: team-size(380);
+    max-width: 100%;
+    transform: none;
+  }
+
+  .team-arrow {
+    top: team-size(100);
+    width: team-size(50);
+    height: team-size(80);
   }
 
   .team-arrow-left {
-    left: 0;
+    left: team-size(-10);
   }
 
   .team-arrow-right {
-    right: 0;
+    right: team-size(-10);
   }
 
-  .team-star {
-    display: none;
+  .team-group-caption {
+    width: 100%;
+    min-height: 0;
+    margin: team-size(12) 0 0;
+    padding: 0 team-size(8);
+    background-image: none;
   }
 
-  .team-lightnings {
+  .team-group-title {
+    color: $color-yellow;
+    font-size: team-size(26);
+    line-height: 1.2;
+    transform: none;
+  }
+
+  .team-group-title span {
+    color: $color-white;
+  }
+
+  .team-ribbon,
+.team-lightnings {
   display: none;
 }
-.team-ribbon {
+
+.team-decorations {
+  display: block;
+}
+
+.team-circle-striped {
+  top: team-size(100);
+  right: team-size(-25);
+  width: team-size(85);
+}
+.team-star-small {
+  right: team-size(-100);
+  bottom: team-size(-60);
+  width: team-size(400);
+}
+
+.team-star-large {
   display: none;
+}
+
+.team-star-top {
+  display: block;
+  right: team-size(-20);
+  bottom: team-size(-5);
+  width: team-size(170);
+}
+
+.team-arrow img.team-arrow-icon-desktop {
+  display: none;
+}
+
+.team-arrow img.team-arrow-icon-mobile {
+  display: block;
 }
 }
