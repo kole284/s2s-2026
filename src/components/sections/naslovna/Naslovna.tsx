@@ -25,14 +25,6 @@ const Naslovna = () => {
 
   return (
     <section className="naslovna" aria-labelledby="naslovna-title">
-      <img
-        className="naslovna__small-logo"
-        src={s2sLogo}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-      />
-
       <div className="naslovna__mobile-top-logo" aria-hidden="true">
         <img
           className="naslovna__mobile-logo-outline"

@@ -2,6 +2,7 @@
   --o-projektu-design-width: min(100vw, 140.625dvh);
 
   position: relative;
+  z-index: 1;
   width: 100%;
   height: auto;
   overflow-x: clip;
@@ -9,6 +10,8 @@
   color: $color-black;
   font-family: $font-body;
   background: $color-white;
+  margin-top: -2px;
+  padding-top: 2px;
 }
 
 .o-projektu-white-stage,
