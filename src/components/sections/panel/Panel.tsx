@@ -121,7 +121,7 @@ const Panel = () => {
   const selectNext = () => selectPanelist("next");
 
   return (
-    <section className="panel-section">
+    <section className="panel-section" id="panel">
       <div className="panel-canvas">
         {/* =================================================
             DESKTOP BLUE BAND

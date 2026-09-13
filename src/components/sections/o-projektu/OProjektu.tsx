@@ -73,7 +73,7 @@ const OProjektu = () => {
   };
 
   return (
-    <section className="o-projektu">
+    <section className="o-projektu" id="o-projektu">
       <div
         className={`o-projektu-white-stage${studentsExpanded ? " is-expanded" : ""}${studentsAnimating ? " is-animating" : ""}`}
       >

@@ -24,7 +24,7 @@ const Naslovna = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="naslovna" aria-labelledby="naslovna-title">
+    <section className="naslovna" id="naslovna" aria-labelledby="naslovna-title">
       <div className="naslovna__mobile-top-logo" aria-hidden="true">
         <img
           className="naslovna__mobile-logo-outline"

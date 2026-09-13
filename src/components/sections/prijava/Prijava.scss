@@ -1888,11 +1888,6 @@
    =========================================================== */
 
 @media #{$mobile} {
-  html:has(.prijava),
-  body:has(.prijava) {
-    overflow: hidden;
-  }
-
   .prijava {
     height: 100vh;
     height: 100svh;

@@ -885,7 +885,7 @@ const Prijava = () => {
 
   if (poslato) {
     return (
-      <section className="prijava">
+      <section className="prijava" id="prijava">
         <div className="prijava__scroll-content">
           <div className="prijava__canvas">
           <div className="prijava__mobile-s2s-band" aria-hidden="true">
@@ -976,7 +976,7 @@ const Prijava = () => {
   }
 
   return (
-    <section className="prijava">
+    <section className="prijava" id="prijava">
       <div className="prijava__scroll-content">
         <div className="prijava__canvas">
         <div className="prijava__mobile-s2s-band" aria-hidden="true">

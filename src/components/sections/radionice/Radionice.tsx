@@ -1,7 +1,7 @@
 import './Radionice.scss';
 
 const Radionice = () => {
-  return <section></section>;
+  return <section id="radionice"></section>;
 };
 
 export default Radionice;

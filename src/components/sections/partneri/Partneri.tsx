@@ -138,7 +138,7 @@ const PartnerRow = ({
 );
 
 const Partneri = () => (
-  <section className="partneri-page" aria-labelledby="partneri-title">
+  <section className="partneri-page" id="partneri" aria-labelledby="partneri-title">
     <header className="partneri-header">
       <h1 id="partneri-title">PARTNERI</h1>
     </header>
