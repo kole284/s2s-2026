@@ -1,14 +1,18 @@
-import './Partneri.scss';
+import "./Partneri.scss";
 
 type HexagonProps = {
   filled?: boolean;
   className?: string;
 };
 
-const Hexagon = ({ filled = true, className = '' }: HexagonProps) => {
-  const classes = ['hexagon', filled ? 'hexagon-filled' : 'hexagon-outline', className]
+const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
+  const classes = [
+    "hexagon",
+    filled ? "hexagon-filled" : "hexagon-outline",
+    className,
+  ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
     <div className={classes}>
@@ -18,142 +22,144 @@ const Hexagon = ({ filled = true, className = '' }: HexagonProps) => {
 };
 
 const Partneri = () => {
-  return <section>
-     <div className="partneri-page">
+  return (
+    <section>
+      <div className="partneri-page">
+        {/* NASLOV */}
+        <header className="partneri-header">
+          <h1>PARTNERI</h1>
+        </header>
 
-      {/* NASLOV */}
-      <header className="partneri-header">
-        <h1>PARTNERI</h1>
-      </header>
+        {/* POKROVITELJ PROJEKTA */}
+        <section className="partner-section sponsor-section">
+          <div className="section-content sponsor-content">
+            <h2>POKROVITELJ</h2>
 
+            <Hexagon className="hexagon--animated hexagon--large" />
 
-      {/* POKROVITELJ PROJEKTA */}
-      <section className="partner-section sponsor-section">
-        <div className="section-content sponsor-content">
-
-          <h2>POKROVITELJ</h2>
-
-          <Hexagon className="hexagon--animated hexagon--large" />
-
-          <h2>PROJEKTA</h2>
-
-        </div>
-
-        <img
-          src="/crtezi/kruna.svg"
-          className="illustration illustration-project"
-          alt=""
-        />
-      </section>
-
-
-      {/* GODIŠNJI */}
-      <section className="partner-section annual-section">
-        <div className="section-content">
-
-          <div className="hexagon-row left">
-            <Hexagon />
-            <Hexagon />
-            <Hexagon />
+            <h2>PROJEKTA</h2>
           </div>
-
-          <h2>GODIŠNJI</h2>
-
-          <div className="hexagon-row right">
-            <Hexagon />
-            <Hexagon />
-            <Hexagon />
+          <div className="partner-illustration-window" aria-hidden="true">
+            <div className="partner-illustration-position">
+              <img
+                src="/crtezi/kruna.svg"
+                className="illustration illustration-project"
+                alt=""
+              />
+            </div>
           </div>
+        </section>
 
-        </div>
+        {/* GODIŠNJI */}
+        <section className="partner-section annual-section">
+          <div className="section-content">
+            <div className="hexagon-row left">
+              <Hexagon />
+              <Hexagon />
+              <Hexagon />
+            </div>
 
-        <img
-          src="/crtezi/kalendar.svg"
-          className="illustration illustration-left"
-          alt=""
-        />
-      </section>
+            <h2>GODIŠNJI</h2>
 
-
-      {/* FINANSIJSKI */}
-      <section className="partner-section financial-section">
-        <div className="section-content">
-
-          <div className="hexagon-row left">
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
+            <div className="hexagon-row right">
+              <Hexagon />
+              <Hexagon />
+              <Hexagon />
+            </div>
           </div>
-
-          <h2>FINANSIJSKI</h2>
-
-          <div className="hexagon-row right">
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
+          <div className="partner-illustration-window" aria-hidden="true">
+            <img
+              src="/crtezi/kalendar.svg"
+              className="illustration illustration-left"
+              alt=""
+            />
           </div>
+        </section>
 
-        </div>
-      </section>
+        {/* FINANSIJSKI */}
+        <section className="partner-section financial-section">
+          <div className="section-content">
+            <div className="hexagon-row left">
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+            </div>
 
+            <h2>FINANSIJSKI</h2>
 
-      {/* ROBNI */}
-      <section className="partner-section goods-section">
-        <div className="section-content">
-
-          <div className="hexagon-row left">
-            <Hexagon />
-            <Hexagon />
-            <Hexagon />
+            <div className="hexagon-row right">
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+            </div>
           </div>
-
-          <h2>ROBNI</h2>
-
-          <div className="hexagon-row right">
-            <Hexagon />
-            <Hexagon />
-            <Hexagon />
+          <div className="partner-illustration-window" aria-hidden="true">
+            <div className="partner-illustration-position">
+              <img
+                src="/crtezi/rukovanje.svg"
+                className="illustration illustration-handshake"
+                alt=""
+              />
+            </div>
           </div>
+        </section>
 
-        </div>
+        {/* ROBNI */}
+        <section className="partner-section goods-section">
+          <div className="section-content">
+            <div className="hexagon-row left">
+              <Hexagon />
+              <Hexagon />
+              <Hexagon />
+            </div>
 
-        <img
-          src="/crtezi/limenka.svg"
-          className="illustration illustration-left"
-          alt=""
-        />
-      </section>
+            <h2>ROBNI</h2>
 
-
-      {/* MEDIJSKI */}
-      <section className="partner-section media-section">
-        <div className="section-content">
-
-          <div className="hexagon-row left">
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
+            <div className="hexagon-row right">
+              <Hexagon />
+              <Hexagon />
+              <Hexagon />
+            </div>
           </div>
-
-          <h2>MEDIJSKI</h2>
-
-          <div className="hexagon-row right">
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
-            <Hexagon filled={false} />
+          <div className="partner-illustration-window" aria-hidden="true">
+            <img
+              src="/crtezi/limenka.svg"
+              className="illustration illustration-left"
+              alt=""
+            />
           </div>
+        </section>
 
-        </div>
+        {/* MEDIJSKI */}
+        <section className="partner-section media-section">
+          <div className="section-content">
+            <div className="hexagon-row left">
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+            </div>
 
-        <img
-          src="/crtezi/kamera.svg"
-          className="illustration illustration-right"
-          alt=""
-        />
-      </section>
+            <h2>MEDIJSKI</h2>
 
-    </div>
-  </section>;
+            <div className="hexagon-row right">
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+              <Hexagon filled={false} />
+            </div>
+          </div>
+          <div className="partner-illustration-window" aria-hidden="true">
+            <div className="partner-illustration-position">
+              <img
+                src="/crtezi/kamera.svg"
+                className="illustration illustration-right"
+                alt=""
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  );
 };
 
 export default Partneri;
