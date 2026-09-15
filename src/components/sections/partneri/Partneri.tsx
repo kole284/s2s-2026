@@ -1,11 +1,18 @@
 import "./Partneri.scss";
 
 type HexagonProps = {
+  image: string;
+  name: string;
   filled?: boolean;
   className?: string;
 };
 
-const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
+const Hexagon = ({
+  image,
+  name,
+  filled = true,
+  className = "",
+}: HexagonProps) => {
   const classes = [
     "hexagon",
     filled ? "hexagon-filled" : "hexagon-outline",
@@ -16,10 +23,13 @@ const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
 
   return (
     <div className={classes}>
-      <div className="hexagon-inner" />
+      <div className="hexagon-inner">
+        <img className="partner-logo" src={image} alt={name} />
+      </div>
     </div>
   );
 };
+
 
 const Partneri = () => {
   return (
@@ -35,7 +45,16 @@ const Partneri = () => {
           <div className="section-content sponsor-content">
             <h2>POKROVITELJ</h2>
 
-            <Hexagon className="hexagon--animated hexagon--large" />
+            <div className="sponsor-emblem">
+              <img
+                className="sponsor-mobile-crown"
+                src="/crtezi/kruna.svg"
+                alt=""
+                aria-hidden="true"
+              />
+
+              <Hexagon  image="/gng.JPG" name="GNG" className="hexagon--animated hexagon--large" />
+            </div>
 
             <h2>PROJEKTA</h2>
           </div>
@@ -53,18 +72,20 @@ const Partneri = () => {
         {/* GODIŠNJI */}
         <section className="partner-section annual-section">
           <div className="section-content">
-            <div className="hexagon-row left">
-              <Hexagon />
-              <Hexagon />
-              <Hexagon />
-            </div>
-
             <h2>GODIŠNJI</h2>
 
-            <div className="hexagon-row right">
-              <Hexagon />
-              <Hexagon />
-              <Hexagon />
+            <div className="partner-hexagon-list">
+              <div className="hexagon-row left">
+                <Hexagon  image="/gng.JPG" name="GNG" /> 
+                <Hexagon  image="/gng.JPG" name="GNG" /> 
+                <Hexagon   image="/gng.JPG" name="GNG" />
+              </div>
+
+              <div className="hexagon-row right">
+                <Hexagon  image="/gng.JPG" name="GNG" />
+                <Hexagon  image="/gng.JPG" name="GNG" />
+                <Hexagon  image="/gng.JPG" name="GNG" />
+              </div>
             </div>
           </div>
           <div className="partner-illustration-window" aria-hidden="true">
@@ -79,18 +100,20 @@ const Partneri = () => {
         {/* FINANSIJSKI */}
         <section className="partner-section financial-section">
           <div className="section-content">
-            <div className="hexagon-row left">
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
-            </div>
-
             <h2>FINANSIJSKI</h2>
 
-            <div className="hexagon-row right">
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
+            <div className="partner-hexagon-list">
+              <div className="hexagon-row left">
+                <Hexagon  image="/gng.JPG" name="GNG"  filled={false} />
+                <Hexagon  image="/gng.JPG" name="GNG"  filled={false} />
+                <Hexagon  image="/gng.JPG" name="GNG"  filled={false} />
+              </div>
+
+              <div className="hexagon-row right">
+                <Hexagon  image="/gng.JPG" name="GNG" filled={false} />
+                <Hexagon  image="/gng.JPG" name="GNG" filled={false} />
+                <Hexagon  image="/gng.JPG" name="GNG" filled={false} />
+              </div>
             </div>
           </div>
           <div className="partner-illustration-window" aria-hidden="true">
@@ -107,18 +130,20 @@ const Partneri = () => {
         {/* ROBNI */}
         <section className="partner-section goods-section">
           <div className="section-content">
-            <div className="hexagon-row left">
-              <Hexagon />
-              <Hexagon />
-              <Hexagon />
-            </div>
-
             <h2>ROBNI</h2>
 
-            <div className="hexagon-row right">
-              <Hexagon />
-              <Hexagon />
-              <Hexagon />
+            <div className="partner-hexagon-list">
+              <div className="hexagon-row left">
+                <Hexagon image="/gng.JPG" name="GNG" />
+                <Hexagon image="/gng.JPG" name="GNG"/>
+                <Hexagon image="/gng.JPG" name="GNG"/>
+              </div>
+
+              <div className="hexagon-row right">
+                <Hexagon image="/gng.JPG" name="GNG"/>
+                <Hexagon image="/gng.JPG" name="GNG"/>
+                <Hexagon image="/gng.JPG" name="GNG"/>
+              </div>
             </div>
           </div>
           <div className="partner-illustration-window" aria-hidden="true">
@@ -133,18 +158,20 @@ const Partneri = () => {
         {/* MEDIJSKI */}
         <section className="partner-section media-section">
           <div className="section-content">
-            <div className="hexagon-row left">
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
-            </div>
-
             <h2>MEDIJSKI</h2>
 
-            <div className="hexagon-row right">
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
-              <Hexagon filled={false} />
+            <div className="partner-hexagon-list">
+              <div className="hexagon-row left">
+                <Hexagon image="/gng.JPG" name="GNG" filled={false} />
+                <Hexagon image="/gng.JPG" name="GNG" filled={false} />
+                <Hexagon image="/gng.JPG" name="GNG" filled={false} />
+              </div>
+
+              <div className="hexagon-row right">
+                <Hexagon image="/gng.JPG" name="GNG" filled={false} />
+                <Hexagon image="/gng.JPG" name="GNG" filled={false} />
+                <Hexagon image="/gng.JPG" name="GNG" filled={false} />
+              </div>
             </div>
           </div>
           <div className="partner-illustration-window" aria-hidden="true">
