@@ -1,0 +1,441 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mediaqueries" as *;
+
+/*
+ * Predavač je detail stanje sekcije Radionice.
+ *
+ * Na desktopu ne dobija sopstvenu geometriju:
+ * koristi ISTI design-space, isti top/bottom spacing, isti zig-zag i istu
+ * visinu centralnog papirnog banda kao Radionice.
+ *
+ * Vizuelna promena je zato samo:
+ * - spoljna bela pozadina Radionica -> plava
+ * - plavi papir -> beli papir
+ * - carousel sadržaj -> detalji predavača
+ *
+ * Dimenzije sekcije se pri kliku ne menjaju.
+ */
+
+.predavac-page {
+  --pd-mobile-design-width: var(--rd-mobile-design-width, 100vw);
+  --pd-chevron-depth: calc(var(--pd-mobile-design-width) * 28 / 390);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background-color: $color-blue;
+}
+
+.predavac-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: calc(var(--pd-mobile-design-width) * 118 / 390);
+  padding: calc(var(--pd-mobile-design-width) * 24 / 390)
+    calc(var(--pd-mobile-design-width) * 64 / 390)
+    calc(var(--pd-chevron-depth) + var(--pd-mobile-design-width) * 20 / 390);
+  background-color: $color-blue;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--pd-chevron-depth)),
+    50% 100%,
+    0 calc(100% - var(--pd-chevron-depth))
+  );
+}
+
+.predavac-title {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: calc(var(--pd-mobile-design-width) * 32 / 390);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  color: $color-yellow;
+}
+
+.predavac-close {
+  position: absolute;
+  top: calc(var(--pd-mobile-design-width) * 20 / 390);
+  right: calc(var(--pd-mobile-design-width) * 20 / 390);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.predavac-close-icon {
+  display: block;
+  width: calc(var(--pd-mobile-design-width) * 24 / 390);
+  height: auto;
+}
+
+.predavac-content {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background-color: $color-white;
+  background-image: url("@/assets/providan_papir.svg");
+  background-size: cover;
+  background-position: center;
+}
+
+.predavac-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--pd-mobile-design-width) * 28 / 390);
+  width: 100%;
+  margin: 0 auto;
+  padding: calc(var(--pd-mobile-design-width) * 32 / 390)
+    calc(var(--pd-mobile-design-width) * 24 / 390)
+    calc(var(--pd-mobile-design-width) * 40 / 390);
+}
+
+.predavac-tezina {
+  margin: 0;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: calc(var(--pd-mobile-design-width) * 26 / 390);
+  line-height: 1.1;
+  color: $color-blue;
+}
+
+.predavac-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--pd-mobile-design-width) * 24 / 390);
+}
+
+.predavac-photo-block {
+  position: relative;
+  margin: 0;
+}
+
+.predavac-photo {
+  display: block;
+  width: calc(var(--pd-mobile-design-width) * 150 / 390);
+  height: calc(var(--pd-mobile-design-width) * 185 / 390);
+  object-fit: cover;
+
+  &--placeholder {
+    background-color: rgba($color-blue-dark, 0.15);
+  }
+}
+
+.predavac-name {
+  position: absolute;
+  bottom: calc(var(--pd-mobile-design-width) * -16 / 390);
+  left: 50%;
+  padding: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: transparent;
+  font-family: $font-display;
+  font-weight: $font-black;
+  font-size: calc(var(--pd-mobile-design-width) * 28 / 390);
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: $color-white;
+  -webkit-text-stroke: calc(var(--pd-mobile-design-width) * 3 / 390) $color-blue;
+  paint-order: stroke fill;
+}
+
+.predavac-shield {
+  display: block;
+  width: calc(var(--pd-mobile-design-width) * 150 / 390);
+  height: calc(var(--pd-mobile-design-width) * 130 / 390);
+  object-fit: contain;
+}
+
+.predavac-text {
+  width: 100%;
+  max-width: calc(var(--pd-mobile-design-width) * 330 / 390);
+  font-family: $font-body;
+  font-size: calc(var(--pd-mobile-design-width) * 16 / 390);
+  line-height: 1.5;
+  color: $color-black;
+  text-align: left;
+}
+
+.predavac-text p {
+  margin: 0;
+}
+
+.predavac-text p + p {
+  margin-top: calc(var(--pd-mobile-design-width) * 16 / 390);
+}
+
+.predavac-arrow {
+  position: absolute;
+  z-index: 3;
+  bottom: calc(var(--pd-mobile-design-width) * 28 / 390);
+  margin: 0;
+  padding: calc(var(--pd-mobile-design-width) * 8 / 390);
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.predavac-arrow img {
+  display: block;
+  width: calc(var(--pd-mobile-design-width) * 24 / 390);
+  height: auto;
+}
+
+.predavac-arrow--prev {
+  left: calc(var(--pd-mobile-design-width) * 24 / 390);
+}
+
+.predavac-arrow--prev img {
+  transform: scaleX(-1);
+}
+
+.predavac-arrow--next {
+  right: calc(var(--pd-mobile-design-width) * 24 / 390);
+}
+
+.predavac-footer {
+  display: none;
+}
+
+@media #{$tablet}, #{$desktop} {
+  .predavac-page {
+    /*
+     * Direktno nasleđujemo iste vrednosti koje koristi Radionice.
+     * Fallback postoji samo ako se Predavac nekad renderuje van Radionice.
+     */
+    --pd-design-width: var(--rd-design-width, min(100vw, 140.625dvh));
+    --pd-zigzag-depth: var(
+      --rd-zigzag-depth,
+      calc(var(--pd-design-width) * 64 / 1440)
+    );
+
+    display: block;
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
+    padding-top: calc(var(--pd-design-width) * 110 / 1440);
+    padding-bottom: calc(var(--pd-design-width) * 64 / 1440);
+    background-color: $color-blue;
+  }
+
+  /*
+   * Ovo je 1:1 geometrijski ekvivalent .radionice-title.
+   * Menja se samo boja i sadržaj naslova.
+   */
+  .predavac-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--pd-design-width);
+    min-height: 0;
+    margin-inline: auto;
+    padding: calc(var(--pd-design-width) * 40 / 1440)
+      calc(var(--pd-design-width) * 24 / 1440)
+      calc(var(--pd-design-width) * 32 / 1440);
+    background: transparent;
+    clip-path: none;
+  }
+
+  .predavac-title {
+    font-family: $font-display;
+    font-weight: $font-black;
+    font-size: calc(var(--pd-design-width) * 72 / 1440);
+    line-height: normal;
+    color: $color-yellow;
+  }
+
+  .predavac-close {
+    top: 50%;
+    right: calc(var(--pd-design-width) * 44 / 1440);
+    transform: translateY(-50%);
+  }
+
+  .predavac-close-icon {
+    width: calc(var(--pd-design-width) * 44 / 1440);
+  }
+
+  /*
+   * Ovo je 1:1 geometrijski ekvivalent .radionice-band +
+   * .radionice-stage:
+   * - ista visina 620/1440
+   * - isti zig-zag gore i dole
+   * - ista puna širina banda
+   *
+   * Samo su boje obrnute: papir je beo, okolina plava.
+   */
+  .predavac-content {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: calc(var(--pd-design-width) * 620 / 1440);
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: $color-white;
+    background-image: url("@/assets/providan_papir.svg");
+    background-size: cover;
+    background-position: center;
+    clip-path: polygon(
+      0 var(--pd-zigzag-depth),
+      12.5% 0,
+      25% var(--pd-zigzag-depth),
+      37.5% 0,
+      50% var(--pd-zigzag-depth),
+      62.5% 0,
+      75% var(--pd-zigzag-depth),
+      87.5% 0,
+      100% var(--pd-zigzag-depth),
+      100% calc(100% - var(--pd-zigzag-depth)),
+      87.5% 100%,
+      75% calc(100% - var(--pd-zigzag-depth)),
+      62.5% 100%,
+      50% calc(100% - var(--pd-zigzag-depth)),
+      37.5% 100%,
+      25% calc(100% - var(--pd-zigzag-depth)),
+      12.5% 100%,
+      0 calc(100% - var(--pd-zigzag-depth))
+    );
+  }
+
+  /*
+   * Unutrašnji design-space je iste širine kao .radionice-stage.
+   * Svi detalji predavača se pozicioniraju unutar tog istog 1440 prostora.
+   */
+  .predavac-card {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: var(--pd-design-width);
+    height: 100%;
+    max-width: none;
+    margin-inline: auto;
+    padding: 0;
+  }
+
+  .predavac-visual {
+    display: contents;
+  }
+
+  .predavac-photo-block {
+    position: absolute;
+    top: calc(var(--pd-design-width) * 92 / 1440);
+    left: calc(var(--pd-design-width) * 238 / 1440);
+  }
+
+  .predavac-photo {
+    width: calc(var(--pd-design-width) * 220 / 1440);
+    height: calc(var(--pd-design-width) * 315 / 1440);
+  }
+
+  .predavac-name {
+    bottom: calc(var(--pd-design-width) * -22 / 1440);
+    left: 50%;
+    padding: 0;
+    transform: translateX(-50%);
+    font-family: $font-display;
+    font-weight: $font-black;
+    font-size: calc(var(--pd-design-width) * 44 / 1440);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: $color-white;
+    -webkit-text-stroke: calc(var(--pd-design-width) * 5 / 1440) $color-blue;
+    paint-order: stroke fill;
+  }
+
+  .predavac-text {
+    position: absolute;
+    top: calc(var(--pd-design-width) * 88 / 1440);
+    left: calc(var(--pd-design-width) * 480 / 1440);
+    width: calc(var(--pd-design-width) * 500 / 1440);
+    max-width: none;
+    font-size: calc(var(--pd-design-width) * 22 / 1440);
+    line-height: 1.16;
+  }
+
+  .predavac-text p + p {
+    margin-top: calc(var(--pd-design-width) * 36 / 1440);
+  }
+
+  .predavac-tezina {
+    position: absolute;
+    top: calc(var(--pd-design-width) * 90 / 1440);
+    left: calc(var(--pd-design-width) * 1030 / 1440);
+    width: calc(var(--pd-design-width) * 300 / 1440);
+    font-size: calc(var(--pd-design-width) * 31 / 1440);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .predavac-shield {
+    position: absolute;
+    top: calc(var(--pd-design-width) * 170 / 1440);
+    left: calc(var(--pd-design-width) * 1060 / 1440);
+    width: calc(var(--pd-design-width) * 225 / 1440);
+    height: calc(var(--pd-design-width) * 235 / 1440);
+  }
+
+  /*
+   * Strelice su deo istog papirnog banda, pa su vertikalno vezane za njegovu
+   * sredinu, baš kao carousel elementi kod Radionica.
+   */
+  .predavac-arrow {
+    top: 50%;
+    bottom: auto;
+    padding: calc(var(--pd-design-width) * 10 / 1440);
+    transform: translateY(-50%);
+  }
+
+  .predavac-arrow img {
+    width: calc(var(--pd-design-width) * 42 / 1440);
+    filter: none;
+  }
+
+  .predavac-arrow--prev {
+    left: calc(
+      (100% - var(--pd-design-width)) / 2 + var(--pd-design-width) * 40 / 1440
+    );
+  }
+
+  .predavac-arrow--next {
+    right: calc(
+      (100% - var(--pd-design-width)) / 2 + var(--pd-design-width) * 40 / 1440
+    );
+  }
+
+  .predavac-footer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .predavac-arrow img {
+    transition: none;
+  }
+}

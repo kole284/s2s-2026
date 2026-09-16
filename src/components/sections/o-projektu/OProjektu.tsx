@@ -22,11 +22,39 @@ import titleFonis from "@/assets/o-projektu/o-projektu-title-fonis.svg";
 import titleStudents from "@/assets/o-projektu/o-projektu-title-students.svg";
 import zigzag from "@/assets/o-projektu/o-projektu-zigzag.svg";
 
-const studentDescription =
-  "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.";
+const studentDescription = (
+  <>
+    <strong>Studenti studentima</strong> je tradicionalni projekat organizacije
+    <strong> FONIS</strong>, namenjen svima koji žele da unaprede svoja znanja iz
+    oblasti <strong>IT-a, menadžmenta i dizajna</strong>. Projekat već godinama
+    okuplja studente koji žele da uče jedni od drugih kroz niz zanimljivih i
+    interaktivnih <strong>radionica</strong> koje vode upravo njihove
+    <strong> kolege sa viših godina</strong>. Kroz praktičan rad i primere iz
+    stvarnog života, učesnici imaju priliku da nauče nešto novo, prošire vidike
+    i inspirišu se za dalji razvoj. Osim <strong>radionica</strong>, deo projekta
+    je i <strong>panel diskusija</strong> na kojoj
+    <strong> stručnjaci iz industrije</strong> dele svoja iskustva, savete i put
+    karijere, pružajući studentima uvid u realne izazove i prilike koje ih
+    očekuju.
+  </>
+);
 
-const fonisDescription =
-  "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.";
+const fonisDescription = (
+  <>
+    Kao i svake godine, <strong>FONIS</strong> kroz ovaj projekat potvrđuje svoju
+    misiju da povezuje studente i svet IT-a. Već dugi niz godina, organizacija
+    okuplja ambiciozne studente Fakulteta organizacionih nauka koji žele da
+    naprave svoje prve korake u oblasti informacionih tehnologija. Kroz
+    <strong> radionice, seminare, hakatone i predavanja</strong>,
+    <strong> FONIS</strong> članovima i učesnicima omogućava da razviju veštine,
+    steknu iskustvo i izgrade mrežu kontakata koji su ključni za njihov
+    <strong> lični i profesionalni napredak</strong>. Sa više od
+    <strong> 100 aktivnih članova</strong> i širokom mrežom
+    <strong> alumni zajednice</strong>, <strong>FONIS</strong> ostaje simbol
+    inicijative, znanja i timskog duha među studentima Fakulteta organizacionih
+    nauka.
+  </>
+);
 
 const toggleCopy = (
   copy: HTMLDivElement | null,
@@ -98,7 +126,6 @@ const OProjektu = () => {
               }
             >
               <p>{studentDescription}</p>
-              <p>{fonisDescription}</p>
             </div>
           </div>
 
@@ -207,7 +234,6 @@ const OProjektu = () => {
                 finishTransition(event, setFonisAnimating)
               }
             >
-              <p>{studentDescription}</p>
               <p>{fonisDescription}</p>
             </div>
           </div>

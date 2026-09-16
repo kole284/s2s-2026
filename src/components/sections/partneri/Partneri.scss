@@ -1,5 +1,6 @@
 .partneri-page {
   --partner-u: 0.0694444444vw;
+  --partner-stroke: 0.0738888888vw;
   --section-design-width: min(100vw, 140.625dvh);
 
   position: relative;
@@ -7,6 +8,8 @@
   width: 100%;
   height: calc(1454 * var(--partner-u));
   min-height: 100vh;
+
+  margin-top: -1px;
 
   overflow: hidden;
 
@@ -333,29 +336,16 @@
   display: none;
 }
 
+// The main sponsor hexagon uses the inline SVG as its only desktop geometry source.
+// 200 / 173.2050807569 is the exact aspect ratio of a regular flat-top hexagon.
 .hexagon--sponsor {
   position: absolute;
   top: calc(56 * var(--partner-u));
   left: calc(609 * var(--partner-u));
 
   width: calc(233 * var(--partner-u));
-  height: calc(199 * var(--partner-u));
-
-  background: $color-blue;
-
-  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
-}
-
-.hexagon--sponsor::after {
-  position: absolute;
-
-  inset: calc(1.1 * var(--partner-u));
-
-  background: #fcfdff;
-
-  clip-path: inherit;
-
-  content: "";
+  height: auto;
+  aspect-ratio: 200 / 173.2050807569;
 }
 
 .hexagon-row {
@@ -370,11 +360,11 @@
 }
 
 .hexagon-row--left {
-  left: calc(80 * var(--partner-u));
+  left: calc(60 * var(--partner-u));
 }
 
 .hexagon-row--right {
-  right: calc(68 * var(--partner-u));
+  right: calc(48 * var(--partner-u));
 }
 
 .hexagon-marquee {
@@ -454,11 +444,10 @@
 
     display: grid;
     grid-template-columns:
-      calc(522 * var(--partner-u))
-      calc(87 * var(--partner-u))
+      minmax(0, 1fr)
       calc(233 * var(--partner-u))
-      calc(68 * var(--partner-u))
-      1fr;
+      minmax(0, 1fr);
+    column-gap: calc(72 * var(--partner-u));
     align-items: center;
   }
 
@@ -476,16 +465,19 @@
     position: static;
 
     grid-row: 1;
+    align-self: center;
   }
 
   .sponsor-label span:first-child {
     grid-column: 1;
     justify-self: end;
+    text-align: right;
   }
 
   .sponsor-label span:last-child {
-    grid-column: 5;
+    grid-column: 3;
     justify-self: start;
+    text-align: left;
   }
 
   .hexagon--sponsor {
@@ -494,7 +486,9 @@
     left: auto;
 
     grid-row: 1;
-    grid-column: 3;
+    grid-column: 2;
+    justify-self: center;
+    align-self: center;
   }
 
   .hexagon {
@@ -505,8 +499,7 @@
     clip-path: none;
   }
 
-  .hexagon-inner,
-  .hexagon--sponsor::after {
+  .hexagon-inner {
     display: none;
   }
 
@@ -545,34 +538,15 @@
   .hexagon-outline .hexagon-svg-polygon,
   .hexagon--sponsor .hexagon-svg-polygon {
     stroke: $color-blue;
-    stroke-width: 1.064px;
+    stroke-width: var(--partner-stroke);
     stroke-linejoin: miter;
-  }
-}
-
-@keyframes partner-marquee-left {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes partner-marquee-right {
-  from {
-    transform: translateX(-50%);
-  }
-
-  to {
-    transform: translateX(0);
   }
 }
 
 @media #{$mobile} {
   .partneri-page {
     --partner-u: 0.2564102564vw;
+    --partner-stroke: 0.2728205128vw;
 
     height: calc(1118 * var(--partner-u));
     min-height: 0;
@@ -827,8 +801,23 @@
 
     width: calc(139 * var(--partner-u));
     height: calc(159 * var(--partner-u));
+    aspect-ratio: auto;
+
+    background: $color-blue;
 
     clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  .sponsor-visual .hexagon--sponsor::after {
+    position: absolute;
+
+    inset: calc(1.1 * var(--partner-u));
+
+    background: #fcfdff;
+
+    clip-path: inherit;
+
+    content: "";
   }
 
   .hexagon-row {
@@ -845,7 +834,10 @@
 
     overflow: hidden;
 
-    pointer-events: none;
+    touch-action: pan-y;
+    user-select: none;
+
+    pointer-events: auto;
   }
 
   .annual-section .hexagon-marquee {
@@ -869,24 +861,18 @@
 
     width: max-content;
 
+    transition: none;
+
     will-change: transform;
-  }
-
-  .hexagon-marquee--left .hexagon-marquee-track {
-    animation: partner-marquee-left var(--marquee-duration) linear infinite;
-  }
-
-  .hexagon-marquee--right .hexagon-marquee-track {
-    animation: partner-marquee-right var(--marquee-duration) linear infinite;
   }
 
   .hexagon-marquee-group {
     display: flex;
     flex: none;
 
-    gap: calc(37 * var(--partner-u));
+    gap: calc(65 * var(--partner-u));
 
-    padding-right: calc(37 * var(--partner-u));
+    padding-right: calc(65 * var(--partner-u));
   }
 
   .hexagon {

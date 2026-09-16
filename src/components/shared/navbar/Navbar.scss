@@ -46,16 +46,17 @@ body.navbar-menu-scroll-locked {
   width: auto;
   height: 60px;
 }
+
 .mobile-menu-control {
   position: fixed;
-  top: 16px;
-  left: 16px;
+  top: 14px;
+  left: 14px;
   z-index: 10002;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 92px;
-  height: 92px;
+  width: 64px;
+  height: 64px;
   padding: 0;
   border: 0;
   color: $color-blue;
@@ -65,20 +66,6 @@ body.navbar-menu-scroll-locked {
   pointer-events: auto;
   cursor: pointer;
   transition: transform 150ms ease;
-}
-
-.mobile-menu-control::before {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  content: "";
-  background: $color-white;
-  clip-path: polygon(3% 0, 96% 2%, 100% 93%, 7% 100%, 0 8%);
-  filter: drop-shadow(4px 4px 0 rgba(19, 69, 149, 0.18));
-  opacity: 1;
-  transition:
-    opacity 220ms ease,
-    filter 220ms ease;
 }
 
 .mobile-menu-control:active {
@@ -124,14 +111,16 @@ body.navbar-menu-scroll-locked {
 
 .mobile-menu-control__burger img {
   display: block;
-  width: 74px;
-  height: 73px;
+  width: 54px;
+  height: 53px;
+
+  object-fit: contain;
 }
 
 .mobile-menu-control__close svg {
   display: block;
-  width: 72px;
-  height: 72px;
+  width: 52px;
+  height: 52px;
 }
 
 @media (hover: hover) {
@@ -331,7 +320,6 @@ body.navbar-menu-scroll-locked {
 
 @media (prefers-reduced-motion: reduce) {
   .mobile-menu-control,
-  .mobile-menu-control::before,
   .mobile-menu-control__state {
     transition: none;
   }
@@ -343,7 +331,7 @@ body.navbar-menu-scroll-locked {
   }
 }
 
-@media #{$tablet}, #{$desktop} {
+@media #{$desktop} {
   .navbar {
     --navbar-design-width: min(100vw, 140.625dvh);
 
@@ -527,5 +515,26 @@ body.navbar-menu-scroll-locked {
           calc(var(--navbar-design-width) * 4 / 1440) 0 $color-black
       );
     }
+  }
+}
+
+@media #{$tablet} {
+  .mobile-menu-control {
+    top: 18px;
+    left: 20px;
+    width: 72px;
+    height: 72px;
+  }
+
+  .mobile-menu-control__burger img {
+    width: 62px;
+    height: 61px;
+  }
+
+  .navbar-mobile-menu {
+    left: 50%;
+    width: min(72vw, 540px);
+    max-width: none;
+    transform: translateX(-50%);
   }
 }

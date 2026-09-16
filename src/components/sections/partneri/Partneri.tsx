@@ -1,4 +1,5 @@
-import type { CSSProperties } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 import calendarIllustration from "@/assets/partneri/kalendar.svg";
 import cameraIllustration from "@/assets/partneri/kamera.svg";
@@ -18,11 +19,14 @@ type MarqueeDirection = "left" | "right";
 type HexagonMarqueeProps = {
   filled?: boolean;
   direction: MarqueeDirection;
-  duration: number;
 };
 
 const DESKTOP_HEXAGON_COUNT = 3;
 const MARQUEE_HEXAGON_COUNT = 6;
+const MARQUEE_GROUP_COUNT = 3;
+const MARQUEE_SPEED_PX_PER_SECOND = 24;
+const AUTOPLAY_RESUME_DELAY_MS = 450;
+const MAX_FRAME_DELTA_SECONDS = 0.1;
 
 const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
   const isSponsor = className.includes("hexagon--sponsor");
@@ -38,20 +42,21 @@ const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
     <span className={classes} aria-hidden="true">
       <svg
         className="hexagon-svg"
-        viewBox={isSponsor ? "0 0 115.47 100" : "0 0 100 115.47"}
-        preserveAspectRatio="none"
+        viewBox={isSponsor ? "0 0 200 173.2050807569" : "0 0 100 115.47"}
+        preserveAspectRatio={isSponsor ? "xMidYMid meet" : "none"}
         focusable="false"
       >
         <polygon
           className="hexagon-svg-polygon"
           points={
             isSponsor
-              ? "28.867,0 86.603,0 115.47,50 86.603,100 28.867,100 0,50"
+              ? "50,0 150,0 200,86.6025403784 150,173.2050807569 50,173.2050807569 0,86.6025403784"
               : "50,0 100,28.867 100,86.603 50,115.47 0,86.603 0,28.867"
           }
           vectorEffect="non-scaling-stroke"
         />
       </svg>
+
       {!filled && <span className="hexagon-inner" />}
     </span>
   );
@@ -71,21 +76,186 @@ const HexagonRow = ({
 const HexagonMarquee = ({
   filled = true,
   direction,
-  duration,
 }: HexagonMarqueeProps) => {
-  const marqueeStyle = {
-    "--marquee-duration": `${duration}s`,
-  } as CSSProperties;
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const groupRef = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const groupWidthRef = useRef(0);
+  const offsetRef = useRef(0);
+  const previousFrameTimeRef = useRef<number | null>(null);
+  const draggingRef = useRef(false);
+  const activePointerIdRef = useRef<number | null>(null);
+  const dragStartXRef = useRef(0);
+  const dragStartOffsetRef = useRef(0);
+  const resumeAutoplayAtRef = useRef(0);
+
+  const getNormalizedOffset = useCallback(() => {
+    const groupWidth = groupWidthRef.current;
+
+    if (groupWidth <= 0) return 0;
+
+    return ((offsetRef.current % groupWidth) + groupWidth) % groupWidth;
+  }, []);
+
+  const applyTrackTransform = useCallback(() => {
+    if (!trackRef.current) return;
+
+    const renderOffset = groupWidthRef.current + getNormalizedOffset();
+
+    trackRef.current.style.transform = `translate3d(${-renderOffset}px, 0, 0)`;
+  }, [getNormalizedOffset]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    const group = groupRef.current;
+
+    if (!viewport || !track || !group) return;
+
+    const mobileMedia = window.matchMedia("(max-width: 768px)");
+    const reducedMotionMedia = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+
+    const measureGroup = () => {
+      const previousGroupWidth = groupWidthRef.current;
+      const nextGroupWidth = group.getBoundingClientRect().width;
+
+      if (nextGroupWidth <= 0) return;
+
+      if (previousGroupWidth > 0) {
+        const normalizedOffset =
+          ((offsetRef.current % previousGroupWidth) + previousGroupWidth) %
+          previousGroupWidth;
+
+        offsetRef.current =
+          (normalizedOffset / previousGroupWidth) * nextGroupWidth;
+      } else {
+        const hexagons = group.querySelectorAll<HTMLElement>(".hexagon");
+        const itemPitch = hexagons[1].offsetLeft - hexagons[0].offsetLeft;
+        const gap = itemPitch - hexagons[0].offsetWidth;
+
+        offsetRef.current = nextGroupWidth - gap / 2;
+      }
+
+      groupWidthRef.current = nextGroupWidth;
+      applyTrackTransform();
+    };
+
+    const stopAnimation = () => {
+      if (animationFrameRef.current !== null) {
+        window.cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+
+      previousFrameTimeRef.current = null;
+    };
+
+    const animate = (time: number) => {
+      const previousTime = previousFrameTimeRef.current;
+      const deltaSeconds =
+        previousTime === null
+          ? 0
+          : Math.min(
+              (time - previousTime) / 1000,
+              MAX_FRAME_DELTA_SECONDS,
+            );
+
+      previousFrameTimeRef.current = time;
+
+      if (!draggingRef.current && time >= resumeAutoplayAtRef.current) {
+        const directionMultiplier = direction === "left" ? 1 : -1;
+
+        offsetRef.current +=
+          directionMultiplier * MARQUEE_SPEED_PX_PER_SECOND * deltaSeconds;
+        applyTrackTransform();
+      }
+
+      animationFrameRef.current = window.requestAnimationFrame(animate);
+    };
+
+    const updateAnimationState = () => {
+      stopAnimation();
+      measureGroup();
+
+      if (mobileMedia.matches && !reducedMotionMedia.matches) {
+        animationFrameRef.current = window.requestAnimationFrame(animate);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(measureGroup);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(group);
+
+    mobileMedia.addEventListener("change", updateAnimationState);
+    reducedMotionMedia.addEventListener("change", updateAnimationState);
+    updateAnimationState();
+
+    return () => {
+      stopAnimation();
+      resizeObserver.disconnect();
+      mobileMedia.removeEventListener("change", updateAnimationState);
+      reducedMotionMedia.removeEventListener("change", updateAnimationState);
+    };
+  }, [applyTrackTransform, direction]);
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    draggingRef.current = true;
+    activePointerIdRef.current = event.pointerId;
+    dragStartXRef.current = event.clientX;
+    dragStartOffsetRef.current = offsetRef.current;
+    resumeAutoplayAtRef.current = Number.POSITIVE_INFINITY;
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (
+      !draggingRef.current ||
+      activePointerIdRef.current !== event.pointerId
+    ) {
+      return;
+    }
+
+    const dragDistance = event.clientX - dragStartXRef.current;
+
+    offsetRef.current = dragStartOffsetRef.current - dragDistance;
+    applyTrackTransform();
+  };
+
+  const finishPointerDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== event.pointerId) return;
+
+    draggingRef.current = false;
+    activePointerIdRef.current = null;
+    resumeAutoplayAtRef.current =
+      performance.now() + AUTOPLAY_RESUME_DELAY_MS;
+    previousFrameTimeRef.current = null;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
 
   return (
     <div
+      ref={viewportRef}
       className={`hexagon-marquee hexagon-marquee--${direction}`}
-      style={marqueeStyle}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={finishPointerDrag}
+      onPointerCancel={finishPointerDrag}
       aria-hidden="true"
     >
-      <div className="hexagon-marquee-track">
-        {[0, 1].map((groupIndex) => (
-          <div className="hexagon-marquee-group" key={groupIndex}>
+      <div ref={trackRef} className="hexagon-marquee-track">
+        {Array.from({ length: MARQUEE_GROUP_COUNT }, (_, groupIndex) => (
+          <div
+            ref={groupIndex === 0 ? groupRef : undefined}
+            className="hexagon-marquee-group"
+            key={groupIndex}
+          >
             {Array.from({ length: MARQUEE_HEXAGON_COUNT }, (_, index) => (
               <Hexagon filled={filled} key={`${groupIndex}-${index}`} />
             ))}
@@ -101,7 +271,6 @@ type PartnerRowProps = {
   title: string;
   filled?: boolean;
   direction: MarqueeDirection;
-  duration: number;
   illustration: string;
   illustrationClassName: string;
 };
@@ -111,7 +280,6 @@ const PartnerRow = ({
   title,
   filled = true,
   direction,
-  duration,
   illustration,
   illustrationClassName,
 }: PartnerRowProps) => (
@@ -120,11 +288,7 @@ const PartnerRow = ({
       <HexagonRow filled={filled} side="left" />
       <h2>{title}</h2>
       <HexagonRow filled={filled} side="right" />
-      <HexagonMarquee
-        filled={filled}
-        direction={direction}
-        duration={duration}
-      />
+      <HexagonMarquee filled={filled} direction={direction} />
     </div>
 
     <img
@@ -138,7 +302,11 @@ const PartnerRow = ({
 );
 
 const Partneri = () => (
-  <section className="partneri-page" id="partneri" aria-labelledby="partneri-title">
+  <section
+    className="partneri-page"
+    id="partneri"
+    aria-labelledby="partneri-title"
+  >
     <header className="partneri-header">
       <h1 id="partneri-title">PARTNERI</h1>
     </header>
@@ -149,8 +317,10 @@ const Partneri = () => (
           <span>POKROVITELJ</span>
           <span>PROJEKTA</span>
         </div>
+
         <div className="sponsor-visual">
           <Hexagon className="hexagon--sponsor" />
+
           <img
             src={crownIllustration}
             className="illustration illustration-project"
@@ -166,7 +336,6 @@ const Partneri = () => (
       className="annual-section"
       title="GODIŠNJI"
       direction="left"
-      duration={22}
       illustration={calendarIllustration}
       illustrationClassName="illustration-calendar"
     />
@@ -176,7 +345,6 @@ const Partneri = () => (
       title="FINANSIJSKI"
       filled={false}
       direction="right"
-      duration={26}
       illustration={handshakeIllustration}
       illustrationClassName="illustration-handshake"
     />
@@ -185,7 +353,6 @@ const Partneri = () => (
       className="goods-section"
       title="ROBNI"
       direction="left"
-      duration={24}
       illustration={canIllustration}
       illustrationClassName="illustration-can"
     />
@@ -195,7 +362,6 @@ const Partneri = () => (
       title="MEDIJSKI"
       filled={false}
       direction="right"
-      duration={28}
       illustration={cameraIllustration}
       illustrationClassName="illustration-camera"
     />

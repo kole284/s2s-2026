@@ -174,6 +174,8 @@
  * na .agenda__desktop::before.
  */
 .agenda__desktop-canvas {
+  --agenda-connector-label-gap: 0.8333cqw;
+
   position: relative;
 
   z-index: 4;
@@ -237,6 +239,14 @@
    DESKTOP STARS
    ========================================================= */
 
+.agenda__desktop-slot,
+.agenda__mobile-slot {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+}
+
 .agenda__desktop-star {
   position: absolute;
 
@@ -264,6 +274,10 @@
   z-index: 3;
 
   width: 0.5556cqw;
+
+  opacity: 0;
+
+  transform: scaleY(0);
 
   pointer-events: none;
 }
@@ -316,6 +330,10 @@
 /*
  * Gornji događaji.
  */
+.agenda__desktop-connector--top {
+  transform-origin: center bottom;
+}
+
 .agenda__desktop-connector--top::after {
   top: -0.2778cqw;
 }
@@ -323,6 +341,10 @@
 /*
  * Donji događaji.
  */
+.agenda__desktop-connector--bottom {
+  transform-origin: center top;
+}
+
 .agenda__desktop-connector--bottom::after {
   bottom: -0.2778cqw;
 }
@@ -331,22 +353,36 @@
    DESKTOP EVENT TEXT
    ========================================================= */
 
-.agenda__desktop-event {
+.agenda__desktop-event-label {
   position: absolute;
 
   z-index: 6;
 
   width: 12.3%;
 
+  opacity: 0;
+
   color: $color-white;
 }
 
-.agenda__desktop-event .agenda__event-time,
-.agenda__desktop-event .agenda__event-title {
+.agenda__desktop-event-label--bottom {
+  transform: translateY(-0.9cqw);
+}
+
+.agenda__desktop-event-label--top {
+  transform: translateY(0.9cqw);
+}
+
+.agenda__desktop-event-label .agenda__event-time,
+.agenda__desktop-event-label .agenda__event-title {
   /*
    * 24px na originalnih 1440px.
    */
   font-size: 1.6667cqw;
+}
+
+.agenda__desktop-event-label .agenda__event-title {
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
@@ -358,8 +394,43 @@
 
   z-index: 7;
 
-  pointer-events: none;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  opacity: 0.72;
+
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease,
+    filter 180ms ease;
+
   user-select: none;
+}
+
+.agenda__desktop-day:hover {
+  opacity: 1;
+
+  transform: scale(1.04);
+}
+
+.agenda__desktop-day:active {
+  transform: scale(0.98);
+}
+
+.agenda__desktop-day--active-slot {
+  opacity: 1;
+
+  filter: drop-shadow(0 0 0.5cqw rgba(255, 209, 7, 0.28));
+}
+
+.agenda__desktop-day:focus-visible {
+  outline: 0.2083cqw solid $color-yellow;
+  outline-offset: 0.2778cqw;
 }
 
 .agenda__desktop-day img {
@@ -386,7 +457,7 @@
    DAN 1
    ========================================================= */
 
-.agenda__desktop-day--one {
+.agenda__desktop-day--active-slot {
   top: 25.488%;
   left: 5.903%;
 
@@ -394,7 +465,7 @@
   height: 16.504%;
 }
 
-.agenda__desktop-day--one span {
+.agenda__desktop-day--active-slot span {
   top: 52.37%;
   left: 52.75%;
 
@@ -407,7 +478,7 @@
    DAN 2
    ========================================================= */
 
-.agenda__desktop-day--two {
+.agenda__desktop-day--inactive-slot {
   top: 16.992%;
   left: 4.722%;
 
@@ -415,7 +486,7 @@
   height: 10.059%;
 }
 
-.agenda__desktop-day--two span {
+.agenda__desktop-day--inactive-slot span {
   top: 56.8%;
   left: 56.8%;
 
@@ -584,6 +655,10 @@
   width: 22%;
   height: auto;
 
+  opacity: 0;
+
+  transform: scaleX(0);
+
   pointer-events: none;
   user-select: none;
 }
@@ -592,22 +667,34 @@
    MOBILE EVENTS
    ========================================================= */
 
-.agenda__mobile-event {
+.agenda__mobile-event-label {
   position: absolute;
 
   z-index: 6;
 
   width: 25%;
 
+  opacity: 0;
+
   color: $color-white;
 }
 
-.agenda__mobile-event .agenda__event-time {
+.agenda__mobile-event-label--from-left {
+  transform: translateX(-14px);
+}
+
+.agenda__mobile-event-label--from-right {
+  transform: translateX(14px);
+}
+
+.agenda__mobile-event-label .agenda__event-time {
   font-size: clamp(12px, 4.53vw, 18px);
 }
 
-.agenda__mobile-event .agenda__event-title {
-  font-size: clamp(14px, 5.13vw, 20px);
+.agenda__mobile-event-label .agenda__event-title {
+  font-size: clamp(13px, 4.75vw, 18px);
+
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
@@ -624,7 +711,12 @@
 
   width: 31.28%;
 
-  pointer-events: none;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
   user-select: none;
 }
 
@@ -653,40 +745,31 @@
 }
 
 /* =========================================================
-   MOBILE DAY SWITCH
+   MOBILE NEXT-DAY TIMELINE MARKER
    ========================================================= */
 
-.agenda__day-switch {
+.agenda__mobile-next-day-marker {
   position: absolute;
 
-  z-index: 15;
+  z-index: 7;
 
   top: 84.71%;
   left: 61.79%;
 
   width: 31.28%;
 
-  padding: 0;
-
-  border: 0;
-
-  background: transparent;
-
-  cursor: pointer;
-
-  transition: transform 160ms ease;
+  pointer-events: none;
+  user-select: none;
 }
 
-.agenda__day-switch img {
+.agenda__mobile-next-day-marker img {
   display: block;
 
   width: 100%;
   height: auto;
-
-  pointer-events: none;
 }
 
-.agenda__day-switch span {
+.agenda__mobile-next-day-marker span {
   position: absolute;
 
   top: 52.55%;
@@ -700,22 +783,160 @@
 
   white-space: nowrap;
 
+  transform: translate(-50%, -50%);
+}
+
+/* =========================================================
+   MOBILE DAY SWITCH
+   ========================================================= */
+
+.agenda__day-switch {
+  position: absolute;
+
+  z-index: 15;
+
+  top: 7.95%;
+  right: 2.8%;
+
+  width: 15.4%;
+  aspect-ratio: 1 / 1;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  transform-origin: center;
+
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
+}
+
+.agenda__day-switch img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.agenda__day-switch span {
+  position: absolute;
+
+  top: 51%;
+  left: 51%;
+
+  font-family: $font-body;
+  font-size: clamp(7px, 2vw, 9px);
+  font-weight: $font-black;
+
+  line-height: 1;
+
+  color: $color-yellow;
+
+  white-space: nowrap;
+
   pointer-events: none;
 
   transform: translate(-50%, -50%);
 }
 
 .agenda__day-switch:hover {
-  transform: scale(1.04);
+  filter: brightness(1.08);
+
+  transform: scale(1.07);
 }
 
 .agenda__day-switch:active {
-  transform: scale(0.98);
+  transform: scale(0.94);
 }
 
 .agenda__day-switch:focus-visible {
-  outline: 3px solid $color-yellow;
-  outline-offset: 4px;
+  outline: 2px solid $color-yellow;
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   TIMELINE REVEAL ANIMATION
+   ========================================================= */
+
+.agenda--revealed .agenda__desktop-connector {
+  animation: agenda-desktop-connector-reveal 280ms
+    cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+}
+
+.agenda--revealed .agenda__desktop-event-label {
+  animation: agenda-event-reveal 240ms ease-out forwards;
+}
+
+.agenda--revealed .agenda__mobile-connector {
+  animation: agenda-mobile-connector-reveal 280ms
+    cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+}
+
+.agenda--revealed .agenda__mobile-event-label {
+  animation: agenda-event-reveal 240ms ease-out forwards;
+}
+
+@keyframes agenda-desktop-connector-reveal {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes agenda-mobile-connector-reveal {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes agenda-event-reveal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agenda__desktop-day,
+  .agenda__day-switch {
+    transition: none;
+  }
+
+  .agenda__desktop-connector,
+  .agenda__desktop-event-label,
+  .agenda__mobile-connector,
+  .agenda__mobile-event-label {
+    opacity: 1;
+
+    animation: none !important;
+
+    transform: none;
+  }
 }
 
 /* =========================================================

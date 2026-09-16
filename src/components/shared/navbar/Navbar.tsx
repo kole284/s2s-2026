@@ -127,7 +127,7 @@ const Navbar = () => {
   }, [closeMenu, isMenuOpen]);
 
   useEffect(() => {
-    const desktopQuery = window.matchMedia('(min-width: 769px)');
+    const desktopQuery = window.matchMedia('(min-width: 1025px)');
     const closeMenuOnDesktop = (event: MediaQueryListEvent) => {
       if (event.matches) {
         closeMenu();

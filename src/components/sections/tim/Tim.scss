@@ -1,0 +1,1050 @@
+@function team-size($value) {
+  @return calc(var(--team-unit) * #{$value});
+}
+
+.team-section {
+  /*
+   * Isti desktop design-space kao ostale sekcije:
+   * 1440 × 1024 -> 140.625dvh.
+   *
+   * Interni Tim layout je i dalje nacrtan u svom 1000-unit koordinatnom
+   * sistemu, ali je sada ceo sistem vezan za jedan design-width token.
+   */
+  --team-design-width: min(100vw, 140.625dvh);
+  --team-unit: calc(var(--team-design-width) / 1000);
+  --team-side-space: max(0px, calc((100vw - var(--team-design-width)) / 2));
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100svh;
+  padding: team-size(40) team-size(24);
+  overflow: hidden;
+  background-color: $color-blue;
+}
+
+.team-stage {
+  position: relative;
+
+  /*
+   * VAŽNO: bez zasebnog stacking context-a.
+   * Desktop munje su sibling layer i moraju da mogu da budu IZNAD ribbon-a,
+   * ali ISPOD kartica.
+   */
+  isolation: auto;
+  z-index: auto;
+
+  width: team-size(1000);
+  height: team-size(650);
+  transform: none;
+}
+
+.team-content {
+  position: absolute;
+  top: team-size(95);
+  left: team-size(140);
+
+  /* Kartice uvek preko originalnih belih munja. */
+  z-index: 3;
+
+  display: grid;
+  grid-template-columns: team-size(290) team-size(380);
+  align-items: start;
+  gap: team-size(48);
+  width: team-size(718);
+}
+
+.team-group-photo {
+  aspect-ratio: 568 / 384;
+}
+
+.team-group-frame {
+  fill: $color-white;
+}
+
+.team-coordinator,
+.team-group {
+  position: relative;
+  min-width: 0;
+  text-align: center;
+}
+
+.team-coordinator {
+  transform: translateY(team-size(20));
+}
+
+.team-coordinator-frame {
+  fill: $color-white;
+}
+
+.team-coordinator-photo,
+.team-group-photo {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.team-coordinator-photo {
+  margin-inline: auto;
+}
+
+.team-coordinator-filter {
+  position: absolute;
+  pointer-events: none;
+}
+
+.team-coordinator-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.team-coordinator-outline-color {
+  flood-color: $color-white;
+}
+
+.team-group {
+  width: 100%;
+  justify-self: center;
+  transform: translateX(team-size(15));
+}
+
+.team-coordinator-caption,
+.team-group-caption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.team-coordinator-caption {
+  width: 100%;
+  min-height: team-size(120);
+  margin: team-size(-62) 0 0 0%;
+  padding: team-size(24) team-size(16);
+  left: team-size(-38);
+  z-index: auto;
+  background-image: none;
+
+  flex-direction: column;
+  gap: team-size(5);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: url("/tim/coordinator-name-background.svg") center / 100% 100%
+      no-repeat;
+  }
+}
+
+.team-coordinator-name {
+  position: relative;
+  z-index: 3;
+}
+
+.team-group-caption {
+  width: 105%;
+  min-height: team-size(115);
+  margin: team-size(-32) 0 0 team-size(-2);
+  padding: team-size(20) team-size(28);
+  background-image: url("/tim/team-name-background.svg");
+}
+
+.team-group-title {
+  margin: 0;
+  color: $color-blue;
+  font-family: $font-display;
+  font-weight: $font-black;
+  text-transform: uppercase;
+  transform: translateY(team-size(10));
+  transform: translateX(team-size(-10));
+}
+
+.team-coordinator-label {
+  position: relative;
+  z-index: 3;
+  display: block;
+  flex-shrink: 0;
+  width: team-size(200);
+  max-width: 100%;
+  height: auto;
+}
+
+.team-coordinator-name {
+  margin: 0;
+  color: $color-black;
+  font-family: $font-display;
+  font-size: team-size(25);
+  font-weight: $font-black;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.team-group-title {
+  font-size: team-size(22);
+  line-height: 1.35;
+}
+
+.team-group-title span {
+  color: $color-black;
+}
+
+.team-arrow {
+  position: absolute;
+  top: 58%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: team-size(56);
+  height: team-size(56);
+  padding: team-size(6);
+  border: 0;
+  background: transparent;
+  transform: translateY(-50%);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &:disabled {
+    opacity: 1;
+    cursor: default;
+  }
+
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-yellow;
+    outline-offset: 4px;
+  }
+}
+
+.team-arrow-left {
+  left: team-size(-90);
+}
+
+.team-arrow-right {
+  right: team-size(0);
+
+  img {
+    transform: rotate(180deg);
+  }
+}
+
+.team-decorations {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.team-circle-striped,
+.team-circle-solid {
+  position: absolute;
+  display: block;
+  height: auto;
+}
+
+.team-circle-striped {
+  top: 0;
+  right: team-size(-20);
+  width: team-size(110);
+}
+
+.team-circle-solid {
+  position: absolute;
+  top: team-size(190);
+  right: team-size(-34);
+  width: team-size(100);
+  height: team-size(100);
+  border-radius: 50%;
+  background-color: $color-yellow;
+}
+
+.team-star {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  height: auto;
+  pointer-events: none;
+}
+
+.team-star-small {
+  right: team-size(-10);
+  bottom: team-size(-30);
+  width: team-size(350);
+}
+
+.team-star-large {
+  right: team-size(-30);
+  bottom: team-size(-40);
+  width: team-size(250);
+}
+
+.team-star-top {
+  right: team-size(-10);
+  bottom: team-size(150);
+  width: team-size(130);
+}
+
+.team-lightnings {
+  /*
+   * ORIGINALNA FIGMA GEOMETRIJA.
+   *
+   * Ovaj layer je vezan za ceo 1440 × 1024 design frame, ne za team-stage.
+   * Tako svih pet originalnih SVG-ova ostaje u svom prirodnom aspect ratio-u
+   * i na pozicijama na kojima su nacrtani u targetu.
+   */
+  position: absolute;
+  top: max(0px, calc((100svh - var(--team-design-width) * 1024 / 1440) / 2));
+  left: 0;
+  z-index: 1;
+
+  width: 100%;
+  max-width: 100vw;
+  height: calc(var(--team-design-width) * 1024 / 1440);
+  overflow: hidden;
+  contain: layout paint;
+
+  pointer-events: none;
+}
+
+.team-lightning {
+  position: absolute;
+  z-index: 1;
+
+  display: block;
+  max-width: none;
+  height: auto;
+
+  /*
+   * Dva inline SVG-a imaju namerno produžen samo jedan konkretan krak van
+   * originalnog viewBox-a. Zato overflow mora ostati vidljiv.
+   */
+  overflow: visible;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/*
+ * Exact original exports from the Figma target:
+ *
+ * left-large   = munjica-1.svg  (292 × 232)
+ * left-inner   = munjica.svg    (188 × 113)
+ * between      = Vector 219.svg (209 × 113)
+ * right-upper  = Vector 216.svg (199 × 60)
+ * right-lower  = Vector 217.svg (223 × 238)
+ *
+ * NEMA scaleX, preserveAspectRatio="none" niti razvlačenja.
+ */
+
+/* Donja leva munja: leva ivica ekrana -> coordinator. */
+.team-lightning-left-large {
+  top: calc(var(--team-design-width) * 576 / 1440);
+  left: var(--team-side-space);
+
+  width: calc(var(--team-design-width) * 292 / 1440);
+}
+
+/* Nastavak donje leve munje ispod coordinator kartice. */
+.team-lightning-left-inner {
+  /*
+   * Donja munja ispod koordinatora.
+   *
+   * Podignuta još više i minimalno pomerena udesno, da stvarni gornji-desni
+   * vrh dublje uđe pod beli coordinator shape, a ne samo da ga dodiruje.
+   */
+  top: calc(var(--team-design-width) * 529 / 1440);
+  left: calc(var(--team-side-space) + var(--team-design-width) * 259 / 1440);
+
+  width: calc(var(--team-design-width) * 188 / 1440);
+}
+
+/* Coordinator -> team kartica. */
+.team-lightning-between {
+  /*
+   * Munja između koordinatora i tima.
+   *
+   * Još malo ulevo i mrvu šira, tako da njen levi beli vrh dublje uđe pod
+   * coordinator karticu, a desni i dalje ostane sigurno pod team frame-om.
+   */
+  top: calc(var(--team-design-width) * 288 / 1440);
+  left: calc(var(--team-side-space) + var(--team-design-width) * 492 / 1440);
+
+  width: calc(var(--team-design-width) * 236 / 1440);
+}
+
+/* Team kartica -> desna ivica, gornji konektor. */
+.team-lightning-right-upper {
+  top: calc(var(--team-design-width) * 249 / 1440);
+  left: calc(var(--team-side-space) + var(--team-design-width) * 1240 / 1440);
+
+  width: calc(var(--team-design-width) * 199 / 1440);
+}
+
+/* Team kartica -> desna ivica, donja razgranata munja. */
+.team-lightning-right-lower {
+  top: calc(var(--team-design-width) * 428 / 1440);
+  left: calc(var(--team-side-space) + var(--team-design-width) * 1215 / 1440);
+
+  width: calc(var(--team-design-width) * 223 / 1440);
+}
+
+/*
+ * RESPONSIVE EDGE CONTINUATIONS
+ * =============================
+ *
+ * Originalni Figma target je 1440×1024, pa u njemu `munjica-1.svg`,
+ * `Vector 216.svg` i `Vector 217.svg` već fizički dodiruju ivicu design frame-a.
+ *
+ * Kada je browser širi od tog aspect-ratio-a, `--team-side-space` nastane levo
+ * i desno. Ovi elementi produžavaju SAMO krajnju belu granu kroz taj prazan
+ * prostor. Originalne munje iznad ostaju 100% nedeformisane.
+ */
+
+.team-lightning-edge {
+  position: absolute;
+  z-index: 0;
+  display: block;
+
+  pointer-events: none;
+}
+
+/*
+ * Nastavak početne grane `munjica-1.svg` do fizičkog x=0.
+ *
+ * SVG stroke koristi istu fizičku debljinu kao nastavak, pa i dijagonalni
+ * segmenti ostaju potpuno ujednačeni.
+ */
+.team-lightning-edge--left {
+  top: calc(var(--team-design-width) * 748 / 1440);
+  left: 0;
+
+  width: calc(var(--team-side-space) + 1px);
+  height: calc(var(--team-design-width) * 92 / 1440);
+
+  overflow: visible;
+}
+
+.team-lightning-edge--left path {
+  fill: none;
+  stroke: $color-white;
+  stroke-width: calc(var(--team-design-width) * 20 / 1440);
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+
+/* Krivudavi nastavak gornje grane sve do fizičke desne ivice. */
+.team-lightning-edge--right-upper {
+  top: calc(var(--team-design-width) * 235 / 1440);
+  right: 0;
+
+  width: calc(var(--team-side-space) + 3px);
+  height: calc(var(--team-design-width) * 70 / 1440);
+
+  background: $color-white;
+
+  clip-path: polygon(
+    0 28%,
+    18% 48%,
+    34% 18%,
+    50% 55%,
+    66% 25%,
+    82% 60%,
+    100% 35%,
+    100% 60%,
+    82% 85%,
+    66% 50%,
+    50% 80%,
+    34% 43%,
+    18% 73%,
+    0 52%
+  );
+}
+
+/* Krivudavi nastavak donje grane sve do fizičke desne ivice. */
+.team-lightning-edge--right-lower {
+  top: calc(var(--team-design-width) * 520 / 1440);
+  right: 0;
+
+  width: calc(var(--team-side-space) + 3px);
+  height: calc(var(--team-design-width) * 100 / 1440);
+
+  background: $color-white;
+
+  clip-path: polygon(
+    0 33%,
+    18% 55%,
+    34% 24%,
+    50% 58%,
+    66% 30%,
+    82% 62%,
+    100% 38%,
+    100% 65%,
+    82% 89%,
+    66% 56%,
+    50% 84%,
+    34% 50%,
+    18% 81%,
+    0 60%
+  );
+}
+
+/* ==========================================================================
+   DESKTOP TEAM BAND — rebuilt from scratch from the supplied Figma SVG
+   ========================================================================== */
+
+.team-band {
+  /*
+   * One continuous surface, deliberately longer than the viewport diagonal.
+   * The marquee is a direct child, so the band and text share one transform.
+   */
+  position: absolute;
+  top: team-size(-120);
+  left: calc(var(--team-side-space) - #{team-size(342)});
+  z-index: 0;
+
+  display: flex;
+  align-items: center;
+  width: 180vmax;
+  height: team-size(234.52);
+  isolation: isolate;
+
+  transform: rotate(46.912deg);
+  transform-origin: left top;
+
+  pointer-events: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: $color-blue-dark;
+
+    /* One uninterrupted reconstruction of the original saw-tooth shape. */
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% 66.67%,
+      98% 100%,
+      96% 66.67%,
+      94% 100%,
+      92% 66.67%,
+      90% 100%,
+      88% 66.67%,
+      86% 100%,
+      84% 66.67%,
+      82% 100%,
+      80% 66.67%,
+      78% 100%,
+      76% 66.67%,
+      74% 100%,
+      72% 66.67%,
+      70% 100%,
+      68% 66.67%,
+      66% 100%,
+      64% 66.67%,
+      62% 100%,
+      60% 66.67%,
+      58% 100%,
+      56% 66.67%,
+      54% 100%,
+      52% 66.67%,
+      50% 100%,
+      48% 66.67%,
+      46% 100%,
+      44% 66.67%,
+      42% 100%,
+      40% 66.67%,
+      38% 100%,
+      36% 66.67%,
+      34% 100%,
+      32% 66.67%,
+      30% 100%,
+      28% 66.67%,
+      26% 100%,
+      24% 66.67%,
+      22% 100%,
+      20% 66.67%,
+      18% 100%,
+      16% 66.67%,
+      14% 100%,
+      12% 66.67%,
+      10% 100%,
+      8% 66.67%,
+      6% 100%,
+      4% 66.67%,
+      2% 100%,
+      0 66.67%
+    );
+  }
+}
+
+.team-band-text-lane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+
+  width: 100%;
+  height: team-size(92);
+
+  transform: translateY(team-size(-63));
+  pointer-events: none;
+}
+
+.team-band-track {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: max-content;
+  height: 100%;
+  overflow: visible;
+
+  animation: team-band-scroll var(--team-band-duration, 40s) linear infinite;
+}
+
+.team-band-group {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+
+  width: max-content;
+  height: 100%;
+}
+
+.team-band-labels {
+  display: flex;
+  align-items: center;
+
+  gap: team-size(18);
+  width: max-content;
+  padding-right: team-size(18);
+
+  span {
+    flex: 0 0 auto;
+
+    color: $color-blue-dark;
+    font-family: $font-display;
+    font-size: team-size(68);
+    font-weight: $font-black;
+    line-height: 1;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+  }
+}
+
+@keyframes team-band-scroll {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-band-track {
+    animation: none;
+  }
+}
+
+.team-ribbon-track {
+  display: flex;
+  width: max-content;
+  animation: team-ribbon-scroll 45s linear infinite;
+  //animation-play-state: paused;
+}
+
+.team-ribbon-group {
+  position: relative;
+  flex: 0 0 auto;
+  width: max-content;
+  height: team-size(255);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: team-size(65);
+    left: 0;
+    width: 100%;
+    height: team-size(182.405);
+
+    background-image: url("/tim/ribbon-segment.svg");
+    background-repeat: round no-repeat;
+    background-position: left top;
+    background-size: team-size(700) team-size(182.405);
+  }
+}
+
+.team-ribbon-labels {
+  position: relative;
+  display: flex;
+  gap: team-size(70);
+  box-sizing: border-box;
+  width: max-content;
+  min-width: team-size(1400);
+  padding-right: team-size(70);
+
+  span {
+    flex: 0 0 auto;
+    color: $color-blue-dark;
+    font-family: $font-display;
+    font-size: team-size(80);
+    font-weight: $font-black;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+}
+
+@keyframes team-ribbon-scroll {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-ribbon-track {
+    animation: none;
+  }
+}
+
+.team-mobile-heading {
+  position: absolute;
+  z-index: 4;
+  top: team-size(80);
+  left: 50%;
+
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  transform: translateX(-50%);
+
+  color: $color-white;
+  font-family: $font-display;
+  font-size: team-size(50);
+  font-weight: $font-black;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  pointer-events: none;
+}
+.team-arrow img.team-arrow-icon-mobile {
+  display: none;
+}
+
+.team-mobile-lightning {
+  display: none;
+}
+
+.team-mobile-ribbon {
+  display: none;
+}
+
+@media #{$mobile} {
+  .team-section {
+    /*
+     * Mobile layout je nacrtan za 390px sadržaj između bočnih paddinga.
+     * Nema px cap-a: sve ostaje u istoj proporciji pri promeni širine/zoom-a.
+     */
+    --team-mobile-design-width: calc(100vw - 32px);
+    --team-unit: calc(var(--team-mobile-design-width) / 390);
+
+    display: block;
+    min-height: 100svh;
+    padding: team-size(24) 16px team-size(170);
+  }
+
+  .team-mobile-heading {
+    position: relative;
+    z-index: 3;
+    top: auto;
+    left: auto;
+
+    display: block;
+    width: 100%;
+    max-width: 390px;
+    margin: 0 auto 70px;
+    padding-inline: 0;
+
+    transform: none;
+
+    color: $color-white;
+    font-family: $font-display;
+    font-size: team-size(42);
+    font-weight: $font-black;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: normal;
+
+    pointer-events: auto;
+  }
+
+  .team-stage {
+    width: 100%;
+    height: auto;
+    transform: none;
+  }
+
+  .team-content {
+    position: relative;
+    top: auto;
+    left: auto;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 0;
+
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .team-coordinator {
+    width: team-size(340);
+    transform: translateY(team-size(38));
+  }
+
+  .team-coordinator-caption {
+    left: team-size(5);
+  }
+  .team-coordinator-photo {
+    transform: translateX(team-size(50));
+  }
+
+  .team-group {
+    width: team-size(380);
+    max-width: 100%;
+    transform: none;
+  }
+
+  .team-arrow {
+    top: team-size(100);
+    width: team-size(50);
+    height: team-size(80);
+  }
+
+  .team-arrow-left {
+    left: team-size(-10);
+  }
+
+  .team-arrow-right {
+    right: team-size(-10);
+  }
+
+  .team-group-caption {
+    width: 100%;
+    min-height: 0;
+    margin: team-size(12) 0 0;
+    padding: 0 team-size(8);
+    background-image: none;
+  }
+
+  .team-group-title {
+    color: $color-yellow;
+    font-size: team-size(26);
+    line-height: 1.2;
+    transform: none;
+  }
+
+  .team-group-title span {
+    color: $color-white;
+  }
+
+  .team-band {
+    display: none;
+  }
+
+  .team-ribbon {
+    display: none;
+  }
+
+  .team-lightnings {
+    display: block;
+  }
+
+  .team-lightning,
+  .team-lightning-edge {
+    display: none;
+  }
+
+  .team-circle-solid {
+    top: team-size(210);
+    right: calc(-16px - #{team-size(35)});
+    width: team-size(70);
+    height: team-size(70);
+  }
+
+  .team-decorations {
+    display: block;
+  }
+
+  .team-circle-striped {
+    top: team-size(100);
+    right: team-size(-25);
+    width: team-size(85);
+  }
+  .team-star-small {
+    right: team-size(-150);
+    bottom: team-size(-60);
+    width: team-size(400);
+    transform: translateY(10%);
+  }
+
+  .team-star-large {
+    display: none;
+  }
+
+  .team-star-top {
+    display: block;
+    right: team-size(-20);
+    bottom: team-size(25);
+    width: team-size(170);
+    transform: translateY(10%);
+  }
+
+  .team-arrow img.team-arrow-icon-desktop {
+    display: none;
+  }
+
+  .team-arrow img.team-arrow-icon-mobile {
+    display: block;
+  }
+
+  .team-mobile-lightning {
+    position: absolute;
+    left: 50%;
+    z-index: 0;
+    display: block;
+    width: 100vw;
+    max-width: none;
+    height: auto;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .team-mobile-lightning-top {
+    top: team-size(0);
+  }
+
+  .team-mobile-lightning-bottom {
+    top: team-size(170);
+  }
+
+  .team-group-caption {
+    position: relative;
+    z-index: 1;
+  }
+  .team-mobile-ribbon {
+    position: absolute;
+    left: 50%;
+    z-index: -1;
+    display: block;
+    width: calc(100vw + #{team-size(80)});
+    height: team-size(125);
+    overflow: visible;
+    pointer-events: none;
+    transform: translateX(-50%) rotate(5deg) scale(1.7);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: team-size(32);
+      left: 0;
+      width: 100%;
+      height: team-size(91.2025);
+      background: $color-blue-dark;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 68%,
+        95% 100%,
+        90% 68%,
+        85% 100%,
+        80% 68%,
+        75% 100%,
+        70% 68%,
+        65% 100%,
+        60% 68%,
+        55% 100%,
+        50% 68%,
+        45% 100%,
+        40% 68%,
+        35% 100%,
+        30% 68%,
+        25% 100%,
+        20% 68%,
+        15% 100%,
+        10% 68%,
+        5% 100%,
+        0 68%
+      );
+    }
+
+    .team-ribbon-track {
+      position: relative;
+      z-index: 1;
+      animation-duration: var(--team-mobile-ribbon-duration, 35s);
+    }
+
+    .team-ribbon-group {
+      width: max-content;
+      height: team-size(125);
+
+      &::before {
+        content: none;
+      }
+    }
+
+    .team-ribbon-labels {
+      gap: team-size(10);
+      min-width: 0;
+      padding-right: team-size(10);
+      transform: translateY(team-size(6));
+
+      span {
+        font-size: team-size(34);
+        letter-spacing: 0.02em;
+      }
+    }
+  }
+
+  .team-mobile-ribbon-top {
+    top: team-size(22);
+  }
+
+  .team-mobile-ribbon-bottom {
+    top: calc(100% + #{team-size(30)});
+  }
+}

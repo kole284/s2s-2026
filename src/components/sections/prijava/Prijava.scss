@@ -677,6 +677,8 @@
   }
 
   &-workshop-card {
+    --workshop-level-shadow-color: #{$color-yellow};
+
     position: relative;
     display: flex;
     min-width: 0;
@@ -684,11 +686,13 @@
     border: 2px solid $color-blue-dark;
     flex-direction: column;
     background: $color-white;
-    box-shadow: 7px 7px 0 $color-yellow;
+    box-shadow: 7px 7px 0 $color-blue;
 
     &--secondary {
+      --workshop-level-shadow-color: #{$color-blue};
+
       border-color: $color-black;
-      box-shadow: 7px 7px 0 $color-blue;
+      box-shadow: 7px 7px 0 $color-yellow;
     }
 
     &__heading {
@@ -1020,10 +1024,19 @@
   }
 
   &-workshop-details {
+    position: relative;
     display: grid;
     min-width: 0;
     gap: 14px;
     margin-top: 14px;
+
+    &--conditional {
+      isolation: isolate;
+    }
+
+    &--locked {
+      cursor: not-allowed;
+    }
   }
 
   &-workshop-field {
@@ -1146,8 +1159,11 @@
     font-weight: 800;
     line-height: 1;
     background: transparent;
+    filter: drop-shadow(4px 4px 0 var(--workshop-level-shadow-color));
     cursor: pointer;
-    transition: transform 140ms ease;
+    transition:
+      filter 140ms ease,
+      transform 140ms ease;
 
     &::before,
     &::after {
@@ -1406,18 +1422,29 @@
     gap: 18px;
   }
 
+  &-panel-main {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 0.66fr);
+    gap: 18px;
+    padding: 16px;
+    border: 2px solid $color-black;
+    box-sizing: border-box;
+    background: $color-white;
+  }
+
   &-panel-attendance {
     position: relative;
     isolation: isolate;
     display: grid;
     min-width: 0;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 12px 14px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
     align-items: center;
     padding: 16px 18px 18px;
     border: 2px solid $color-black;
     background: $color-white;
-    box-shadow: 7px 7px 0 $color-yellow;
+    box-shadow: 7px 7px 0 $color-blue;
     clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
 
     &--error {
@@ -1440,19 +1467,48 @@
 
     &__content {
       min-width: 0;
-      padding-right: 46px;
+      padding-right: 0;
     }
 
     &__title {
-      margin: 6px 0 0;
+      margin: 0;
       color: $color-black;
       font-family: $font-display;
       font-size: 20px;
       font-weight: $font-black;
-      line-height: 1.05;
+      line-height: 1.14;
 
-      span {
-        color: $color-blue-dark;
+      &--ribbon {
+        position: relative;
+        z-index: 0;
+        display: flex;
+        width: 100%;
+        min-height: 44px;
+        padding: 9px 34px 11px;
+        align-items: center;
+        box-sizing: border-box;
+        isolation: isolate;
+
+        &::before {
+          position: absolute;
+          z-index: -1;
+          inset: 0;
+          content: "";
+          background: $color-yellow;
+          clip-path: polygon(
+            0 30%,
+            4% 4%,
+            12% 0,
+            34% 2%,
+            56% 0,
+            92% 13%,
+            100% 50%,
+            94% 100%,
+            66% 88%,
+            35% 100%,
+            8% 86%
+          );
+        }
       }
     }
 
@@ -1521,6 +1577,8 @@
     }
 
     &__button {
+      --panel-choice-shadow: 4px;
+
       min-height: 46px;
       padding: 8px 14px;
       border: 2px solid $color-black;
@@ -1530,6 +1588,11 @@
       font-weight: $font-black;
       line-height: 1;
       background: $color-white;
+      box-shadow:
+        var(--panel-choice-shadow)
+        var(--panel-choice-shadow)
+        0
+        $color-yellow;
       cursor: pointer;
       transition:
         color 140ms ease,
@@ -1541,7 +1604,11 @@
       &--active {
         color: $color-white;
         background: $color-blue;
-        box-shadow: 4px 4px 0 $color-yellow;
+        box-shadow:
+          var(--panel-choice-shadow)
+          var(--panel-choice-shadow)
+          0
+          $color-yellow;
         transform: translateY(-1px);
       }
 
@@ -1574,6 +1641,7 @@
     background: $color-white;
 
     &--question {
+      border-color: $color-black;
       box-shadow: 7px 7px 0 $color-yellow;
     }
 
@@ -1583,6 +1651,18 @@
 
     &--error {
       border-color: #b00020;
+    }
+
+    &--inactive {
+      position: relative;
+      isolation: isolate;
+      cursor: not-allowed;
+
+      .prijava-panel-textarea {
+        color: rgba($color-black, 0.62);
+        background: rgba($color-white, 0.78);
+        cursor: not-allowed;
+      }
     }
 
     &__heading {
@@ -1624,6 +1704,60 @@
       font-size: 13px;
       font-weight: 700;
       line-height: 1.3;
+
+      &--reasons-question {
+        position: relative;
+        z-index: 0;
+        display: inline-flex;
+        width: 100%;
+        max-width: 100%;
+        min-height: 46px;
+        margin: 0 0 14px;
+        padding: 9px 34px 12px;
+        align-items: center;
+        justify-content: flex-start;
+        box-sizing: border-box;
+        color: $color-black;
+        font-family: $font-display;
+        font-size: 15px;
+        font-weight: $font-black;
+        line-height: 1.18;
+        text-align: left;
+        text-wrap: pretty;
+        isolation: isolate;
+        cursor: text;
+
+        &::before {
+          position: absolute;
+          z-index: -1;
+          top: -2px;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          content: "";
+          background: $color-yellow;
+          clip-path: polygon(
+            0 30%,
+            4% 4%,
+            12% 0,
+            34% 2%,
+            56% 0,
+            92% 13%,
+            100% 50%,
+            94% 100%,
+            66% 88%,
+            35% 100%,
+            8% 86%
+          );
+        }
+      }
+
+      &--panel-question-ribbon {
+        min-height: 58px;
+        padding: 12px 38px 14px;
+        font-size: 20px;
+        line-height: 1.14;
+      }
     }
   }
 
@@ -1773,6 +1907,214 @@
       margin: 0;
       accent-color: $color-blue;
     }
+  }
+
+  /* =========================================================
+     STEP 4 — ISKUSTVA
+     Desktop: 2-column card layout. Mobile: stacked in reading order.
+     ========================================================= */
+
+  &-experience-layout {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    gap: 18px;
+    padding: 18px;
+    border: 2px solid $color-black;
+    box-sizing: border-box;
+    background: $color-white;
+    box-shadow: 7px 7px 0 $color-yellow;
+  }
+
+  &-experience-left,
+  &-experience-right {
+    display: grid;
+    min-width: 0;
+    gap: 16px;
+  }
+
+  &-experience-card {
+    min-width: 0;
+    padding: 15px 16px 16px;
+    border: 2px solid $color-black;
+    box-sizing: border-box;
+    background: $color-white;
+
+    &--participation {
+      box-shadow: 6px 6px 0 $color-blue;
+    }
+
+    &--text {
+      box-shadow: 6px 6px 0 $color-blue;
+    }
+
+    &--cv {
+      box-shadow: 6px 6px 0 $color-yellow;
+    }
+
+    &--proposal {
+      box-shadow: 6px 6px 0 $color-yellow;
+    }
+
+    &--error {
+      border-color: #b00020;
+    }
+  }
+
+  &-experience-ribbon {
+    position: relative;
+    z-index: 0;
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 34px;
+    margin: 0 0 12px;
+    padding: 7px 24px 8px 16px;
+    align-items: center;
+    box-sizing: border-box;
+    color: $color-black;
+    font-family: $font-display;
+    font-size: 15px;
+    font-weight: $font-black;
+    line-height: 1.14;
+    isolation: isolate;
+
+    &::before {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      content: "";
+      background: $color-yellow;
+      clip-path: polygon(
+        0 28%,
+        5% 4%,
+        16% 0,
+        38% 3%,
+        58% 0,
+        88% 8%,
+        100% 50%,
+        91% 100%,
+        64% 90%,
+        36% 100%,
+        9% 88%
+      );
+    }
+  }
+
+  &-experience-choice {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+
+    &__button {
+      --experience-choice-shadow: 4px;
+
+      min-height: 46px;
+      padding: 8px 14px;
+      border: 2px solid $color-black;
+      color: $color-black;
+      font-family: $font-display;
+      font-size: 17px;
+      font-weight: $font-black;
+      line-height: 1;
+      background: $color-white;
+      box-shadow:
+        var(--experience-choice-shadow)
+        var(--experience-choice-shadow)
+        0
+        $color-yellow;
+      cursor: pointer;
+      transition:
+        color 140ms ease,
+        background 140ms ease,
+        box-shadow 140ms ease,
+        transform 140ms ease;
+
+      &:hover,
+      &--active {
+        color: $color-white;
+        background: $color-blue;
+        box-shadow:
+          var(--experience-choice-shadow)
+          var(--experience-choice-shadow)
+          0
+          $color-yellow;
+        transform: translateY(-1px);
+      }
+
+      &:focus-visible {
+        outline: 3px solid $color-yellow;
+        outline-offset: 3px;
+      }
+    }
+  }
+
+  &-experience-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+
+    & + & {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 3px solid $color-blue;
+    }
+  }
+
+  &-experience-textarea,
+  &-experience-input {
+    --experience-control-shadow: 6px;
+    --experience-control-shadow-color: #{$color-yellow};
+
+    width: 100%;
+    border: 2px solid $color-black;
+    border-radius: 0;
+    box-sizing: border-box;
+    color: $color-black;
+    font-family: $font-body;
+    font-size: 15px;
+    background: $color-white;
+    outline: 0;
+    box-shadow:
+      var(--experience-control-shadow)
+      var(--experience-control-shadow)
+      0
+      var(--experience-control-shadow-color);
+
+    &:focus-visible {
+      border-color: $color-black;
+      outline: 0;
+      box-shadow:
+        var(--experience-control-shadow)
+        var(--experience-control-shadow)
+        0
+        var(--experience-control-shadow-color);
+    }
+  }
+
+  &-experience-card--cv &-experience-input,
+  &-experience-card--proposal &-experience-textarea {
+    --experience-control-shadow-color: #{$color-blue};
+  }
+
+  &-experience-textarea {
+    min-height: 150px;
+    padding: 13px 15px;
+    line-height: 1.35;
+    resize: none;
+  }
+
+  &-experience-input {
+    min-height: 52px;
+    padding: 10px 14px;
+  }
+
+  &-experience-description {
+    margin: 0 0 10px;
+    color: $color-black;
+    font-family: $font-body;
+    font-size: 13px;
+    line-height: 1.35;
   }
 
   &_navigacija {
@@ -2230,7 +2572,7 @@
         background 140ms ease,
         box-shadow 140ms ease;
 
-      &[aria-pressed="true"] {
+      &[aria-checked="true"] {
         background: $color-white;
         box-shadow: 4px 4px 0 $color-blue-dark;
         transform: translateY(-1px) rotate(-1deg);
@@ -2347,24 +2689,6 @@
       margin-top: 16px;
     }
 
-    .prijava-workshop-validation-backdrop {
-      padding: 18px;
-    }
-
-    .prijava-workshop-validation-popup {
-      width: min(100%, 500px);
-      padding: 28px 22px 24px;
-
-      &__item {
-        grid-template-columns: 1fr;
-        gap: 4px;
-      }
-
-      &__button {
-        width: 100%;
-      }
-    }
-
     .prijava-workshop-label {
       font-size: 13px;
     }
@@ -2409,7 +2733,14 @@
     }
 
     .prijava-panel-layout {
-      gap: 22px;
+      gap: 18px;
+    }
+
+    .prijava-panel-main {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+      padding: 12px;
+      border-width: 2px;
     }
 
     .prijava-panel-attendance {
@@ -2457,6 +2788,14 @@
     .prijava-panel-block {
       padding: 15px;
 
+      &--panel-question {
+        min-height: 250px;
+      }
+
+      &--reasons {
+        min-height: 260px;
+      }
+
       &__title {
         font-size: 23px;
       }
@@ -2472,6 +2811,25 @@
       font-size: 13px;
     }
 
+    .prijava-panel-block__description--reasons-question {
+      width: 100%;
+      max-width: 100%;
+      min-height: 46px;
+      margin-bottom: 14px;
+      padding: 8px 28px 11px;
+      font-size: 13px;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+
+    .prijava-panel-block__description--panel-question-ribbon {
+      min-height: 54px;
+      padding: 10px 30px 12px;
+      font-size: 17px;
+      line-height: 1.16;
+    }
+
     .prijava-panel-textarea {
       font-size: 14px;
 
@@ -2482,6 +2840,69 @@
       &--reasons {
         min-height: 190px;
       }
+    }
+
+    /* STEP 4 — ISKUSTVA / MOBILE */
+    .form_step--4 {
+      gap: 0;
+    }
+
+    .prijava-experience-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      padding: 12px;
+    }
+
+    .prijava-experience-left,
+    .prijava-experience-right {
+      display: contents;
+    }
+
+    .prijava-experience-card {
+      padding: 14px;
+
+      &--participation {
+        order: 1;
+      }
+
+      &--previous {
+        order: 2;
+      }
+
+      &--proposal {
+        order: 3;
+      }
+
+      &--cv {
+        order: 4;
+      }
+    }
+
+    .prijava-experience-ribbon {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 26px 10px;
+      font-size: 15px;
+      line-height: 1.16;
+    }
+
+    .prijava-experience-choice__button {
+      min-height: 44px;
+      font-size: 17px;
+    }
+
+    .prijava-experience-textarea {
+      min-height: 150px;
+      font-size: 15px;
+    }
+
+    .prijava-experience-input {
+      min-height: 50px;
+      font-size: 15px;
+    }
+
+    .prijava-experience-description {
+      font-size: 13px;
     }
 
     /* Shared mobile decoration for every registration page.
@@ -2946,13 +3367,13 @@
         transform: translateY(calc(var(--prijava-design-width) * -2 / 1440));
       }
 
-      &[aria-pressed="true"] {
+      &[aria-checked="true"] {
         background: $color-white;
         box-shadow:
           calc(var(--prijava-design-width) * 5 / 1440)
           calc(var(--prijava-design-width) * 5 / 1440)
           0
-          $color-blue-dark;
+          $color-blue;
       }
     }
 
@@ -3065,7 +3486,7 @@
         calc(var(--prijava-design-width) * 7 / 1440)
         calc(var(--prijava-design-width) * 7 / 1440)
         0
-        $color-yellow;
+        $color-blue;
 
       &--secondary {
         display: flex;
@@ -3074,7 +3495,7 @@
           calc(var(--prijava-design-width) * 7 / 1440)
           calc(var(--prijava-design-width) * 7 / 1440)
           0
-          $color-blue;
+          $color-yellow;
       }
 
       &__heading {
@@ -3248,6 +3669,12 @@
         calc(var(--prijava-design-width) * 11 / 1440)
         calc(var(--prijava-design-width) * 6.5 / 1440);
       font-size: calc(var(--prijava-design-width) * 19 / 1440);
+      filter: drop-shadow(
+        calc(var(--prijava-design-width) * 4 / 1440)
+        calc(var(--prijava-design-width) * 4 / 1440)
+        0
+        var(--workshop-level-shadow-color)
+      );
 
       &.prijava_opcija-aktivna {
         filter: drop-shadow(
@@ -3357,155 +3784,65 @@
     }
 
     /* =======================================================
-       DESKTOP STEP 3 — PANEL
-       V7: compact vertical composition that stays inside the paper.
+       DESKTOP STEP 4 — ISKUSTVA
+       Layout from the sketch:
+       left/top = DA/NE, left/bottom = workshop proposal,
+       right/top = CV link, right/bottom = conditional S2S experience.
        ======================================================= */
 
-    .form_step--3 {
+    .prijava_sadrzaj > .form_step.form_step--4 {
+      width: 100%;
+      margin:
+        calc(var(--prijava-design-width) * 18 / 1440)
+        0
+        0;
+    }
+
+    .form_step--4 {
       display: block;
-      width: min(100%, calc(var(--prijava-design-width) * 1120 / 1440));
+      height: 100%;
       min-height: 0;
-      margin: 0 auto;
-      padding: 0;
     }
 
-    .prijava-panel-layout {
-      display: grid;
-      min-height: 0;
-      grid-template-rows: auto auto;
-      gap: calc(var(--prijava-design-width) * 14 / 1440);
-    }
-
-    /* ---------- GORNJI PANEL BLOK ---------- */
-
-    .prijava-panel-attendance {
-      box-sizing: border-box;
+    .prijava-experience-layout {
       grid-template-columns:
-        auto
-        minmax(0, 1fr)
-        minmax(
-          calc(var(--prijava-design-width) * 245 / 1440),
-          calc(var(--prijava-design-width) * 300 / 1440)
-        );
-      gap:
-        calc(var(--prijava-design-width) * 8 / 1440)
-        calc(var(--prijava-design-width) * 16 / 1440);
+        minmax(0, 0.43fr)
+        minmax(0, 0.57fr);
+      gap: calc(var(--prijava-design-width) * 30 / 1440);
+      height: 100%;
+      min-height: 0;
       padding:
-        calc(var(--prijava-design-width) * 13 / 1440)
-        calc(var(--prijava-design-width) * 20 / 1440)
-        calc(var(--prijava-design-width) * 14 / 1440);
+        calc(var(--prijava-design-width) * 22 / 1440)
+        calc(var(--prijava-design-width) * 24 / 1440);
       border-width: var(--workshop-outline);
+      align-items: start;
       box-shadow:
-        calc(var(--prijava-design-width) * 6 / 1440)
-        calc(var(--prijava-design-width) * 6 / 1440)
+        calc(var(--prijava-design-width) * 7 / 1440)
+        calc(var(--prijava-design-width) * 7 / 1440)
         0
         $color-yellow;
-
-      &__icon {
-        width: calc(var(--prijava-design-width) * 42 / 1440);
-        height: calc(var(--prijava-design-width) * 42 / 1440);
-        font-size: calc(var(--prijava-design-width) * 25 / 1440);
-      }
-
-      &__content {
-        min-width: 0;
-        padding-right: calc(var(--prijava-design-width) * 40 / 1440);
-      }
-
-      &__title {
-        max-width: 45ch;
-        margin-top: calc(var(--prijava-design-width) * 4 / 1440);
-        font-size: calc(var(--prijava-design-width) * 19 / 1440);
-        line-height: 1.02;
-      }
-
-      &__description {
-        margin-top: calc(var(--prijava-design-width) * 4 / 1440);
-        font-size: calc(var(--prijava-design-width) * 12 / 1440);
-        line-height: 1.18;
-      }
-
-      &__bolt {
-        top: calc(var(--prijava-design-width) * 11 / 1440);
-        right: calc(var(--prijava-design-width) * 17 / 1440);
-        width: calc(var(--prijava-design-width) * 33 / 1440);
-        height: calc(var(--prijava-design-width) * 33 / 1440);
-      }
     }
 
-    .prijava-panel-kicker {
-      min-height: calc(var(--prijava-design-width) * 23 / 1440);
-      padding:
-        calc(var(--prijava-design-width) * 4 / 1440)
-        calc(var(--prijava-design-width) * 12 / 1440)
-        calc(var(--prijava-design-width) * 5 / 1440);
-      font-size: calc(var(--prijava-design-width) * 10.5 / 1440);
-    }
-
-    .prijava-panel-choice {
-      grid-column: 3;
-      grid-row: 1;
-      align-self: center;
-      width: 100%;
-      margin: 0;
-      padding-top: calc(var(--prijava-design-width) * 28 / 1440);
-
-      &__button {
-        min-height: calc(var(--prijava-design-width) * 45 / 1440);
-        padding:
-          calc(var(--prijava-design-width) * 7 / 1440)
-          calc(var(--prijava-design-width) * 12 / 1440);
-        border-width: var(--workshop-outline);
-        font-size: calc(var(--prijava-design-width) * 17 / 1440);
-
-        &:hover,
-        &--active {
-          box-shadow:
-            calc(var(--prijava-design-width) * 4 / 1440)
-            calc(var(--prijava-design-width) * 4 / 1440)
-            0
-            $color-yellow;
-        }
-      }
-    }
-
-    /* ---------- DONJI SADRŽAJ ---------- */
-
-    .prijava-panel-content-row {
-      min-height: 0;
-      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    .prijava-experience-left,
+    .prijava-experience-right {
+      grid-template-rows:
+        calc(var(--prijava-design-width) * 170 / 1440)
+        minmax(0, 1fr);
       gap: calc(var(--prijava-design-width) * 18 / 1440);
-      align-items: stretch;
-
-      &--single {
-        grid-template-columns: minmax(0, 1fr);
-
-        .prijava-panel-block--reasons {
-          width: min(100%, calc(var(--prijava-design-width) * 940 / 1440));
-          justify-self: center;
-        }
-      }
+      height: 100%;
+      min-height: 0;
+      align-content: stretch;
     }
 
-    .prijava-panel-block {
-      box-sizing: border-box;
-      min-height: calc(var(--prijava-design-width) * 195 / 1440);
+    .prijava-experience-card {
       padding:
-        calc(var(--prijava-design-width) * 11 / 1440)
+        calc(var(--prijava-design-width) * 14 / 1440)
         calc(var(--prijava-design-width) * 16 / 1440)
-        calc(var(--prijava-design-width) * 12 / 1440);
+        calc(var(--prijava-design-width) * 16 / 1440);
       border-width: var(--workshop-outline);
-      overflow: visible;
 
-      &--question {
-        box-shadow:
-          calc(var(--prijava-design-width) * 6 / 1440)
-          calc(var(--prijava-design-width) * 6 / 1440)
-          0
-          $color-yellow;
-      }
-
-      &--reasons {
+      &--participation {
+        min-height: calc(var(--prijava-design-width) * 118 / 1440);
         box-shadow:
           calc(var(--prijava-design-width) * 6 / 1440)
           calc(var(--prijava-design-width) * 6 / 1440)
@@ -3513,90 +3850,593 @@
           $color-blue;
       }
 
+      &--text {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr);
+        min-height: 0;
+        height: 100%;
+        overflow: hidden;
+        box-shadow:
+          calc(var(--prijava-design-width) * 6 / 1440)
+          calc(var(--prijava-design-width) * 6 / 1440)
+          0
+          $color-blue;
+      }
+
+      &--cv {
+        min-height: calc(var(--prijava-design-width) * 150 / 1440);
+        box-shadow:
+          calc(var(--prijava-design-width) * 6 / 1440)
+          calc(var(--prijava-design-width) * 6 / 1440)
+          0
+          $color-yellow;
+      }
+
+      &--proposal {
+        box-shadow:
+          calc(var(--prijava-design-width) * 6 / 1440)
+          calc(var(--prijava-design-width) * 6 / 1440)
+          0
+          $color-yellow;
+      }
+
+    }
+
+    .prijava-experience-ribbon {
+      min-height: calc(var(--prijava-design-width) * 34 / 1440);
+      margin-bottom: calc(var(--prijava-design-width) * 10 / 1440);
+      padding:
+        calc(var(--prijava-design-width) * 6 / 1440)
+        calc(var(--prijava-design-width) * 24 / 1440)
+        calc(var(--prijava-design-width) * 7 / 1440)
+        calc(var(--prijava-design-width) * 14 / 1440);
+      font-size: calc(var(--prijava-design-width) * 16 / 1440);
+      line-height: 1.12;
+    }
+
+    .prijava-experience-choice {
+      gap: calc(var(--prijava-design-width) * 12 / 1440);
+
+      &__button {
+        --experience-choice-shadow:
+          calc(var(--prijava-design-width) * 3 / 1440);
+
+        min-height: calc(var(--prijava-design-width) * 44 / 1440);
+        padding:
+          calc(var(--prijava-design-width) * 7 / 1440)
+          calc(var(--prijava-design-width) * 12 / 1440);
+        border-width: var(--workshop-outline);
+        font-size: calc(var(--prijava-design-width) * 17.5 / 1440);
+      }
+    }
+
+    .prijava-experience-field {
+      display: flex;
+      height: auto;
+      min-height: 0;
+      flex-direction: column;
+      overflow: visible;
+
+      & + & {
+        margin-top: calc(var(--prijava-design-width) * 12 / 1440);
+        padding-top: calc(var(--prijava-design-width) * 12 / 1440);
+        border-top-width: calc(var(--prijava-design-width) * 3 / 1440);
+      }
+    }
+
+    .prijava-experience-textarea,
+    .prijava-experience-input {
+      --experience-control-shadow:
+        calc(var(--prijava-design-width) * 6 / 1440);
+
+      border-width: var(--workshop-outline);
+      font-size: calc(var(--prijava-design-width) * 15.5 / 1440);
+    }
+
+    .prijava-experience-textarea {
+      height: auto;
+      min-height: 0;
+      flex: 1 1 auto;
+      padding:
+        calc(var(--prijava-design-width) * 11 / 1440)
+        calc(var(--prijava-design-width) * 13 / 1440);
+    }
+
+    .prijava-experience-card--text .prijava-experience-textarea {
+      height: auto;
+      min-height: 0;
+      flex: 1 1 0;
+    }
+
+    .prijava-experience-input {
+      min-height: calc(var(--prijava-design-width) * 48 / 1440);
+      padding:
+        calc(var(--prijava-design-width) * 9 / 1440)
+        calc(var(--prijava-design-width) * 13 / 1440);
+    }
+
+    .prijava-experience-description {
+      margin-bottom: calc(var(--prijava-design-width) * 8 / 1440);
+      font-size: calc(var(--prijava-design-width) * 13 / 1440);
+      line-height: 1.28;
+    }
+
+    &__form-area:has(.form_step--4) {
+      top: calc(var(--prijava-design-width) * 126 / 1440);
+      right: calc(var(--prijava-design-width) * 72 / 1440);
+      bottom: calc(var(--prijava-design-width) * 32 / 1440);
+      left: calc(var(--prijava-design-width) * 110 / 1440);
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      row-gap: calc(var(--prijava-design-width) * 14 / 1440);
+      align-content: stretch;
+
+      .prijava_sadrzaj {
+        min-width: 0;
+        min-height: 0;
+        overflow: visible;
+      }
+
+      .prijava_navigacija {
+        position: static;
+        justify-self: end;
+        justify-content: flex-end;
+        margin-top: 0;
+        padding-top: 0;
+        gap: calc(var(--prijava-design-width) * 16 / 1440);
+      }
+    }
+
+    /* =======================================================
+       DESKTOP STEP 3 — PANEL
+       Three-part composition:
+       - left/top: attendance
+       - left/bottom: question for speakers
+       - right: large three-reasons textarea
+       Navigation stays in its own row below the composition.
+       ======================================================= */
+
+    /*
+     * The generic desktop rule above caps every non-step-1/2 form at 820 design
+     * units. Keep the LEFT panel exactly where/at the size it was under that cap,
+     * but let Step 3 itself use the full available paper width so only the
+     * "Zašto baš S2S?" column grows.
+     */
+    .prijava_sadrzaj > .form_step.form_step--3 {
+      width: 100%;
+      margin:
+        calc(var(--prijava-design-width) * 24 / 1440)
+        0
+        0;
+    }
+
+    .form_step--3 {
+      display: block;
+      height: 100%;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .prijava-panel-layout {
+      display: grid;
+
+      /*
+       * Keep the exact same left-column width and the exact same expanded
+       * right-column width from the previous iteration, but center the WHOLE
+       * two-column composition inside the available paper area.
+       *
+       * Previously the old inset existed only as padding-left, which pushed the
+       * composition to the right. We now subtract that same inset from the
+       * layout width and use auto margins, so nothing inside changes size.
+       */
+      width: calc(
+        100% -
+          (
+            (
+                100% -
+                  calc(var(--prijava-design-width) * 820 / 1440)
+              ) /
+              2
+          )
+      );
+      height: 100%;
+      min-height: 0;
+      margin: 0 auto;
+      box-sizing: border-box;
+
+      grid-template-columns:
+        calc(var(--prijava-design-width) * 390 / 1440)
+        minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr);
+      gap: calc(var(--prijava-design-width) * 24 / 1440);
+      align-items: stretch;
+    }
+
+    /* ---------- LEFT COLUMN: TWO STACKED ITEMS ---------- */
+
+    .prijava-panel-main {
+      display: grid;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: minmax(0, 0.46fr) minmax(0, 0.54fr);
+      gap: calc(var(--prijava-design-width) * 18 / 1440);
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .prijava-panel-attendance {
+      box-sizing: border-box;
+      align-content: start;
+      grid-template-columns: minmax(0, 1fr);
+      gap: calc(var(--prijava-design-width) * 9 / 1440);
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      padding:
+        calc(var(--prijava-design-width) * 14 / 1440)
+        calc(var(--prijava-design-width) * 16 / 1440)
+        calc(var(--prijava-design-width) * 14 / 1440);
+
+      /*
+       * Desktop: clean, continuous frame.
+       * The base clip-path was cutting the real CSS border on the upper-left
+       * and lower-right corners, which made the outline look broken.
+       */
+      border: var(--workshop-outline) solid $color-black;
+      clip-path: none;
+      background: $color-white;
+      box-shadow:
+        calc(var(--prijava-design-width) * 4 / 1440)
+        calc(var(--prijava-design-width) * 4 / 1440)
+        0
+        $color-blue;
+
+      &__icon {
+        width: calc(var(--prijava-design-width) * 40 / 1440);
+        height: calc(var(--prijava-design-width) * 40 / 1440);
+        font-size: calc(var(--prijava-design-width) * 30 / 1440);
+      }
+
+      &__content {
+        min-width: 0;
+        padding-right: 0;
+      }
+
+      &__title {
+        margin-top: 0;
+        font-size: calc(var(--prijava-design-width) * 17 / 1440);
+        line-height: 1.16;
+
+        &--ribbon {
+          min-height: calc(var(--prijava-design-width) * 46 / 1440);
+          padding:
+            calc(var(--prijava-design-width) * 9 / 1440)
+            calc(var(--prijava-design-width) * 32 / 1440)
+            calc(var(--prijava-design-width) * 11 / 1440);
+        }
+      }
+
+      &__description {
+        margin-top: calc(var(--prijava-design-width) * 3 / 1440);
+        font-size: calc(var(--prijava-design-width) * 11.5 / 1440);
+        line-height: 1.22;
+      }
+
+      &__bolt {
+        top: calc(var(--prijava-design-width) * 11 / 1440);
+        right: calc(var(--prijava-design-width) * 11 / 1440);
+        width: calc(var(--prijava-design-width) * 31 / 1440);
+        height: calc(var(--prijava-design-width) * 31 / 1440);
+      }
+    }
+
+    .prijava-panel-kicker {
+      min-height: calc(var(--prijava-design-width) * 24 / 1440);
+      padding:
+        calc(var(--prijava-design-width) * 3 / 1440)
+        calc(var(--prijava-design-width) * 9 / 1440)
+        calc(var(--prijava-design-width) * 4 / 1440);
+      font-size: calc(var(--prijava-design-width) * 11.5 / 1440);
+    }
+
+    .prijava-panel-choice {
+      grid-column: 1 / -1;
+      align-self: end;
+      width: 100%;
+      margin: auto 0 0;
+      padding-top: calc(var(--prijava-design-width) * 9 / 1440);
+
+      &__button {
+        --panel-choice-shadow:
+          calc(var(--prijava-design-width) * 3 / 1440);
+
+        min-height: calc(var(--prijava-design-width) * 42 / 1440);
+        padding:
+          calc(var(--prijava-design-width) * 5 / 1440)
+          calc(var(--prijava-design-width) * 8 / 1440);
+        border: var(--workshop-outline) solid $color-black;
+        box-sizing: border-box;
+        font-size: calc(var(--prijava-design-width) * 16 / 1440);
+
+        &:hover,
+        &--active {
+          box-shadow:
+            calc(var(--prijava-design-width) * 3 / 1440)
+            calc(var(--prijava-design-width) * 3 / 1440)
+            0
+            $color-yellow;
+        }
+      }
+    }
+
+    /* ---------- LEFT/BOTTOM + RIGHT/LARGE ---------- */
+
+    .prijava-panel-block {
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0;
+      padding:
+        calc(var(--prijava-design-width) * 12 / 1440)
+        calc(var(--prijava-design-width) * 16 / 1440)
+        calc(var(--prijava-design-width) * 13 / 1440);
+      border-width: var(--workshop-outline);
+      overflow: visible;
+
+      &--panel-question {
+        height: 100%;
+        min-height: 0;
+        background: $color-white;
+        box-shadow:
+          calc(var(--prijava-design-width) * 7 / 1440)
+          calc(var(--prijava-design-width) * 7 / 1440)
+          0
+          $color-yellow;
+      }
+
+      &--reasons {
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        box-shadow:
+          calc(var(--prijava-design-width) * 5 / 1440)
+          calc(var(--prijava-design-width) * 5 / 1440)
+          0
+          $color-blue;
+      }
+
       &__heading {
         gap: calc(var(--prijava-design-width) * 7 / 1440);
-        margin-bottom: calc(var(--prijava-design-width) * 6 / 1440);
+        margin-bottom: calc(var(--prijava-design-width) * 5 / 1440);
       }
 
       &__number {
-        width: calc(var(--prijava-design-width) * 32 / 1440);
-        height: calc(var(--prijava-design-width) * 29 / 1440);
+        width: calc(var(--prijava-design-width) * 34 / 1440);
+        height: calc(var(--prijava-design-width) * 30 / 1440);
         font-size: calc(var(--prijava-design-width) * 13 / 1440);
       }
 
       &__title {
-        margin-top: calc(var(--prijava-design-width) * 2 / 1440);
-        font-size: calc(var(--prijava-design-width) * 22 / 1440);
+        margin-top: calc(var(--prijava-design-width) * 1 / 1440);
+        font-size: calc(var(--prijava-design-width) * 21 / 1440);
+        line-height: 0.98;
       }
 
       &__description {
-        max-width: 54ch;
-        margin-bottom: calc(var(--prijava-design-width) * 6 / 1440);
+        max-width: 72ch;
+        margin-bottom: calc(var(--prijava-design-width) * 5 / 1440);
         font-size: calc(var(--prijava-design-width) * 11.5 / 1440);
-        line-height: 1.16;
+        line-height: 1.18;
       }
     }
 
-    .prijava-panel-label {
-      min-height: calc(var(--prijava-design-width) * 27 / 1440);
-      margin-bottom: calc(var(--prijava-design-width) * 5 / 1440);
+    .prijava-panel-block--reasons {
       padding:
-        calc(var(--prijava-design-width) * 4.5 / 1440)
-        calc(var(--prijava-design-width) * 25 / 1440)
-        calc(var(--prijava-design-width) * 5.5 / 1440);
-      font-size: calc(var(--prijava-design-width) * 12.5 / 1440);
+        calc(var(--prijava-design-width) * 18 / 1440)
+        calc(var(--prijava-design-width) * 22 / 1440)
+        calc(var(--prijava-design-width) * 20 / 1440);
+
+      .prijava-panel-block__description--reasons-question {
+        width: 100%;
+        max-width: 100%;
+        min-height: calc(var(--prijava-design-width) * 47 / 1440);
+        margin: 0 0 calc(var(--prijava-design-width) * 14 / 1440);
+        padding:
+          calc(var(--prijava-design-width) * 8 / 1440)
+          calc(var(--prijava-design-width) * 34 / 1440)
+          calc(var(--prijava-design-width) * 12 / 1440);
+        font-size: calc(var(--prijava-design-width) * 15 / 1440);
+        line-height: 1.2;
+        text-align: left;
+      }
+
+
+    }
+
+    /* Match the question ribbon text size to the panel-attendance question. */
+    .prijava-panel-block__description--panel-question-ribbon {
+      font-size: calc(var(--prijava-design-width) * 17 / 1440);
+      line-height: 1.16;
+    }
+
+    .prijava-panel-label {
+      min-height: calc(var(--prijava-design-width) * 22 / 1440);
+      margin-bottom: calc(var(--prijava-design-width) * 4 / 1440);
+      padding:
+        calc(var(--prijava-design-width) * 3.5 / 1440)
+        calc(var(--prijava-design-width) * 20 / 1440)
+        calc(var(--prijava-design-width) * 4.5 / 1440);
+      font-size: calc(var(--prijava-design-width) * 12 / 1440);
 
       &::before {
         top: calc(var(--prijava-design-width) * -3 / 1440);
       }
     }
 
+    .prijava-panel-block--reasons .prijava-panel-label {
+      min-height: calc(var(--prijava-design-width) * 32 / 1440);
+      padding:
+        calc(var(--prijava-design-width) * 5 / 1440)
+        calc(var(--prijava-design-width) * 25 / 1440)
+        calc(var(--prijava-design-width) * 6 / 1440);
+      font-size: calc(var(--prijava-design-width) * 15 / 1440);
+    }
+
     .prijava-panel-textarea-shell {
       --panel-textarea-outline: var(--workshop-outline);
-      --panel-textarea-shadow: var(--workshop-shadow);
+      --panel-textarea-shadow: calc(var(--prijava-design-width) * 4 / 1440);
 
+      display: flex;
+      min-height: 0;
+      flex: 1 1 auto;
+      box-sizing: border-box;
       margin-top: 0;
     }
 
-    .prijava-panel-textarea {
-      padding:
-        calc(var(--prijava-design-width) * 9 / 1440)
-        calc(var(--prijava-design-width) * 13 / 1440)
-        calc(var(--prijava-design-width) * 9 / 1440)
-        calc(var(--prijava-design-width) * 15 / 1440);
-      font-size: calc(var(--prijava-design-width) * 13 / 1440);
+    .prijava-panel-block--reasons .prijava-panel-textarea-shell {
+      --panel-textarea-shadow: calc(var(--prijava-design-width) * 7 / 1440);
 
-      &--question {
-        min-height: calc(var(--prijava-design-width) * 92 / 1440);
+      position: relative;
+      isolation: isolate;
+      padding:
+        0
+        var(--panel-textarea-shadow)
+        var(--panel-textarea-shadow)
+        0;
+      overflow: visible;
+    }
+
+    .prijava-panel-block--reasons .prijava-panel-textarea-shell::before {
+      z-index: -1;
+      top: var(--panel-textarea-shadow);
+      right: 0;
+      bottom: 0;
+      left: var(--panel-textarea-shadow);
+      background: $color-yellow;
+      clip-path: none;
+    }
+
+    .prijava-panel-block--reasons .prijava-panel-textarea-shell::after {
+      display: none;
+    }
+
+    .prijava-panel-block--reasons .prijava-panel-textarea {
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
+      border: var(--workshop-outline) solid $color-black;
+      background: $color-white;
+      clip-path: none;
+      outline: 0;
+    }
+
+    /*
+     * PANEL QUESTION textarea:
+     * clean rectangular black frame + visible yellow offset underneath.
+     * This overrides only the left-bottom "Koje pitanje..." textbox.
+     */
+    .prijava-panel-block--panel-question .prijava-panel-textarea-shell {
+      --panel-textarea-shadow: calc(var(--prijava-design-width) * 7 / 1440);
+
+      position: relative;
+      isolation: isolate;
+      padding:
+        0
+        var(--panel-textarea-shadow)
+        var(--panel-textarea-shadow)
+        0;
+      overflow: visible;
+    }
+
+    .prijava-panel-block--panel-question .prijava-panel-textarea-shell::before {
+      z-index: -1;
+      top: var(--panel-textarea-shadow);
+      right: 0;
+      bottom: 0;
+      left: var(--panel-textarea-shadow);
+      background: $color-yellow;
+      clip-path: none;
+    }
+
+    .prijava-panel-block--panel-question .prijava-panel-textarea-shell::after {
+      display: none;
+    }
+
+    .prijava-panel-block--panel-question .prijava-panel-textarea {
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
+      border: var(--workshop-outline) solid $color-black;
+      background: $color-white;
+      clip-path: none;
+      outline: 0;
+    }
+
+    .prijava-panel-textarea {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      flex: 1 1 auto;
+      padding:
+        calc(var(--prijava-design-width) * 8 / 1440)
+        calc(var(--prijava-design-width) * 12 / 1440)
+        calc(var(--prijava-design-width) * 8 / 1440)
+        calc(var(--prijava-design-width) * 14 / 1440);
+      font-size: calc(var(--prijava-design-width) * 14 / 1440);
+      line-height: 1.3;
+
+      &--question,
+      &--reasons {
+        min-height: 0;
       }
 
       &--reasons {
-        min-height: calc(var(--prijava-design-width) * 105 / 1440);
+        font-size: calc(var(--prijava-design-width) * 16 / 1440);
+        line-height: 1.35;
       }
     }
 
     /* ---------- FORM AREA / NAV ---------- */
 
     &__form-area:has(.form_step--3) {
-      top: calc(var(--prijava-design-width) * 142 / 1440);
-      right: calc(var(--prijava-design-width) * 82 / 1440);
-      bottom: calc(var(--prijava-design-width) * 34 / 1440);
-      left: calc(var(--prijava-design-width) * 82 / 1440);
+      top: calc(var(--prijava-design-width) * 108 / 1440);
+      right: calc(var(--prijava-design-width) * 28 / 1440);
+      bottom: calc(var(--prijava-design-width) * 24 / 1440);
+      left: calc(var(--prijava-design-width) * 28 / 1440);
       display: grid;
-      grid-template-rows: auto auto;
-      row-gap: calc(var(--prijava-design-width) * 10 / 1440);
-      align-content: start;
+      grid-template-rows: minmax(0, 1fr) auto;
+      row-gap: calc(var(--prijava-design-width) * 16 / 1440);
+      align-content: stretch;
 
       .prijava_sadrzaj {
         min-width: 0;
         min-height: 0;
+        overflow: visible;
       }
 
       .prijava_navigacija {
         position: static;
+        z-index: 3;
+        width: 63%;
         justify-self: end;
+        justify-content: flex-end;
         margin-top: 0;
         padding-top: 0;
+        gap: calc(var(--prijava-design-width) * 16 / 1440);
+
+        .prijava_dugme {
+          width: calc(var(--prijava-design-width) * 190 / 1440);
+          min-width: 0;
+          min-height: 0;
+          flex: 0 0 calc(var(--prijava-design-width) * 190 / 1440);
+          padding: 0;
+          font-size: calc(var(--prijava-design-width) * 18 / 1440);
+        }
       }
     }
 
@@ -3653,7 +4493,534 @@
   }
 }
 
+.prijava .prijava-workshop-label--question {
+  min-width: 0;
+  box-sizing: border-box;
+  white-space: normal;
+
+  > span { min-width: 0; }
+}
+
+.prijava .prijava-required-star {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-start: 0.3em;
+  vertical-align: middle;
+  object-fit: contain;
+  pointer-events: none;
+
+  &.prijava-field__required,
+  &.prijava_required-marker,
+  &.prijava-workshop-select__required {
+    width: var(--workshop-select-required-size, 1.4em);
+    height: auto;
+    margin: 0;
+    background: transparent;
+  }
+}
+
+/* Locked regions use the supplied hand-drawn SVGs. The image is a purely
+   decorative layer and never affects sizing or input interaction. */
+.prijava .prijava-scribble-host {
+  --scribble-inset: 4px;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  cursor: not-allowed;
+  user-select: none;
+}
+
+.prijava .prijava-scribble-overlay {
+  position: absolute;
+  z-index: 20;
+  top: var(--scribble-inset);
+  left: var(--scribble-inset);
+  display: block;
+  width: calc(100% - (2 * var(--scribble-inset)));
+  height: calc(100% - (2 * var(--scribble-inset)));
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+
+}
+
+.prijava .prijava-scribble-overlay--panel {
+  top: var(--panel-textarea-outline);
+  left: var(--panel-textarea-outline);
+  width: calc(
+    100% - var(--panel-textarea-shadow) -
+      var(--panel-textarea-outline) - var(--panel-textarea-outline)
+  );
+  height: calc(
+    100% - var(--panel-textarea-shadow) -
+      var(--panel-textarea-outline) - var(--panel-textarea-outline)
+  );
+  object-fit: fill;
+  object-position: center;
+  clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+}
+
+.prijava .prijava-scribble-overlay--experience {
+  position: absolute;
+  z-index: 3;
+  inset: 6px 8px;
+  width: calc(100% - 16px);
+  max-width: none;
+  height: calc(100% - 12px);
+  max-height: none;
+  object-fit: fill;
+  object-position: center;
+  pointer-events: none;
+  transform: none;
+  clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+}
+
+.prijava .prijava-workshop-conditional--locked {
+  position: relative;
+}
+
+.prijava .prijava-workshop-scribble {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.prijava .prijava-eraser-scribble__eraser-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 800ms ease-in-out;
+}
+
+.prijava .prijava-eraser-scribble--workshop
+  .prijava-eraser-scribble__eraser-path {
+  transition-duration: 1000ms;
+}
+
+.prijava .prijava-eraser-scribble--unlocked
+  .prijava-eraser-scribble__eraser-path {
+  stroke-dashoffset: 0;
+}
+
+.prijava
+  .prijava-workshop-details--conditional.prijava-workshop-details--locked
+  .prijava-workshop-textarea:disabled {
+  color: rgba($color-black, 0.62);
+  background: #fffdf4;
+  background-color: #fffdf4;
+  opacity: 1;
+  -webkit-text-fill-color: rgba($color-black, 0.62);
+  filter: none;
+  mix-blend-mode: normal;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  pointer-events: none;
+  cursor: not-allowed;
+
+  &::placeholder {
+    color: rgba($color-black, 0.46);
+    opacity: 1;
+    -webkit-text-fill-color: rgba($color-black, 0.46);
+  }
+}
+
+.prijava .prijava-experience-card--inactive .prijava-experience-textarea {
+  color: rgba($color-black, 0.62);
+  background: $color-white;
+  opacity: 1;
+  -webkit-text-fill-color: rgba($color-black, 0.62);
+  cursor: not-allowed;
+
+  &::placeholder {
+    color: rgba($color-black, 0.46);
+    opacity: 1;
+    -webkit-text-fill-color: rgba($color-black, 0.46);
+  }
+}
+
+.prijava .prijava-panel-block--inactive .prijava-panel-textarea:disabled {
+  color: rgba($color-black, 0.62);
+  background: $color-white;
+  opacity: 1;
+  -webkit-text-fill-color: rgba($color-black, 0.62);
+  cursor: not-allowed;
+
+  &::placeholder {
+    color: rgba($color-black, 0.46);
+    opacity: 1;
+    -webkit-text-fill-color: rgba($color-black, 0.46);
+  }
+}
+
+/* Conditional textboxes use the same clean rectangular frame as Experience. */
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell,
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell {
+  padding: 0;
+  overflow: hidden;
+}
+
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell {
+  box-shadow:
+    var(--workshop-shadow, 7px)
+    var(--workshop-shadow, 7px)
+    0
+    $color-blue;
+}
+
+.prijava .prijava-workshop-card--secondary .prijava-workshop-select__shadow path {
+  fill: $color-blue;
+}
+
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell {
+  box-shadow:
+    var(--workshop-shadow, 7px)
+    var(--workshop-shadow, 7px)
+    0
+    $color-blue;
+}
+
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell::before,
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell::after,
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell::before,
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell::after {
+  display: none;
+}
+
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea,
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border: var(--workshop-outline, 2px) solid $color-black;
+  box-sizing: border-box;
+  background: $color-white;
+  clip-path: none;
+  outline: 0;
+}
+
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell--error .prijava-workshop-textarea {
+  border-color: #b00020;
+}
+
+/* Later-step required badges reuse the same asset and edge placement as Step 1. */
+.prijava .prijava-required-star--edge {
+  position: absolute;
+  z-index: 25;
+  top: 0;
+  right: 0;
+  width: 34px;
+  height: 31px;
+  margin: 0;
+  transform: translate(42%, -42%) rotate(-3deg);
+}
+
+.prijava .prijava-workshop-label,
+.prijava .prijava-panel-attendance__title--ribbon,
+.prijava .prijava-panel-block__description--reasons-question,
+.prijava .prijava-experience-ribbon {
+  position: relative;
+  overflow: visible;
+}
+
+.prijava .prijava-workshop-select__required.prijava-field__required {
+  top: 0;
+  right: -3px;
+  left: auto;
+  width: 34px;
+  height: 31px;
+  transform: translate(20%, -45%) rotate(-3deg);
+}
+
+@media #{$desktop} {
+  .prijava .prijava-required-star--edge,
+  .prijava .prijava-workshop-select__required.prijava-field__required {
+    width: calc(var(--prijava-design-width) * 34 / 1440);
+    height: calc(var(--prijava-design-width) * 31 / 1440);
+  }
+
+  .prijava .prijava-workshop-select__required.prijava-field__required {
+    top: 0;
+    right: calc(var(--prijava-design-width) * -3 / 1440);
+  }
+}
+
+/* The remaining text controls use the same hand-cut polygon frame as the
+   primary workshop textarea. The offset layer stays inside each shell, so
+   the skewed edge cannot be clipped or leave a white gap in the border. */
+.prijava .prijava-experience-control-shell {
+  --experience-control-outline: 2px;
+  --experience-control-shadow: 6px;
+  --experience-control-shadow-color: #{$color-yellow};
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 0;
+  padding:
+    0
+    var(--experience-control-shadow)
+    var(--experience-control-shadow)
+    0;
+
+  &::before,
+  &::after {
+    position: absolute;
+    content: "";
+    clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+    pointer-events: none;
+  }
+
+  &::before {
+    z-index: 0;
+    top: var(--experience-control-shadow);
+    right: 0;
+    bottom: 0;
+    left: var(--experience-control-shadow);
+    background: var(--experience-control-shadow-color);
+  }
+
+  &::after {
+    z-index: 1;
+    top: 0;
+    right: var(--experience-control-shadow);
+    bottom: var(--experience-control-shadow);
+    left: 0;
+    background: $color-black;
+  }
+
+  &--input {
+    flex: 0 0 auto;
+  }
+
+  &--scribble {
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+.prijava .prijava-experience-card--cv .prijava-experience-control-shell,
+.prijava .prijava-experience-card--proposal .prijava-experience-control-shell {
+  --experience-control-shadow-color: #{$color-blue};
+}
+
+.prijava .prijava-experience-textarea,
+.prijava .prijava-experience-input {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  border: 0;
+  box-shadow: none;
+  clip-path: polygon(
+    calc(3% + var(--experience-control-outline))
+      var(--experience-control-outline),
+    calc(100% - var(--experience-control-outline))
+      var(--experience-control-outline),
+    calc(97% - var(--experience-control-outline))
+      calc(100% - var(--experience-control-outline)),
+    var(--experience-control-outline)
+      calc(100% - var(--experience-control-outline))
+  );
+
+  &:focus-visible {
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+  }
+}
+
+.prijava .prijava-experience-textarea {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+/* Restore the polygon frame for the conditional workshop and both panel
+   textareas after the desktop rectangular-frame compatibility rules. */
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell {
+  --workshop-textarea-shadow: var(--workshop-shadow, 7px);
+
+  padding:
+    0
+    var(--workshop-textarea-shadow)
+    var(--workshop-textarea-shadow)
+    0;
+  overflow: visible;
+  box-shadow: none;
+}
+
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell::before,
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell::after {
+  display: block;
+}
+
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea-shell::before {
+  background: $color-blue;
+}
+
+.prijava .prijava-workshop-details--conditional .prijava-workshop-textarea {
+  z-index: 2;
+  border: 0;
+  background: $color-white;
+  clip-path: polygon(
+    calc(3% + var(--workshop-textarea-outline))
+      var(--workshop-textarea-outline),
+    calc(100% - var(--workshop-textarea-outline))
+      var(--workshop-textarea-outline),
+    calc(97% - var(--workshop-textarea-outline))
+      calc(100% - var(--workshop-textarea-outline)),
+    var(--workshop-textarea-outline)
+      calc(100% - var(--workshop-textarea-outline))
+  );
+}
+
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell,
+.prijava .prijava-panel-block--reasons .prijava-panel-textarea-shell {
+  padding:
+    0
+    var(--panel-textarea-shadow)
+    var(--panel-textarea-shadow)
+    0;
+  overflow: visible;
+  box-shadow: none;
+}
+
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell::before,
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell::after,
+.prijava .prijava-panel-block--reasons .prijava-panel-textarea-shell::before,
+.prijava .prijava-panel-block--reasons .prijava-panel-textarea-shell::after {
+  display: block;
+  clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+}
+
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell::before {
+  z-index: 0;
+  background: $color-blue;
+}
+
+.prijava .prijava-panel-block--reasons .prijava-panel-textarea-shell::before {
+  z-index: 0;
+  background: $color-yellow;
+}
+
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell::after,
+.prijava .prijava-panel-block--reasons .prijava-panel-textarea-shell::after {
+  z-index: 1;
+  top: 0;
+  right: var(--panel-textarea-shadow);
+  bottom: var(--panel-textarea-shadow);
+  left: 0;
+  background: $color-black;
+}
+
+.prijava .prijava-panel-block--panel-question .prijava-panel-textarea,
+.prijava .prijava-panel-block--reasons .prijava-panel-textarea {
+  position: relative;
+  z-index: 2;
+  border: 0;
+  clip-path: polygon(
+    calc(3% + var(--panel-textarea-outline))
+      var(--panel-textarea-outline),
+    calc(100% - var(--panel-textarea-outline))
+      var(--panel-textarea-outline),
+    calc(97% - var(--panel-textarea-outline))
+      calc(100% - var(--panel-textarea-outline)),
+    var(--panel-textarea-outline)
+      calc(100% - var(--panel-textarea-outline))
+  );
+}
+
+@media #{$desktop} {
+  .prijava .prijava-experience-control-shell {
+    --experience-control-outline: var(--workshop-outline);
+    --experience-control-shadow:
+      calc(var(--prijava-design-width) * 6 / 1440);
+  }
+}
+
+/* PANEL and ISKUSTVA choices use the same cut-paper silhouette as the
+   workshop level controls, while retaining their existing state colors. */
+.prijava .prijava-panel-choice__button,
+.prijava .prijava-experience-choice__button {
+  --choice-outline: 2px;
+  --choice-fill: #{$color-white};
+
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(
+    var(--choice-shadow)
+    var(--choice-shadow)
+    0
+    $color-yellow
+  );
+
+  &::before,
+  &::after {
+    position: absolute;
+    content: "";
+    clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+    pointer-events: none;
+  }
+
+  &::before {
+    z-index: -2;
+    inset: 0;
+    background: $color-black;
+  }
+
+  &::after {
+    z-index: -1;
+    inset: var(--choice-outline);
+    background: var(--choice-fill);
+  }
+
+  &:hover,
+  &--active {
+    --choice-fill: #{$color-blue};
+
+    color: $color-white;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.prijava .prijava-panel-choice__button {
+  --choice-shadow: var(--panel-choice-shadow);
+}
+
+.prijava .prijava-experience-choice__button {
+  --choice-shadow: var(--experience-choice-shadow);
+}
+
+.prijava .prijava-panel-choice[aria-invalid="true"]
+  .prijava-panel-choice__button::before {
+  background: #b00020;
+}
+
+@media #{$desktop} {
+  .prijava .prijava-panel-choice__button,
+  .prijava .prijava-experience-choice__button {
+    --choice-outline: var(--workshop-outline);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .prijava .prijava-eraser-scribble__eraser-path {
+    transition: none;
+  }
+
   .prijava__mobile-s2s-track {
     animation: none !important;
     transform: translate3d(0, 0, 0) !important;
@@ -3664,5 +5031,76 @@
   .prijava *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* The validation dialog is portaled to document.body, outside .prijava. */
+@media #{$mobile} {
+  .prijava-workshop-validation-backdrop {
+    padding: 16px;
+  }
+
+  .prijava-workshop-validation-popup {
+    display: flex;
+    width: calc(100vw - 32px);
+    max-width: 360px;
+    max-height: calc(100dvh - 48px);
+    padding: 26px 20px 22px;
+    flex-direction: column;
+    overflow-y: auto;
+
+    &__title {
+      line-height: 1.05;
+    }
+
+    &__intro {
+      margin-bottom: 18px;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    &__list {
+      min-height: 0;
+      gap: 8px;
+      margin-bottom: 22px;
+      overflow-y: auto;
+    }
+
+    &__item {
+      display: flex;
+      gap: 4px;
+      padding: 12px 14px;
+      flex-direction: column;
+      align-items: stretch;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+
+    &__card,
+    &__message {
+      width: 100%;
+      min-width: 0;
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+
+    &__card {
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    &__message {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    &__button {
+      width: 70%;
+      min-width: 0;
+      min-height: 46px;
+      margin: 0 auto;
+      text-align: center;
+    }
   }
 }

@@ -1,0 +1,335 @@
+.footer {
+  /*
+   * Isti design-space princip kao ostale desktop sekcije:
+   * 1440 × 1024 -> 140.625dvh.
+   *
+   * Sve dimenzije footera izlaze iz istog tokena, pa browser zoom
+   * ne menja međusobne proporcije elemenata.
+   */
+  --footer-design-width: min(100vw, 140.625dvh);
+  --footer-u: calc(var(--footer-design-width) / 1440);
+
+  position: relative;
+  margin-top: auto;
+  padding: calc(var(--footer-u) * 108) 0 calc(var(--footer-u) * 70);
+  overflow: visible;
+  background-color: $color-blue-dark;
+}
+
+.footer-zigzag {
+  position: absolute;
+  top: calc(var(--footer-u) * -30);
+  left: 0;
+  z-index: 2;
+
+  width: 100%;
+  height: calc(var(--footer-u) * 31);
+
+  background-color: $color-blue-dark;
+  pointer-events: none;
+
+  clip-path: polygon(
+    0% 100%,
+    0.9% 55%,
+    3.8% 7%,
+    7.4% 91%,
+    11.1% 2%,
+    15% 94%,
+    18.7% 11%,
+    22.5% 88%,
+    26.1% 5%,
+    30.4% 97%,
+    34% 14%,
+    37.9% 90%,
+    41.5% 4%,
+    45.8% 95%,
+    49.3% 10%,
+    53.1% 89%,
+    56.9% 3%,
+    60.8% 97%,
+    64.4% 13%,
+    68.5% 91%,
+    72% 6%,
+    76.2% 96%,
+    79.8% 15%,
+    83.7% 89%,
+    87.5% 4%,
+    91.6% 94%,
+    95.3% 10%,
+    100% 100%
+  );
+}
+
+.footer-inner {
+  position: relative;
+  z-index: 3;
+
+  display: grid;
+  grid-template-columns:
+    minmax(calc(var(--footer-u) * 200), 1fr)
+    calc(var(--footer-u) * 330)
+    minmax(calc(var(--footer-u) * 200), 1fr);
+  align-items: center;
+
+  width: calc(var(--footer-u) * 1324);
+  margin: 0 auto;
+}
+
+.footer-address {
+  justify-self: start;
+}
+
+.footer-social {
+  justify-self: end;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: calc(var(--footer-u) * 34);
+  margin-bottom: calc(var(--footer-u) * 14);
+  padding: 0 calc(var(--footer-u) * 20);
+
+  border-radius: 0;
+
+  font-family: $font-display;
+  font-size: calc(var(--footer-u) * 16);
+  font-weight: $font-black;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  transform-origin: center;
+}
+
+.footer-address .footer-badge {
+  transform: rotate(-2.5deg);
+}
+
+.footer-social .footer-badge {
+  transform: rotate(2.2deg);
+}
+
+.footer-badge--yellow {
+  color: $color-black;
+  background-color: $color-yellow;
+}
+
+.footer-badge--white {
+  color: $color-black;
+  background-color: $color-white;
+}
+
+.footer-address-lines {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--footer-u) * 10);
+
+  margin: 0;
+  padding: 0;
+
+  color: $color-white;
+  font-family: $font-body;
+  font-size: calc(var(--footer-u) * 20);
+  font-style: normal;
+  font-weight: $font-black;
+  line-height: 1.25;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: calc(var(--footer-u) * 330);
+}
+
+.footer-logo-image {
+  display: block;
+
+  width: calc(var(--footer-u) * 330);
+  height: auto;
+}
+
+.footer-social-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(var(--footer-u) * 11);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.footer-social-link {
+  display: block;
+
+  color: $color-white;
+  font-family: $font-body;
+  font-size: calc(var(--footer-u) * 20);
+  font-weight: $font-black;
+  line-height: 1.25;
+  text-align: right;
+  text-decoration: none;
+
+  transition: opacity 0.2s ease;
+}
+
+.footer-social-link:hover {
+  opacity: 0.7;
+}
+
+@media #{$mobile} {
+  .footer {
+    /*
+     * Mobile referenca je 390px. I ovde sve koristi jedan token,
+     * pa nema mešanja fiksnih px vrednosti sa skaliranim elementima.
+     */
+    --footer-mobile-design-width: 100vw;
+    --footer-u: calc(var(--footer-mobile-design-width) / 390);
+
+    padding: calc(var(--footer-u) * 55) calc(var(--footer-u) * 25)
+      calc(var(--footer-u) * 65);
+  }
+
+  .footer-zigzag {
+    top: calc(var(--footer-u) * -28);
+    height: calc(var(--footer-u) * 29);
+
+    clip-path: polygon(
+      0% 100%,
+      0.8% 64%,
+      4.1% 8%,
+      5% 5%,
+      9% 94%,
+      13.2% 3%,
+      14.1% 1%,
+      18.2% 91%,
+      22.4% 12%,
+      23.2% 9%,
+      27.4% 97%,
+      31.5% 6%,
+      32.3% 4%,
+      36.5% 93%,
+      40.7% 15%,
+      41.5% 12%,
+      45.8% 98%,
+      49.8% 5%,
+      50.7% 3%,
+      54.9% 92%,
+      59% 11%,
+      59.8% 8%,
+      64.1% 96%,
+      68.1% 4%,
+      69% 2%,
+      73.2% 94%,
+      77.3% 14%,
+      78.1% 11%,
+      82.4% 98%,
+      86.5% 7%,
+      87.4% 5%,
+      91.6% 93%,
+      95.7% 12%,
+      96.5% 9%,
+      100% 100%
+    );
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .footer-address {
+    order: 1;
+    align-self: flex-start;
+  }
+
+  .footer-badge {
+    height: calc(var(--footer-u) * 27);
+    margin-bottom: calc(var(--footer-u) * 18);
+    padding: 0 calc(var(--footer-u) * 13);
+
+    font-size: calc(var(--footer-u) * 14);
+  }
+
+  .footer-address-lines {
+    gap: calc(var(--footer-u) * 7);
+
+    font-size: calc(var(--footer-u) * 16);
+    line-height: 1.25;
+  }
+
+  .footer-social {
+    order: 2;
+    align-self: stretch;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    margin-top: calc(var(--footer-u) * 39);
+  }
+
+  .footer-social .footer-badge {
+    margin-bottom: calc(var(--footer-u) * 22);
+  }
+
+  .footer-social-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: calc(var(--footer-u) * 35);
+    row-gap: calc(var(--footer-u) * 18);
+    justify-items: start;
+    align-items: start;
+
+    width: 100%;
+  }
+
+  .footer-social-link {
+    font-size: calc(var(--footer-u) * 16);
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .footer-logo {
+    order: 3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    margin-top: calc(var(--footer-u) * 43);
+  }
+
+  .footer-logo-image {
+    display: block;
+
+    width: calc(var(--footer-u) * 340);
+    max-width: 100%;
+    height: auto;
+  }
+
+  .footer-address .footer-badge {
+    transform: rotate(-2.8deg);
+  }
+
+  .footer-social .footer-badge {
+    transform: rotate(2.5deg);
+  }
+}

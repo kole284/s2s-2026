@@ -6,12 +6,10 @@ import Agenda from "./sections/agenda/Agenda";
 import Pitanja from "./sections/pitanja/Pitanja";
 import Partneri from "./sections/partneri/Partneri";
 import Tim from "./sections/tim/Tim";
-import Prijava from "./sections/prijava/Prijava";
-import Navbar from "./shared/navbar/Navbar";
+import Footer from "./shared/footer/Footer";
 const Test = () => {
   return (
     <>
-      <Navbar />
       <Naslovna />
       <OProjektu />
       <Radionice />
@@ -20,7 +18,7 @@ const Test = () => {
       <Pitanja />
       <Partneri />
       <Tim />
-      <Prijava />
+      <Footer />
     </>
   );
 };

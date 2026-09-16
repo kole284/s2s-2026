@@ -1,5 +1,24 @@
 .o-projektu {
   --o-projektu-design-width: min(100vw, 140.625dvh);
+  --o-projektu-bottom-teeth: calc(var(--o-projektu-design-width) * 64 / 1440);
+  --o-projektu-teeth-shape: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--o-projektu-bottom-teeth)),
+    87.5% 100%,
+    75% calc(100% - var(--o-projektu-bottom-teeth)),
+    62.5% 100%,
+    50% calc(100% - var(--o-projektu-bottom-teeth)),
+    37.5% 100%,
+    25% calc(100% - var(--o-projektu-bottom-teeth)),
+    12.5% 100%,
+    0 calc(100% - var(--o-projektu-bottom-teeth))
+  );
+  --o-projektu-flat-shape: polygon(
+    0 0, 100% 0, 100% 100%, 87.5% 100%, 75% 100%,
+    62.5% 100%, 50% 100%, 37.5% 100%, 25% 100%,
+    12.5% 100%, 0 100%
+  );
 
   position: relative;
   z-index: 1;
@@ -12,6 +31,27 @@
   background: $color-white;
   margin-top: -2px;
   padding-top: 2px;
+}
+
+/* Završni zupci su deo O projektu, u toku stranice pre belog naslova Radionica. */
+.o-projektu::after {
+  content: "";
+  display: block;
+  height: calc(var(--o-projektu-bottom-teeth) + 1px);
+  margin-top: -1px;
+  background: $color-blue;
+  clip-path: var(--o-projektu-teeth-shape);
+  pointer-events: none;
+}
+
+/* Uz plavu podlogu prikaza predavača, beli prorezi između zubaca ne pripadaju prelazu. */
+.o-projektu:has(+ .radionice-page--predavac-open)::after {
+  clip-path: var(--o-projektu-flat-shape);
+}
+
+.o-projektu:has(+ .radionice-page--view-to-workshop-unfolding)::after {
+  clip-path: var(--o-projektu-teeth-shape);
+  transition: clip-path 420ms linear;
 }
 
 .o-projektu-white-stage,
@@ -48,6 +88,19 @@
   right: 0;
   bottom: 0;
   left: 0;
+  content: "";
+  pointer-events: none;
+  background: $color-blue;
+}
+
+/* SVG ima proziran donji rub; plava podloga ga spaja sa završnim zupcima. */
+.o-projektu-blue-stage::after {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--o-projektu-bottom-teeth);
   content: "";
   pointer-events: none;
   background: $color-blue;
@@ -119,6 +172,7 @@
   font-weight: $font-regular;
   line-height: 1.2;
   letter-spacing: calc(var(--o-projektu-design-width) * -0.25 / 1440);
+  text-align: justify;
   transition: height 380ms ease;
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -194,9 +248,11 @@
     var(--o-projektu-design-width) * -84.196 / 1440 +
       var(--o-projektu-zigzag-width) * -166.804 / 1440
   );
+  bottom: 0;
   left: 0;
   width: 100%;
   height: auto;
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -291,6 +347,20 @@
 @media #{$mobile} {
   .o-projektu {
     --o-projektu-design-width: 100vw;
+    --o-projektu-bottom-teeth: calc(100vw * 36 / 390);
+    --o-projektu-teeth-shape: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - var(--o-projektu-bottom-teeth)),
+      75% 100%,
+      50% calc(100% - var(--o-projektu-bottom-teeth)),
+      25% 100%,
+      0 calc(100% - var(--o-projektu-bottom-teeth))
+    );
+    --o-projektu-flat-shape: polygon(
+      0 0, 100% 0, 100% 100%, 75% 100%, 50% 100%,
+      25% 100%, 0 100%
+    );
   }
 
   /*
@@ -307,8 +377,16 @@
 
   .o-projektu-white-design {
     box-sizing: border-box;
-    min-height: calc(100vw * 430 / 390);
-    padding: calc(100vw * 205 / 390) 0 calc(100vw * 15 / 390);
+
+    /*
+     * Mobile: dodatno smanjen gornji prazan prostor.
+     * Collapsed copy je 210/390 visine, pa stage sada prati:
+     * 95 top + 210 copy + 15 bottom = 320 design px.
+     *
+     * Desktop nije diran.
+     */
+    min-height: calc(100vw * 320 / 390);
+    padding: calc(100vw * 95 / 390) 0 calc(100vw * 15 / 390);
   }
 
   .o-projektu-blue-design {
