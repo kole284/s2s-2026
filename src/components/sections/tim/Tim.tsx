@@ -32,7 +32,7 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim",
     titleFirstLine: "koordinatora",
     titleSecondLine: "",
-    image: "/tim/koordinator-team.JPG",
+    image: "/tim/ljudi/timovi/core.webp",
     coordinator: {
       firstName: "Stefan",
       lastName: "Mrkela",
