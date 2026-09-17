@@ -512,8 +512,9 @@
     overflow: hidden;
   }
 
+  /* Počinje ispod gornjih zubaca ali iznad dna SVG-a, jer 100vw uključuje i skrol-traku. */
   .o-projektu-blue-stage::before {
-    top: calc(100vw * 414 / 390);
+    top: calc(100vw * 200 / 390);
   }
 
   .o-projektu-zigzag {

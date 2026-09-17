@@ -100,7 +100,13 @@ const Predavac = ({
   return (
     <section className="predavac-page">
       <header className="predavac-header">
-        <h1 className="predavac-title">{workshopTitle}</h1>
+        <h1
+          className={`predavac-title${
+            (workshopTitle?.length ?? 0) > 24 ? " predavac-title--long" : ""
+          }`}
+        >
+          {workshopTitle}
+        </h1>
 
         <button
           type="button"
@@ -112,7 +118,39 @@ const Predavac = ({
         </button>
       </header>
 
-      <div className="predavac-content">
+      <div className="predavac-band">
+        <div className="predavac-content">
+          <div className="predavac-card">
+            <p className="predavac-tezina">
+              TEŽINA: <span>{predavac.tezina}</span>
+            </p>
+
+            <div className="predavac-visual">
+              <figure className="predavac-photo-block">
+                {predavac.slika ? (
+                  <img
+                    src={predavac.slika}
+                    alt={predavac.ime}
+                    className="predavac-photo"
+                  />
+                ) : (
+                  <div className="predavac-photo predavac-photo--placeholder" />
+                )}
+
+                <figcaption className="predavac-name">{predavac.ime}</figcaption>
+              </figure>
+
+              <img src={workshopIcon} alt="" className="predavac-shield" />
+            </div>
+
+            <div className="predavac-text">
+              {predavac.opis.map((pasus, indeks) => (
+                <p key={indeks}>{pasus}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <button
           type="button"
           className="predavac-arrow predavac-arrow--prev"
@@ -126,36 +164,6 @@ const Predavac = ({
             alt=""
           />
         </button>
-
-        <div className="predavac-card">
-          <p className="predavac-tezina">
-            TEŽINA: <span>{predavac.tezina}</span>
-          </p>
-
-          <div className="predavac-visual">
-            <figure className="predavac-photo-block">
-              {predavac.slika ? (
-                <img
-                  src={predavac.slika}
-                  alt={predavac.ime}
-                  className="predavac-photo"
-                />
-              ) : (
-                <div className="predavac-photo predavac-photo--placeholder" />
-              )}
-
-              <figcaption className="predavac-name">{predavac.ime}</figcaption>
-            </figure>
-
-            <img src={workshopIcon} alt="" className="predavac-shield" />
-          </div>
-
-          <div className="predavac-text">
-            {predavac.opis.map((pasus, indeks) => (
-              <p key={indeks}>{pasus}</p>
-            ))}
-          </div>
-        </div>
 
         <button
           type="button"

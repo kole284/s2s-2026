@@ -45,6 +45,32 @@
   padding-bottom: calc(var(--rd-mobile-design-width) * 64 / 390);
 }
 
+/*
+ * Završni zupci sekcije stoje uvek: isti oblik kao donja ivica papira, samo
+ * beli i na dnu. Dok su Radionice prikazane iznad njih je belo pa se ne vide,
+ * a uz plavu podlogu predavača daju prelaz u Panel umesto ravne linije.
+ */
+.radionice-page::after {
+  content: "";
+  position: absolute;
+  z-index: 9;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--rd-zigzag-depth);
+  background: $color-white;
+  clip-path: polygon(
+    0 0,
+    25% 100%,
+    50% 0,
+    75% 100%,
+    100% 0,
+    100% 100%,
+    0 100%
+  );
+  pointer-events: none;
+}
+
 .radionice-background-base,
 .radionice-background-transition {
   position: absolute;
@@ -928,6 +954,22 @@
     padding-bottom: calc(var(--rd-design-width) * 64 / 1440);
   }
 
+  .radionice-page::after {
+    clip-path: polygon(
+      0 0,
+      12.5% 100%,
+      25% 0,
+      37.5% 100%,
+      50% 0,
+      62.5% 100%,
+      75% 0,
+      87.5% 100%,
+      100% 0,
+      100% 100%,
+      0 100%
+    );
+  }
+
   .radionice-title {
     display: block;
     width: var(--rd-design-width);
@@ -1082,9 +1124,12 @@
  * Tokom tranzicije oba "papira" postoje istovremeno.
  * Sam sadržaj se brzo gasi, a wrapper ostaje kao fizički papir koji se gužva.
  */
+.radionice-page--view-transition .radionice-band {
+  position: relative;
+}
+
 .radionice-page--view-transition .radionice-band,
 .radionice-page--view-transition .predavac-content {
-  position: relative;
   overflow: hidden;
   transform-origin: center center;
   backface-visibility: hidden;
