@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type AnimationEvent, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type AnimationEvent,
+  type CSSProperties,
+  type TouchEvent,
+} from "react";
 
 import graphIcon from "@/assets/lupa.svg";
 import csharpIcon from "@/assets/workshops/csharp-development.svg";
@@ -99,20 +107,18 @@ const INTERVAL_ROTACIJE_MS = 3000;
 
 const VIDLJIVI_POMERAJI = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
 
-type SmerRadionice = "next" | "previous";
-type FazaRadionice =
-  | "crumpling"
-  | "exiting"
-  | "entering"
-  | "unfolding";
-type FazaPrikaza = "crumpling" | "swapping" | "unfolding";
+/* Isti prelom kao `$mobile` u src/styles/_mediaqueries.scss. */
+const UPIT_MOBILNI = "(max-width: 768px)";
 
-type TranzicijaRadionice = {
-  faza: FazaRadionice;
-  smer: SmerRadionice;
-  odlazeciIndeks: number;
-  dolazeciIndeks: number;
-};
+/*
+ * Na telefonu karusel vodi korisnik prstom.
+ * Swipe se računa samo ako je pokret pretežno horizontalan, da vertikalni
+ * scroll kroz sekciju ostane netaknut.
+ */
+const MIN_SWIPE_PX = 40;
+
+type SmerRadionice = "next" | "previous";
+type FazaPrikaza = "crumpling" | "swapping" | "unfolding";
 
 type SmerPrikaza = "to-speaker" | "to-workshop";
 type TranzicijaPrikaza = {
@@ -120,9 +126,11 @@ type TranzicijaPrikaza = {
   smer: SmerPrikaza;
 };
 
-const TRAJANJE_GUZVANJA_MS = 620;
-const TRAJANJE_IZLASKA_MS = 360;
-const TRAJANJE_ULASKA_MS = 520;
+/*
+ * Prelaz između dve radionice je samo horizontalni slide traka ikonica.
+ * Mora da ostane sinhron sa `--rd-trajanje-slajda` u Radionice.scss.
+ */
+const TRAJANJE_SLAJDA_MS = 420;
 
 const TRAJANJE_GUZVANJA_PRIKAZA_MS = 380;
 const TRAJANJE_ZAMENE_PRIKAZA_MS = 300;
@@ -138,29 +146,11 @@ const RadionicePaperSurface = () => (
   <div className="radionice-paper-surface" aria-hidden="true" />
 );
 
-const RadionicePaperBall = () => (
-  <div className="radionice-paper-ball" aria-hidden="true">
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--one" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--two" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--three" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--four" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--five" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--six" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--seven" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--eight" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--nine" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--ten" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--eleven" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--twelve" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--thirteen" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--fourteen" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--fifteen" />
-    <span className="radionice-paper-ball-fold radionice-paper-ball-fold--sixteen" />
-  </div>
-);
-
 const RadionicePaper = ({ indeks, interaktivno, onOpen }: RadionicePaperProps) => (
-  <div className="radionice-stage">
+  <div
+    className="radionice-stage"
+    style={{ "--rd-indeks": indeks } as CSSProperties}
+  >
     {VIDLJIVI_POMERAJI.map((pomeraj) => {
       const virtuelniIndeks = indeks + pomeraj;
       const radionica =
@@ -174,7 +164,7 @@ const RadionicePaper = ({ indeks, interaktivno, onOpen }: RadionicePaperProps) =
         <div
           key={virtuelniIndeks}
           className={`radionice-slot${jeCentar ? " radionice-slot--centar" : ""}`}
-          style={{ "--rd-pomeraj": pomeraj } as CSSProperties}
+          style={{ "--rd-pozicija": virtuelniIndeks } as CSSProperties}
         >
           {jeCentar ? (
             <button
@@ -210,8 +200,7 @@ const RadionicePaper = ({ indeks, interaktivno, onOpen }: RadionicePaperProps) =
 const Radionice = () => {
   const radionicePageRef = useRef<HTMLElement>(null);
   const [aktivniIndeks, setAktivniIndeks] = useState(0);
-  const [tranzicija, setTranzicija] = useState<TranzicijaRadionice | null>(null);
-  const tranzicijaUToku = useRef(false);
+  const [slajdUToku, setSlajdUToku] = useState(false);
   const [tranzicijaPrikaza, setTranzicijaPrikaza] =
     useState<TranzicijaPrikaza | null>(null);
   const tranzicijaPrikazaUToku = useRef(false);
@@ -220,6 +209,10 @@ const Radionice = () => {
   );
   const [otvorenaRadionica, setOtvorenaRadionica] = useState<Radionica | null>(null);
   const [pomerajCentraPrikaza, setPomerajCentraPrikaza] = useState(0);
+  const [jeMobilni, setJeMobilni] = useState(
+    () => typeof window !== "undefined" && window.matchMedia(UPIT_MOBILNI).matches,
+  );
+  const pocetakDodira = useRef<{ x: number; y: number } | null>(null);
 
   const predavacOtvoren = aktivniPredavacId !== null;
   const plavaPozadina = tranzicijaPrikaza
@@ -227,7 +220,7 @@ const Radionice = () => {
     : predavacOtvoren;
 
   const otvoriPredavaca = (radionica: Radionica) => {
-    if (tranzicijaUToku.current || tranzicijaPrikazaUToku.current) return;
+    if (tranzicijaPrikazaUToku.current) return;
     setOtvorenaRadionica(radionica);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setAktivniPredavacId(radionica.predavacId);
@@ -267,55 +260,61 @@ const Radionice = () => {
     setTranzicijaPrikaza({ faza: "crumpling", smer: "to-workshop" });
   };
 
+  /*
+   * Radionica -> radionica je čist horizontalni slide: samo se pomeri traka
+   * ikonica. `slajdUToku` postoji da klik/auto-rotacija ne preskoče slide.
+   */
   const promeniRadionicu = useCallback(
     (smer: SmerRadionice) => {
-      if (tranzicijaUToku.current || tranzicijaPrikazaUToku.current || predavacOtvoren) return;
+      if (slajdUToku || tranzicijaPrikazaUToku.current || predavacOtvoren) return;
 
-      const dolazeciIndeks = aktivniIndeks + (smer === "next" ? 1 : -1);
+      setAktivniIndeks((prethodni) => prethodni + (smer === "next" ? 1 : -1));
 
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        setAktivniIndeks(dolazeciIndeks);
-        return;
-      }
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      tranzicijaUToku.current = true;
-      setTranzicija({
-        faza: "crumpling",
-        smer,
-        odlazeciIndeks: aktivniIndeks,
-        dolazeciIndeks,
-      });
+      setSlajdUToku(true);
     },
-    [aktivniIndeks, predavacOtvoren],
+    [predavacOtvoren, slajdUToku],
   );
 
-  useEffect(() => {
-    if (!tranzicija) return;
-    if (tranzicija.faza === "unfolding") return;
+  const zapocniDodir = (event: TouchEvent<HTMLDivElement>) => {
+    const dodir = event.touches[0];
+    pocetakDodira.current = dodir ? { x: dodir.clientX, y: dodir.clientY } : null;
+  };
 
-    const trajanje =
-      tranzicija.faza === "crumpling"
-        ? TRAJANJE_GUZVANJA_MS
-        : tranzicija.faza === "exiting"
-          ? TRAJANJE_IZLASKA_MS
-          : TRAJANJE_ULASKA_MS;
+  const zavrsiDodir = (event: TouchEvent<HTMLDivElement>) => {
+    const pocetak = pocetakDodira.current;
+    pocetakDodira.current = null;
+
+    const dodir = event.changedTouches[0];
+    if (!pocetak || !dodir) return;
+
+    const dx = dodir.clientX - pocetak.x;
+    const dy = dodir.clientY - pocetak.y;
+    if (Math.abs(dx) < MIN_SWIPE_PX || Math.abs(dx) <= Math.abs(dy)) return;
+
+    promeniRadionicu(dx < 0 ? "next" : "previous");
+  };
+
+  useEffect(() => {
+    const upit = window.matchMedia(UPIT_MOBILNI);
+    const naPromenu = () => setJeMobilni(upit.matches);
+
+    naPromenu();
+    upit.addEventListener("change", naPromenu);
+
+    return () => upit.removeEventListener("change", naPromenu);
+  }, []);
+
+  useEffect(() => {
+    if (!slajdUToku) return;
 
     const tajmer = window.setTimeout(() => {
-      if (tranzicija.faza === "crumpling") {
-        // 1) Stari papir se zguzva u loptu.
-        setTranzicija({ ...tranzicija, faza: "exiting" });
-      } else if (tranzicija.faza === "exiting") {
-        // 2) Stara lopta potpuno napusti kadar.
-        setTranzicija({ ...tranzicija, faza: "entering" });
-      } else if (tranzicija.faza === "entering") {
-        // 3) Nova zgužvana lopta je stigla u centar.
-        //    Sledeći korak je fizičko odgužvavanje ISTOG papira zajedno sa sadržajem.
-        setTranzicija({ ...tranzicija, faza: "unfolding" });
-      }
-    }, trajanje);
+      setSlajdUToku(false);
+    }, TRAJANJE_SLAJDA_MS);
 
     return () => window.clearTimeout(tajmer);
-  }, [tranzicija]);
+  }, [slajdUToku]);
 
   useEffect(() => {
     if (!tranzicijaPrikaza) return;
@@ -349,15 +348,6 @@ const Radionice = () => {
     if (event.target !== event.currentTarget) return;
 
     if (
-      tranzicija?.faza === "unfolding" &&
-      event.animationName.startsWith("rd-paper-sheet-unfold-")
-    ) {
-      setAktivniIndeks(tranzicija.dolazeciIndeks);
-      setTranzicija(null);
-      tranzicijaUToku.current = false;
-    }
-
-    if (
       tranzicijaPrikaza?.smer === "to-workshop" &&
       tranzicijaPrikaza.faza === "unfolding" &&
       event.animationName === "rd-view-workshop-shape-unfold"
@@ -369,8 +359,9 @@ const Radionice = () => {
     }
   };
 
+  /* Auto-rotacija je samo desktop/tablet ponašanje; na telefonu vodi swipe. */
   useEffect(() => {
-    if (predavacOtvoren || tranzicija || tranzicijaPrikaza) {
+    if (jeMobilni || predavacOtvoren || slajdUToku || tranzicijaPrikaza) {
       return;
     }
 
@@ -381,7 +372,7 @@ const Radionice = () => {
     return () => {
       window.clearInterval(tajmer);
     };
-  }, [predavacOtvoren, promeniRadionicu, tranzicija, tranzicijaPrikaza]);
+  }, [jeMobilni, predavacOtvoren, promeniRadionicu, slajdUToku, tranzicijaPrikaza]);
 
   return (
     <section
@@ -409,71 +400,31 @@ const Radionice = () => {
       <div className="radionice-default-view" aria-hidden={predavacOtvoren && !tranzicijaPrikaza}>
         <h1 className="radionice-title">Radionice</h1>
 
-        <div
-          className={`radionice-band radionice-band--${tranzicija?.faza ?? "idle"}`}
-          data-direction={tranzicija?.smer ?? "next"}
-        >
-          <div className="radionice-paper-viewport" id="radionice-carousel">
-            <div className="radionice-paper radionice-paper--outgoing">
+        <div className="radionice-band">
+          <div
+            className="radionice-paper-viewport"
+            id="radionice-carousel"
+            onTouchStart={zapocniDodir}
+            onTouchEnd={zavrsiDodir}
+            onTouchCancel={() => {
+              pocetakDodira.current = null;
+            }}
+          >
+            <div className="radionice-paper">
               <div className="radionice-paper-sheet" onAnimationEnd={zavrsiOtvaranjePapira}>
                 <div className="radionice-paper-shape">
                   <RadionicePaperSurface />
                   <div className="radionice-paper-content">
                     <RadionicePaper
-                      indeks={tranzicija?.odlazeciIndeks ?? aktivniIndeks}
-                      interaktivno={tranzicija === null && !predavacOtvoren}
+                      indeks={aktivniIndeks}
+                      interaktivno={!predavacOtvoren}
                       onOpen={otvoriPredavaca}
                     />
                   </div>
                 </div>
               </div>
-              <RadionicePaperBall />
             </div>
-
-            {tranzicija && (
-              <div
-                className="radionice-paper radionice-paper--incoming"
-                aria-hidden="true"
-              >
-                <div className="radionice-paper-sheet" onAnimationEnd={zavrsiOtvaranjePapira}>
-                  <div className="radionice-paper-shape">
-                    <RadionicePaperSurface />
-                    <div className="radionice-paper-content">
-                      <RadionicePaper
-                        indeks={tranzicija.dolazeciIndeks}
-                        interaktivno={false}
-                        onOpen={otvoriPredavaca}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <RadionicePaperBall />
-              </div>
-            )}
           </div>
-
-
-          <button
-            type="button"
-            className="radionice-arrow radionice-arrow--left"
-            onClick={() => promeniRadionicu("previous")}
-            aria-label="Prethodna radionica"
-            aria-controls="radionice-carousel"
-            disabled={tranzicija !== null}
-          >
-            <img src="/tim/arrow-left.svg" alt="" aria-hidden="true" />
-          </button>
-
-          <button
-            type="button"
-            className="radionice-arrow radionice-arrow--right"
-            onClick={() => promeniRadionicu("next")}
-            aria-label="Sledeća radionica"
-            aria-controls="radionice-carousel"
-            disabled={tranzicija !== null}
-          >
-            <img src="/tim/arrow-right.svg" alt="" aria-hidden="true" />
-          </button>
         </div>
       </div>
 
