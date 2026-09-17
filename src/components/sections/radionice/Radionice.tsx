@@ -118,7 +118,7 @@ const UPIT_MOBILNI = "(max-width: 768px)";
 const MIN_SWIPE_PX = 40;
 
 type SmerRadionice = "next" | "previous";
-type FazaPrikaza = "crumpling" | "swapping" | "unfolding";
+type FazaPrikaza = "crumpling" | "exiting" | "entering" | "unfolding";
 
 type SmerPrikaza = "to-speaker" | "to-workshop";
 type TranzicijaPrikaza = {
@@ -132,9 +132,18 @@ type TranzicijaPrikaza = {
  */
 const TRAJANJE_SLAJDA_MS = 420;
 
-const TRAJANJE_GUZVANJA_PRIKAZA_MS = 380;
-const TRAJANJE_ZAMENE_PRIKAZA_MS = 300;
-const TRAJANJE_OTVARANJA_PRIKAZA_MS = 430;
+/*
+ * Jedna lopta kroz četiri beata:
+ * 1) papir se skupča u sredinu i stara pozadina se uvuče u njega,
+ * 2) lopta ode udesno iz kadra,
+ * 3) nova lopta uđe sa leve strane u sredinu,
+ * 4) iz nje izlazi nova pozadina i širi se dok se papir odgužva.
+ * Trajanja moraju da prate iste vrednosti u Radionice.scss.
+ */
+const TRAJANJE_GUZVANJA_PRIKAZA_MS = 360;
+const TRAJANJE_IZLASKA_PRIKAZA_MS = 300;
+const TRAJANJE_ULASKA_PRIKAZA_MS = 340;
+const TRAJANJE_OTVARANJA_PRIKAZA_MS = 450;
 
 type RadionicePaperProps = {
   indeks: number;
@@ -198,7 +207,6 @@ const RadionicePaper = ({ indeks, interaktivno, onOpen }: RadionicePaperProps) =
 );
 
 const Radionice = () => {
-  const radionicePageRef = useRef<HTMLElement>(null);
   const [aktivniIndeks, setAktivniIndeks] = useState(0);
   const [slajdUToku, setSlajdUToku] = useState(false);
   const [tranzicijaPrikaza, setTranzicijaPrikaza] =
@@ -208,13 +216,17 @@ const Radionice = () => {
     null,
   );
   const [otvorenaRadionica, setOtvorenaRadionica] = useState<Radionica | null>(null);
-  const [pomerajCentraPrikaza, setPomerajCentraPrikaza] = useState(0);
   const [jeMobilni, setJeMobilni] = useState(
     () => typeof window !== "undefined" && window.matchMedia(UPIT_MOBILNI).matches,
   );
   const pocetakDodira = useRef<{ x: number; y: number } | null>(null);
 
   const predavacOtvoren = aktivniPredavacId !== null;
+  /*
+   * Tokom prelaza baza već drži NOVU boju pozadine. Stara pozadina stoji
+   * preko nje i uvlači se u loptu, pa se time otkriva nova — novi papir posle
+   * ulazi na već otkrivenu pozadinu.
+   */
   const plavaPozadina = tranzicijaPrikaza
     ? tranzicijaPrikaza.smer === "to-speaker"
     : predavacOtvoren;
@@ -239,22 +251,6 @@ const Radionice = () => {
       setOtvorenaRadionica(null);
       return;
     }
-
-    const radionicePapir = radionicePageRef.current?.querySelector<HTMLElement>(
-      ".radionice-band",
-    );
-    const predavacPapir = radionicePageRef.current?.querySelector<HTMLElement>(
-      ".predavac-content",
-    );
-
-    const radioniceRect = radionicePapir?.getBoundingClientRect();
-    const predavacRect = predavacPapir?.getBoundingClientRect();
-    setPomerajCentraPrikaza(
-      radioniceRect && predavacRect
-        ? predavacRect.top + predavacRect.height / 2 -
-            radioniceRect.top - radioniceRect.height / 2
-        : 0,
-    );
 
     tranzicijaPrikazaUToku.current = true;
     setTranzicijaPrikaza({ faza: "crumpling", smer: "to-workshop" });
@@ -326,14 +322,21 @@ const Radionice = () => {
     const trajanje =
       tranzicijaPrikaza.faza === "crumpling"
         ? TRAJANJE_GUZVANJA_PRIKAZA_MS
-        : tranzicijaPrikaza.faza === "swapping"
-          ? TRAJANJE_ZAMENE_PRIKAZA_MS
-          : TRAJANJE_OTVARANJA_PRIKAZA_MS;
+        : tranzicijaPrikaza.faza === "exiting"
+          ? TRAJANJE_IZLASKA_PRIKAZA_MS
+          : tranzicijaPrikaza.faza === "entering"
+            ? TRAJANJE_ULASKA_PRIKAZA_MS
+            : TRAJANJE_OTVARANJA_PRIKAZA_MS;
 
     const tajmer = window.setTimeout(() => {
       if (tranzicijaPrikaza.faza === "crumpling") {
-        setTranzicijaPrikaza({ ...tranzicijaPrikaza, faza: "swapping" });
-      } else if (tranzicijaPrikaza.faza === "swapping") {
+        // 1) Papir se skupčao u loptu i povukao staru pozadinu u sebe.
+        setTranzicijaPrikaza({ ...tranzicijaPrikaza, faza: "exiting" });
+      } else if (tranzicijaPrikaza.faza === "exiting") {
+        // 2) Lopta je otišla udesno iz kadra.
+        setTranzicijaPrikaza({ ...tranzicijaPrikaza, faza: "entering" });
+      } else if (tranzicijaPrikaza.faza === "entering") {
+        // 3) Nova lopta je stigla sa leve strane u centar.
         setTranzicijaPrikaza({ ...tranzicijaPrikaza, faza: "unfolding" });
       } else {
         setTranzicijaPrikaza(null);
@@ -376,7 +379,6 @@ const Radionice = () => {
 
   return (
     <section
-      ref={radionicePageRef}
       id="radionice"
       className={`radionice-page${
         predavacOtvoren ? " radionice-page--predavac-open" : ""
@@ -385,7 +387,6 @@ const Radionice = () => {
           ? ` radionice-page--view-transition radionice-page--view-${tranzicijaPrikaza.smer}-${tranzicijaPrikaza.faza}`
           : ""
       }`}
-      style={{ "--rd-view-center-offset-y": `${pomerajCentraPrikaza}px` } as CSSProperties}
     >
       <div
         className={`radionice-background-base${plavaPozadina ? " radionice-background-base--blue" : ""}`}
