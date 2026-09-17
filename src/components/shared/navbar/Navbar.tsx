@@ -1,5 +1,5 @@
 import './Navbar.scss';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import hamburgerIcon from '@/assets/Group(2).svg';
@@ -8,18 +8,23 @@ import { SECTION_ROUTE_BY_PATH, SECTION_ROUTES } from '@/routes/sectionRoutes';
 
 const NAV_ITEMS = SECTION_ROUTES.filter(({ path }) => path !== '/prijava');
 const CTA_ITEM = SECTION_ROUTES.find(({ path }) => path === '/prijava')!;
+const GAME_SECTION_ID = 'igrica';
+const GAME_LABEL = 'Igrica';
 const MENU_SCROLL_LOCK_CLASS = 'navbar-menu-scroll-locked';
+const NAVBAR_SCROLL_THRESHOLD = 24;
 
 type NavbarMenuContentProps = {
   activeId: string;
   pathname: string;
   onNavigate: (path: string, sectionId: string) => void;
+  onNavigateToGame: () => void;
 };
 
 const NavbarMenuContent = ({
   activeId,
   pathname,
   onNavigate,
+  onNavigateToGame,
 }: NavbarMenuContentProps) => (
   <>
     <ul className="navbar-links">
@@ -35,6 +40,15 @@ const NavbarMenuContent = ({
           </button>
         </li>
       ))}
+      <li className="navbar-links-item">
+        <button
+          type="button"
+          className={`navbar-link ${activeId === GAME_SECTION_ID ? 'navbar-link--active' : ''}`}
+          onClick={onNavigateToGame}
+        >
+          {GAME_LABEL}
+        </button>
+      </li>
     </ul>
 
     <button
@@ -53,7 +67,6 @@ const Navbar = () => {
   const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const topSentinelRef = useRef<HTMLSpanElement>(null);
   const [visibleSection, setVisibleSection] = useState({
     pathname,
     sectionId: SECTION_ROUTE_BY_PATH.get(pathname) ?? NAV_ITEMS[0].sectionId,
@@ -67,18 +80,18 @@ const Navbar = () => {
   const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), []);
 
   useEffect(() => {
-    const sentinel = topSentinelRef.current;
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > NAVBAR_SCROLL_THRESHOLD);
+    };
 
-    if (!sentinel) {
-      return;
-    }
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('pageshow', handleScroll);
 
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsScrolled(!entry.isIntersecting);
-    });
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('pageshow', handleScroll);
+    };
   }, []);
 
   const navigateToSection = useCallback(
@@ -97,6 +110,15 @@ const Navbar = () => {
     },
     [closeMenu, navigate, pathname],
   );
+
+  const navigateToGame = useCallback(() => {
+    closeMenu();
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById(GAME_SECTION_ID)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [closeMenu]);
 
   useEffect(() => {
     const body = document.body;
@@ -164,12 +186,7 @@ const Navbar = () => {
 
   return (
     <>
-      <span
-        ref={topSentinelRef}
-        className="navbar-top-sentinel"
-        aria-hidden="true"
-      />
-      <header className="navbar">
+      <header className={`navbar${isScrolled ? ' navbar--scrolled' : ''}`}>
         <svg
           className="navbar-shape"
           viewBox="0 0 1440 107"
@@ -189,65 +206,68 @@ const Navbar = () => {
           />
         </svg>
         <div className="navbar-inner">
-          <button
-            type="button"
-            className="navbar-logo"
-            onClick={() => navigateToSection('/', 'naslovna')}
-            aria-label="Naslovna"
-          >
-            <img src={logoS2S} alt="S2S" className="navbar-logo-img" />
-          </button>
+          <div className="navbar-content">
+            <button
+              type="button"
+              className="navbar-logo"
+              onClick={() => navigateToSection('/', 'naslovna')}
+              aria-label="Naslovna"
+            >
+              <img src={logoS2S} alt="S2S" className="navbar-logo-img" />
+            </button>
 
-          <button
-            type="button"
-            className={`mobile-menu-control ${isMenuOpen ? 'is-open' : ''} ${isScrolled ? 'is-scrolled' : ''}`}
-            onClick={toggleMenu}
-            aria-expanded={isMenuOpen}
-            aria-controls="navbar-mobile-menu"
-            aria-label={isMenuOpen ? 'Zatvori meni' : 'Otvori meni'}
-          >
-            <span
-              className="mobile-menu-control__state mobile-menu-control__burger"
-              aria-hidden="true"
+            <button
+              type="button"
+              className={`mobile-menu-control ${isMenuOpen ? 'is-open' : ''}`}
+              onClick={toggleMenu}
+              aria-expanded={isMenuOpen}
+              aria-controls="navbar-mobile-menu"
+              aria-label={isMenuOpen ? 'Zatvori meni' : 'Otvori meni'}
             >
-              <img src={hamburgerIcon} alt="" />
-            </span>
-            <span
-              className="mobile-menu-control__state mobile-menu-control__close"
-              aria-hidden="true"
-            >
-              <svg
-                viewBox="0 0 74 73"
-                width="74"
-                height="73"
-                fill="none"
-                focusable="false"
+              <span
+                className="mobile-menu-control__state mobile-menu-control__burger"
+                aria-hidden="true"
               >
-                <path
-                  d="M14 12C27 25 46 48 60 61M59 12C46 26 30 45 13 60"
-                  stroke="#134595"
-                  strokeWidth="12"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M13 9C28 24 45 47 62 61M62 9C48 24 31 45 12 63"
-                  stroke="#2062D4"
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
+                <img src={hamburgerIcon} alt="" />
+              </span>
+              <span
+                className="mobile-menu-control__state mobile-menu-control__close"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 74 73"
+                  width="74"
+                  height="73"
+                  fill="none"
+                  focusable="false"
+                >
+                  <path
+                    d="M14 12C27 25 46 48 60 61M59 12C46 26 30 45 13 60"
+                    stroke="#134595"
+                    strokeWidth="12"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M13 9C28 24 45 47 62 61M62 9C48 24 31 45 12 63"
+                    stroke="#2062D4"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </button>
 
-          <nav id="navbar-menu" className="navbar-menu">
-            <NavbarMenuContent
-              activeId={activeId}
-              pathname={pathname}
-              onNavigate={navigateToSection}
-            />
-          </nav>
+            <nav id="navbar-menu" className="navbar-menu">
+              <NavbarMenuContent
+                activeId={activeId}
+                pathname={pathname}
+                onNavigate={navigateToSection}
+                onNavigateToGame={navigateToGame}
+              />
+            </nav>
+          </div>
         </div>
 
         {isMenuOpen
@@ -270,6 +290,7 @@ const Navbar = () => {
                     activeId={activeId}
                     pathname={pathname}
                     onNavigate={navigateToSection}
+                    onNavigateToGame={navigateToGame}
                   />
                 </nav>
               </div>,

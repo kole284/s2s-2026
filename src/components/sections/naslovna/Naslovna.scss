@@ -284,16 +284,30 @@
      ======================================================= */
 
   .naslovna__mobile-s2s-marquee {
+    --naslovna-mobile-s2s-height: clamp(147.2px, 46vw, 225.4px);
+    --naslovna-mobile-s2s-font-size: clamp(108px, 30vw, 147.6px);
+    --naslovna-mobile-band-height: clamp(159.12px, 44.2vw, 217.464px);
+    --naslovna-mobile-band-top: calc(
+      min(47vw, 21.7192dvh) - clamp(4px, 1.2vw, 8px)
+    );
+
     position: absolute;
     z-index: 2;
 
-    top: calc(min(47vw, 21.7192dvh) - min(17vw, 86px));
+    top: calc(
+      var(--naslovna-mobile-band-top) + var(--naslovna-mobile-band-height) *
+        0.065 - var(--naslovna-mobile-s2s-height)
+    );
     left: -20vw;
 
     width: 140vw;
-    height: clamp(122.4px, 34vw, 167.3px);
+    height: var(--naslovna-mobile-s2s-height);
 
-    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    overflow: visible;
+    transform: rotate(-3.3deg);
+    transform-origin: center;
 
     pointer-events: none;
   }
@@ -314,15 +328,15 @@
     color: $color-blue-dark;
 
     font-family: $font-display;
-    font-size: clamp(108px, 30vw, 147.6px);
+    font-size: var(--naslovna-mobile-s2s-font-size);
     font-weight: $font-black;
 
-    line-height: 0.8;
+    line-height: 1;
     letter-spacing: -0.09em;
 
     white-space: nowrap;
 
-    transform: skewX(-6deg);
+    transform: translateY(0.16em) skewX(-6deg);
   }
 
   @keyframes naslovna-mobile-s2s-scroll {
@@ -628,8 +642,12 @@
   }
 
   @keyframes naslovna-tablet-s2s-scroll {
-    from { transform: translate3d(0, 0, 0); }
-    to { transform: translate3d(-50%, 0, 0); }
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
   }
 
   .naslovna__mobile-band {

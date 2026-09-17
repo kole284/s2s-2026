@@ -316,7 +316,7 @@
 }
 
 .o-projektu-arrow-top {
-  bottom: calc(var(--o-projektu-design-width) * 91 / 1440);
+  bottom: calc(var(--o-projektu-design-width) * 61 / 1440);
   left: calc(var(--o-projektu-design-width) * 348 / 1440);
   width: calc(var(--o-projektu-design-width) * 70 / 1440);
   height: calc(var(--o-projektu-design-width) * 30 / 1440);
@@ -377,22 +377,14 @@
 
   .o-projektu-white-design {
     box-sizing: border-box;
-
-    /*
-     * Mobile: dodatno smanjen gornji prazan prostor.
-     * Collapsed copy je 210/390 visine, pa stage sada prati:
-     * 95 top + 210 copy + 15 bottom = 320 design px.
-     *
-     * Desktop nije diran.
-     */
-    min-height: calc(100vw * 320 / 390);
-    padding: calc(100vw * 95 / 390) 0 calc(100vw * 15 / 390);
+    min-height: 0;
+    padding: calc(100vw * 42 / 390) 0 calc(100vw * 32 / 390);
   }
 
   .o-projektu-blue-design {
     box-sizing: border-box;
-    min-height: calc(100vw * 414 / 390);
-    padding: calc(100vw * 117 / 390) 0 calc(100vw * 89 / 390);
+    min-height: 0;
+    padding: calc(100vw * 96 / 390) 0 calc(100vw * 52 / 390);
   }
 
   .o-projektu-students-content {
@@ -405,15 +397,24 @@
     margin-left: calc(100vw * 30 / 390);
   }
 
-  /* Titles are intentionally absent in the supplied mobile target. */
   .o-projektu-title {
-    display: none;
+    display: block;
+    line-height: 0;
+  }
+
+  .o-projektu-students-title img {
+    width: calc(100vw * 280 / 390);
+  }
+
+  .o-projektu-fonis-title img {
+    width: calc(100vw * 118 / 390);
   }
 
   .o-projektu-copy {
     font-size: calc(100vw * 14 / 390);
     line-height: calc(100vw * 18 / 390);
     letter-spacing: 0;
+    overflow-anchor: none;
     -webkit-mask-image: linear-gradient(
       to bottom,
       #000 0%,
@@ -433,17 +434,17 @@
   }
 
   .o-projektu-students-copy {
-    --o-projektu-copy-collapsed-height: calc(100vw * 210 / 390);
+    --o-projektu-copy-collapsed-height: calc(100vw * 108 / 390);
 
     width: 100%;
-    margin-top: 0;
+    margin-top: calc(100vw * 18 / 390);
   }
 
   .o-projektu-fonis-copy {
-    --o-projektu-copy-collapsed-height: calc(100vw * 207 / 390);
+    --o-projektu-copy-collapsed-height: calc(100vw * 108 / 390);
 
     width: 100%;
-    margin-top: 0;
+    margin-top: calc(100vw * 16 / 390);
   }
 
   .o-projektu-white-stage.is-expanded .o-projektu-students-copy p:first-child,
@@ -508,6 +509,7 @@
   .o-projektu-blue-stage {
     isolation: isolate;
     background: transparent;
+    overflow: hidden;
   }
 
   .o-projektu-blue-stage::before {
@@ -542,31 +544,31 @@
   }
 
   .o-projektu-arrow-button {
-    position: absolute;
+    position: relative;
+    inset: auto;
     display: block;
-    margin: 0;
+    margin: calc(100vw * 26 / 390) auto 0;
+    transform: none;
   }
 
   .o-projektu-arrow-top {
     z-index: 4;
     top: auto;
     right: auto;
-    bottom: calc(100vw * -5 / 390);
-    left: 50%;
+    bottom: auto;
+    left: auto;
     width: calc(100vw * 70 / 390);
     height: calc(100vw * 30 / 390);
-    transform: translateX(-50%);
   }
 
   .o-projektu-arrow-bottom {
     z-index: 4;
     top: auto;
     right: auto;
-    bottom: calc(100vw * 35 / 390);
-    left: 50%;
+    bottom: auto;
+    left: auto;
     width: calc(100vw * 89 / 390);
     height: calc(100vw * 37 / 390);
-    transform: translateX(-50%);
   }
 }
 

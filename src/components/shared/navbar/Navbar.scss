@@ -1,12 +1,3 @@
-.navbar-top-sentinel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 48px;
-  pointer-events: none;
-}
-
 html.navbar-menu-scroll-locked,
 body.navbar-menu-scroll-locked {
   overflow: hidden;
@@ -65,7 +56,13 @@ body.navbar-menu-scroll-locked {
   box-shadow: none;
   pointer-events: auto;
   cursor: pointer;
-  transition: transform 150ms ease;
+  transition:
+    top 220ms ease,
+    transform 150ms ease;
+}
+
+.navbar--scrolled .mobile-menu-control {
+  top: 0;
 }
 
 .mobile-menu-control:active {
@@ -319,6 +316,7 @@ body.navbar-menu-scroll-locked {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .navbar,
   .mobile-menu-control,
   .mobile-menu-control__state {
     transition: none;
@@ -334,6 +332,10 @@ body.navbar-menu-scroll-locked {
 @media #{$desktop} {
   .navbar {
     --navbar-design-width: min(100vw, 140.625dvh);
+    --navbar-white-top-inset: calc(var(--navbar-design-width) * 11 / 1440);
+    --navbar-white-bottom-inset: calc(
+      var(--navbar-design-width) * 35 / 1440
+    );
 
     position: fixed;
     top: 2%;
@@ -347,6 +349,11 @@ body.navbar-menu-scroll-locked {
     overflow: visible;
     pointer-events: auto;
     background-color: transparent;
+    transition: top 220ms ease;
+  }
+
+  .navbar.navbar--scrolled {
+    top: 0;
   }
 
   .navbar-shape {
@@ -377,13 +384,21 @@ body.navbar-menu-scroll-locked {
     margin-inline: auto;
     box-sizing: border-box;
 
-    display: flex;
-    align-items: center;
-
-    padding: 0 calc(var(--navbar-design-width) * 32 / 1440)
-      calc(var(--navbar-design-width) * 32 / 1440);
+    padding: var(--navbar-white-top-inset)
+      calc(var(--navbar-design-width) * 32 / 1440)
+      var(--navbar-white-bottom-inset);
     pointer-events: auto;
     background-color: transparent;
+  }
+
+  .navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    gap: calc(var(--navbar-design-width) * 28 / 1440);
   }
 
   .navbar-logo {
@@ -404,6 +419,7 @@ body.navbar-menu-scroll-locked {
     display: block;
     width: auto;
     height: calc(var(--navbar-design-width) * 83 / 1440);
+    transform: translateY(calc(var(--navbar-design-width) * 2 / 1440));
   }
 
   .mobile-menu-control {
@@ -414,16 +430,16 @@ body.navbar-menu-scroll-locked {
     position: static;
 
     display: flex;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     flex-wrap: nowrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
 
-    width: auto;
+    width: max-content;
     max-width: none;
 
     margin: 0;
-    padding: 0 0 0 calc(var(--navbar-design-width) * 28 / 1440);
+    padding: 0;
 
     background: none;
 
@@ -437,12 +453,12 @@ body.navbar-menu-scroll-locked {
 
   .navbar-links {
     display: flex;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
 
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
 
     gap: calc(var(--navbar-design-width) * 25.5 / 1440);
 
