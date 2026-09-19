@@ -391,6 +391,65 @@ const jeFakultetFON = (fakultet: string) => {
   );
 };
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+
+const jeValidanEmail = (email: string) => EMAIL_REGEX.test(email.trim());
+
+// Skladišti se bez razmaka, da ista osoba ne završi kao dve prijave.
+const normalizujTelefon = (telefon: string) =>
+  telefon.replace(/[\s()\-./]/g, "");
+
+// Prihvata samo međunarodni format: + pozivni broj pa 7-14 cifara.
+const jeValidanTelefon = (telefon: string) =>
+  /^\+[1-9]\d{7,14}$/.test(normalizujTelefon(telefon));
+
+const PRIMER_TELEFONA = "+381 60 123 4567";
+
+type OsnovnoPolje = {
+  id: string;
+  label: string;
+  type: "text" | "email" | "tel";
+  field: "imePrezime" | "email" | "telefon" | "fakultet";
+  autoComplete: string;
+  placeholder?: string;
+  inputMode?: "email" | "tel";
+};
+
+const OSNOVNA_POLJA: OsnovnoPolje[] = [
+  {
+    id: "prijava-ime-prezime",
+    label: "Ime i prezime",
+    type: "text",
+    field: "imePrezime",
+    autoComplete: "name",
+  },
+  {
+    id: "prijava-email",
+    label: "Mejl adresa",
+    type: "email",
+    field: "email",
+    autoComplete: "email",
+    placeholder: "ime@primer.com",
+    inputMode: "email",
+  },
+  {
+    id: "prijava-telefon",
+    label: "Broj telefona",
+    type: "tel",
+    field: "telefon",
+    autoComplete: "tel",
+    placeholder: PRIMER_TELEFONA,
+    inputMode: "tel",
+  },
+  {
+    id: "prijava-fakultet",
+    label: "Fakultet",
+    type: "text",
+    field: "fakultet",
+    autoComplete: "organization",
+  },
+];
+
 const tekstZaCV =
   BROJ_POKROVITELJA === 1
     ? "Ukoliko želiš da pokrovitelj projekta dobije tvoje kontakt podatke, priloži link ka svom CV-ju."
@@ -442,13 +501,7 @@ type ApplicationPayload = {
   accepted_choice: null;
 };
 
-type DuplicatePrompt = {
-  applicationId: number;
-  message: string;
-};
-
 type ExistingApplication = {
-  id: number;
   email: string;
   phone_number: string;
 };
@@ -488,7 +541,7 @@ const buildPayload = (forma: PrijavaForma): ApplicationPayload => {
   return {
     name_surname: forma.imePrezime.trim(),
     email: forma.email.trim(),
-    phone_number: forma.telefon.trim(),
+    phone_number: normalizujTelefon(forma.telefon),
     faculty: forma.fakultet.trim(),
     ...(jeFakultetFON(forma.fakultet) ? { major: forma.smer.trim() } : {}),
 
@@ -524,8 +577,7 @@ const Prijava = () => {
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [duplicatePrompt, setDuplicatePrompt] =
-    useState<DuplicatePrompt | null>(null);
+  const [duplicatePrompt, setDuplicatePrompt] = useState<string | null>(null);
 
   const ocistiGreske = (...polja: Array<keyof PrijavaForma>) => {
     setGreske((prev) => {
@@ -658,10 +710,14 @@ const Prijava = () => {
 
       if (!forma.email.trim()) {
         greskeKorak.email = "Email je obavezan.";
+      } else if (!jeValidanEmail(forma.email)) {
+        greskeKorak.email = "Unesi validnu mejl adresu (npr. ime@primer.com).";
       }
 
       if (!forma.telefon.trim()) {
         greskeKorak.telefon = "Broj telefona je obavezan.";
+      } else if (!jeValidanTelefon(forma.telefon)) {
+        greskeKorak.telefon = `Unesi broj u međunarodnom formatu, sa + i pozivnim brojem (npr. ${PRIMER_TELEFONA}).`;
       }
 
       if (!forma.fakultet.trim()) {
@@ -781,7 +837,7 @@ const Prijava = () => {
       or: `(email.ilike.${quoteFilterValue(
         email,
       )},phone_number.eq.${quoteFilterValue(phoneNumber)})`,
-      select: "id,email,phone_number",
+      select: "email,phone_number",
     });
 
     const response = await fetch(
@@ -799,33 +855,22 @@ const Prijava = () => {
 
     const rows = (await response.json()) as ExistingApplication[];
 
-    const emailMatches = rows.filter(
+    const zauzetEmail = rows.some(
       (row) => row.email.toLowerCase() === email.toLowerCase(),
     );
 
-    const phoneMatches = rows.filter((row) => row.phone_number === phoneNumber);
+    const zauzetTelefon = rows.some((row) => row.phone_number === phoneNumber);
 
-    const emailMatch = emailMatches.at(-1);
-    const phoneMatch = phoneMatches.at(-1);
-
-    if (emailMatch && phoneMatch && emailMatch.id !== phoneMatch.id) {
-      throw new Error("Email i broj telefona pripadaju različitim prijavama.");
+    if (zauzetEmail && zauzetTelefon) {
+      return "Već postoji prijava sa ovom mejl adresom i ovim brojem telefona.";
     }
 
-    if (emailMatch) {
-      return {
-        applicationId: emailMatch.id,
-        message:
-          "Email koji ste uneli već postoji, da li želite da ažurirate podatke?",
-      };
+    if (zauzetEmail) {
+      return "Već postoji prijava sa ovom mejl adresom.";
     }
 
-    if (phoneMatch) {
-      return {
-        applicationId: phoneMatch.id,
-        message:
-          "Broj telefona koji ste uneli već postoji, da li želite da ažurirate podatke?",
-      };
+    if (zauzetTelefon) {
+      return "Već postoji prijava sa ovim brojem telefona.";
     }
 
     return null;
@@ -849,73 +894,6 @@ const Prijava = () => {
       const errorText = await response.text();
 
       throw new Error(errorText || `Request failed with ${response.status}`);
-    }
-  };
-
-  const updateApplicationAndResendCode = async (
-    supabaseUrl: string,
-    supabasePublishableKey: string,
-    applicationId: number,
-    payload: ApplicationPayload,
-  ) => {
-    const updatePayload = {
-      name_surname: payload.name_surname,
-      email: payload.email,
-      phone_number: payload.phone_number,
-      faculty: payload.faculty,
-      ...(payload.major !== undefined ? { major: payload.major } : {}),
-      study_year: payload.study_year,
-      previously_participated: payload.previously_participated,
-      s2s_experience: payload.s2s_experience,
-      dream_workshop_topic: payload.dream_workshop_topic,
-      receive_fonis_updates: payload.receive_fonis_updates,
-      motivation: payload.motivation,
-      attend_panel_discussion: payload.attend_panel_discussion,
-      question_for_lecturers: payload.question_for_lecturers,
-      first_workshop_choice: payload.first_workshop_choice,
-      first_choice_reason: payload.first_choice_reason,
-      second_workshop_choice: payload.second_workshop_choice,
-      second_choice_reason: payload.second_choice_reason,
-      cv_drive_link: payload.cv_drive_link,
-    };
-
-    const updateResponse = await fetch(
-      `${supabaseUrl}/rest/v1/Application?id=eq.${applicationId}`,
-      {
-        method: "PATCH",
-        headers: {
-          ...supabaseHeaders(supabasePublishableKey),
-          Prefer: "return=minimal",
-        },
-        body: JSON.stringify(updatePayload),
-      },
-    );
-
-    if (!updateResponse.ok) {
-      const errorText = await updateResponse.text();
-
-      throw new Error(
-        errorText || `Request failed with ${updateResponse.status}`,
-      );
-    }
-
-    const resendResponse = await fetch(
-      `${supabaseUrl}/rest/v1/rpc/resend_existing_access_code`,
-      {
-        method: "POST",
-        headers: supabaseHeaders(supabasePublishableKey),
-        body: JSON.stringify({
-          p_application_id: applicationId,
-        }),
-      },
-    );
-
-    if (!resendResponse.ok) {
-      const errorText = await resendResponse.text();
-
-      throw new Error(
-        errorText || `Request failed with ${resendResponse.status}`,
-      );
     }
   };
 
@@ -952,11 +930,7 @@ const Prijava = () => {
 
       if (existing) {
         setStatus("idle");
-
-        setDuplicatePrompt({
-          applicationId: existing.applicationId,
-          message: existing.message,
-        });
+        setDuplicatePrompt(existing);
 
         return;
       }
@@ -977,45 +951,9 @@ const Prijava = () => {
     }
   };
 
-  const handleDeclineUpdate = () => {
+  const zatvoriObavestenjeODuplikatu = () => {
     setDuplicatePrompt(null);
     setStatus("idle");
-  };
-
-  const handleConfirmUpdate = async () => {
-    if (!duplicatePrompt) {
-      return;
-    }
-
-    setStatus("submitting");
-    setErrorMessage("");
-
-    try {
-      const { supabaseUrl, supabasePublishableKey } = getSupabaseConfig();
-
-      const payload = buildPayload(forma);
-
-      await updateApplicationAndResendCode(
-        supabaseUrl,
-        supabasePublishableKey,
-        duplicatePrompt.applicationId,
-        payload,
-      );
-
-      setDuplicatePrompt(null);
-      setStatus("idle");
-      setPoslato(true);
-      setForma(praznaForma);
-      setGreske({});
-      setKorak(1);
-    } catch (error) {
-      setDuplicatePrompt(null);
-      setStatus("error");
-
-      setErrorMessage(
-        error instanceof Error ? error.message : "Prijava nije ažurirana.",
-      );
-    }
   };
 
   if (poslato) {
@@ -1188,19 +1126,16 @@ const Prijava = () => {
                 {korak === 1 ? (
                   <div className="form_step form_step--1">
                     <div className="prijava-step1__fields">
-                      {[
-                        [
-                          "prijava-ime-prezime",
-                          "Ime i prezime",
-                          "text",
-                          "imePrezime",
-                        ],
-                        ["prijava-email", "Mejl adresa", "email", "email"],
-                        ["prijava-telefon", "Broj telefona", "tel", "telefon"],
-                        ["prijava-fakultet", "Fakultet", "text", "fakultet"],
-                      ].map(([id, label, type, field]) => {
-                        const key = field as
-                          "imePrezime" | "email" | "telefon" | "fakultet";
+                      {OSNOVNA_POLJA.map(({
+                        id,
+                        label,
+                        type,
+                        field,
+                        autoComplete,
+                        placeholder,
+                        inputMode,
+                      }) => {
+                        const key = field;
                         const error = greske[key];
 
                         return (
@@ -1222,6 +1157,9 @@ const Prijava = () => {
                                 className="prijava-field__input"
                                 type={type}
                                 required
+                                autoComplete={autoComplete}
+                                placeholder={placeholder}
+                                inputMode={inputMode}
                                 value={forma[key]}
                                 onChange={(event) =>
                                   key === "fakultet"
@@ -2005,23 +1943,11 @@ const Prijava = () => {
                 aria-modal="true"
                 aria-labelledby="prijava-duplicate-title"
               >
-                <p id="prijava-duplicate-title">{duplicatePrompt.message}</p>
+                <p id="prijava-duplicate-title">{duplicatePrompt}</p>
 
                 <div className="prijava-dialog-actions">
-                  <button
-                    type="button"
-                    onClick={handleConfirmUpdate}
-                    disabled={status === "submitting"}
-                  >
-                    Da
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleDeclineUpdate}
-                    disabled={status === "submitting"}
-                  >
-                    Ne
+                  <button type="button" onClick={zatvoriObavestenjeODuplikatu}>
+                    U redu
                   </button>
                 </div>
               </div>

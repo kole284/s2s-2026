@@ -2,17 +2,38 @@ import './Navbar.scss';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
+import closeIcon from '@/assets/Layer_1.svg';
 import hamburgerIcon from '@/assets/Group(2).svg';
 import logoS2S from '@/assets/logo-s2s.svg';
 import { SECTION_ROUTE_BY_PATH, SECTION_ROUTES } from '@/routes/sectionRoutes';
 
 const NAV_ITEMS = SECTION_ROUTES.filter(({ path }) => path !== '/prijava');
 const CTA_ITEM = SECTION_ROUTES.find(({ path }) => path === '/prijava')!;
+const PRIJAVA_PATH = '/prijava';
 const GAME_SECTION_ID = 'igrica';
 const GAME_LABEL = 'Igrica';
 const GAME_URL = '/igrica/';
 const MENU_SCROLL_LOCK_CLASS = 'navbar-menu-scroll-locked';
 const NAVBAR_SCROLL_THRESHOLD = 24;
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 74 73" width="74" height="73" fill="none" focusable="false">
+    <path
+      d="M14 12C27 25 46 48 60 61M59 12C46 26 30 45 13 60"
+      stroke="#134595"
+      strokeWidth="12"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M13 9C28 24 45 47 62 61M62 9C48 24 31 45 12 63"
+      stroke="#2062D4"
+      strokeWidth="8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 type NavbarMenuContentProps = {
   activeId: string;
@@ -76,6 +97,8 @@ const Navbar = () => {
     visibleSection.pathname === pathname
       ? visibleSection.sectionId
       : (SECTION_ROUTE_BY_PATH.get(pathname) ?? NAV_ITEMS[0].sectionId);
+
+  const isPrijavaPage = pathname === PRIJAVA_PATH;
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
   const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), []);
@@ -146,6 +169,12 @@ const Navbar = () => {
   }, [closeMenu, isMenuOpen]);
 
   useEffect(() => {
+    if (isPrijavaPage) {
+      closeMenu();
+    }
+  }, [closeMenu, isPrijavaPage]);
+
+  useEffect(() => {
     const desktopQuery = window.matchMedia('(min-width: 1025px)');
     const closeMenuOnDesktop = (event: MediaQueryListEvent) => {
       if (event.matches) {
@@ -183,7 +212,11 @@ const Navbar = () => {
 
   return (
     <>
-      <header className={`navbar${isScrolled ? ' navbar--scrolled' : ''}`}>
+      <header
+        className={`navbar${isScrolled ? ' navbar--scrolled' : ''}${
+          isPrijavaPage ? ' navbar--prijava' : ''
+        }`}
+      >
         <svg
           className="navbar-shape"
           viewBox="0 0 1440 107"
@@ -213,48 +246,43 @@ const Navbar = () => {
               <img src={logoS2S} alt="S2S" className="navbar-logo-img" />
             </button>
 
-            <button
-              type="button"
-              className={`mobile-menu-control ${isMenuOpen ? 'is-open' : ''}`}
-              onClick={toggleMenu}
-              aria-expanded={isMenuOpen}
-              aria-controls="navbar-mobile-menu"
-              aria-label={isMenuOpen ? 'Zatvori meni' : 'Otvori meni'}
-            >
-              <span
-                className="mobile-menu-control__state mobile-menu-control__burger"
-                aria-hidden="true"
+            {isPrijavaPage ? (
+              <button
+                type="button"
+                className="mobile-menu-control mobile-menu-control--exit"
+                onClick={() => navigateToSection('/', 'naslovna')}
+                aria-label="Zatvori prijavu"
               >
-                <img src={hamburgerIcon} alt="" />
-              </span>
-              <span
-                className="mobile-menu-control__state mobile-menu-control__close"
-                aria-hidden="true"
-              >
-                <svg
-                  viewBox="0 0 74 73"
-                  width="74"
-                  height="73"
-                  fill="none"
-                  focusable="false"
+                <span
+                  className="mobile-menu-control__state mobile-menu-control__close"
+                  aria-hidden="true"
                 >
-                  <path
-                    d="M14 12C27 25 46 48 60 61M59 12C46 26 30 45 13 60"
-                    stroke="#134595"
-                    strokeWidth="12"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M13 9C28 24 45 47 62 61M62 9C48 24 31 45 12 63"
-                    stroke="#2062D4"
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </button>
+                  <img src={closeIcon} alt="" className="navbar-exit-icon" />
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={`mobile-menu-control ${isMenuOpen ? 'is-open' : ''}`}
+                onClick={toggleMenu}
+                aria-expanded={isMenuOpen}
+                aria-controls="navbar-mobile-menu"
+                aria-label={isMenuOpen ? 'Zatvori meni' : 'Otvori meni'}
+              >
+                <span
+                  className="mobile-menu-control__state mobile-menu-control__burger"
+                  aria-hidden="true"
+                >
+                  <img src={hamburgerIcon} alt="" />
+                </span>
+                <span
+                  className="mobile-menu-control__state mobile-menu-control__close"
+                  aria-hidden="true"
+                >
+                  <CloseIcon />
+                </span>
+              </button>
+            )}
 
             <nav id="navbar-menu" className="navbar-menu">
               <NavbarMenuContent

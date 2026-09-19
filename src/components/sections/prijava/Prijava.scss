@@ -282,6 +282,13 @@
         0 80%
       );
 
+      &::placeholder {
+        color: rgba(0, 0, 0, 0.38);
+        font-family: $font-body;
+        font-size: 16px;
+        opacity: 1;
+      }
+
       &:focus-visible {
         box-shadow: none;
       }
@@ -2438,7 +2445,7 @@
       }
 
       &--right {
-        right: calc((100% - 100vw) / 2 + 49px);
+        right: calc((100% - 100vw) / 2 + 26px);
       }
     }
 
@@ -2447,8 +2454,10 @@
       the form content stays at effectively the same vertical position.
     */
     &__paper-shell {
-      margin-top: 164px;
-      padding-top: 46px;
+      // Papir je spusten (a padding smanjen za istu vrednost) da zuti
+      // naslov ne sedi na ivici belog panela.
+      margin-top: 186px;
+      padding-top: 24px;
     }
 
     &_dugme {
@@ -2504,15 +2513,16 @@
     }
 
     &__title {
-      top: -158px;
+      // Spusteno ispod fiksnog X-a u navbaru i smanjeno da se ne preklapaju.
+      top: -100px;
       left: 50%;
-      width: 320px;
+      width: 262px;
       min-width: 0;
-      min-height: 102px;
-      padding: 7px 14px 10px;
+      min-height: 84px;
+      padding: 6px 12px 8px;
       box-sizing: border-box;
       color: $color-black;
-      font-size: clamp(42px, 12.5vw, 50px);
+      font-size: clamp(34px, 10vw, 40px);
       line-height: 0.9;
       background: $color-yellow;
       clip-path: polygon(
