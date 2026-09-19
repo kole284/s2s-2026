@@ -78,6 +78,28 @@
   font-weight: $font-black;
   background: $color-white;
   cursor: pointer;
+  animation: naslovna-cta-float 3.4s ease-in-out infinite;
+}
+
+// Koristi `translate`/`rotate` (ne `transform`), da se slaže sa hover/active
+// efektima dugmeta. Procenti se računaju od veličine dugmeta.
+@keyframes naslovna-cta-float {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: 0.6deg;
+  }
+
+  50% {
+    translate: 0 -7%;
+    rotate: -0.8deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .naslovna__cta {
+    animation: none;
+  }
 }
 
 .naslovna__date-composition {
