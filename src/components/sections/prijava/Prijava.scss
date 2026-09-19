@@ -338,6 +338,33 @@
     }
   }
 
+  /* Cekiranje FON-a: popunjava i zakljucava polje "Fakultet". */
+  &-field--zakljucano {
+    .prijava-field__input {
+      // Pun naziv fakulteta je dug, pa se u zakljucanom stanju malo smanji
+      // da stane u uzu mobilnu sirinu polja.
+      font-size: clamp(13px, 3.9vw, 18px);
+      color: $color-black;
+      background: $color-white;
+      opacity: 1;
+      cursor: not-allowed;
+      -webkit-text-fill-color: $color-black;
+    }
+  }
+
+  &-fon-cek {
+    // Manji checkbox sa rombom + munjica, blizi fakultet polju
+    align-self: flex-start;
+    min-width: 0;
+    margin: -5px 0 1px 8px;
+  }
+
+  // Na mobilnom/tabletu smer i godina ostaju u normalnom toku;
+  // na desktopu ih ovaj omotac drzi u desnoj koloni.
+  &-step1__izbori {
+    display: contents;
+  }
+
   /* =========================================================
      STEP 1 — STUDY YEAR
      ========================================================= */
@@ -410,7 +437,7 @@
 
   &_godina-mrezica-ostalo {
     display: grid;
-    grid-template-columns: 0.9fr 1.55fr;
+    grid-template-columns: 1fr 1fr;
     gap: 18px;
     width: 100%;
   }
@@ -442,6 +469,7 @@
     display: grid;
     width: 42px;
     height: 28px;
+    flex: none;
     place-items: center;
   }
 
@@ -2566,7 +2594,7 @@
     }
 
     &_godina-mrezica-ostalo {
-      grid-template-columns: 0.95fr 1.45fr;
+      grid-template-columns: 1fr 1fr;
       gap: 9px;
     }
 
@@ -2596,6 +2624,27 @@
     &_godina-polje-horizontalno {
       min-height: 50px;
       gap: 6px;
+    }
+
+    // FON checkbox je manji jer nema Smer sekcije pored njega
+    &-fon-cek {
+      min-height: 46px;
+      padding: 4px 6px;
+      gap: 6px;
+
+      .prijava_godina-box-wrapper {
+        width: 35px;
+        height: 24px;
+      }
+
+      .prijava_godina-bolt {
+        width: 18px;
+        height: 28px;
+      }
+
+      .prijava_godina-tekst {
+        font-size: 12px;
+      }
     }
 
     &_godina-box-wrapper {
@@ -3239,14 +3288,55 @@
       grid-template-columns:
         calc(var(--prijava-design-width) * 540 / 1440)
         calc(var(--prijava-design-width) * 440 / 1440);
-      grid-template-rows: 1fr;
-      gap: calc(var(--prijava-design-width) * 65 / 1440);
+      grid-template-rows: auto;
+      gap: calc(var(--prijava-design-width) * 20 / 1440)
+        calc(var(--prijava-design-width) * 65 / 1440);
+      align-content: start;
       align-items: start;
       padding-top: calc(var(--prijava-design-width) * 25 / 1440);
+
+      .prijava-step1__fields {
+        grid-column: 1;
+      }
+
+      .prijava-step1__izbori {
+        display: flex;
+        flex-direction: column;
+        grid-column: 2;
+        align-self: center;
+        // Levi stub uključuje i "Sa FON-a sam" (38px + 6px gap), a centriranje
+        // treba da bude prema četiri polja.
+        margin-bottom: calc(var(--prijava-design-width) * 44 / 1440);
+        gap: calc(var(--prijava-design-width) * 18 / 1440);
+      }
     }
 
     &-step1__fields {
-      gap: calc(var(--prijava-design-width) * 11 / 1440);
+      gap: calc(var(--prijava-design-width) * 6 / 1440);
+    }
+
+    // Kompaktnija varijanta "godina" kutije, da kolona sa poljima
+    // ostane unutar papira.
+    &-fon-cek.prijava_godina-polje-horizontalno {
+      min-height: calc(var(--prijava-design-width) * 38 / 1440);
+      margin: 0 0 0 calc(var(--prijava-design-width) * 8 / 1440);
+      padding:
+        calc(var(--prijava-design-width) * 4 / 1440)
+        calc(var(--prijava-design-width) * 9 / 1440);
+
+      .prijava_godina-box-wrapper {
+        width: calc(var(--prijava-design-width) * 32 / 1440);
+        height: calc(var(--prijava-design-width) * 23 / 1440);
+      }
+
+      .prijava_godina-bolt {
+        width: calc(var(--prijava-design-width) * 18 / 1440);
+        height: calc(var(--prijava-design-width) * 28 / 1440);
+      }
+
+      .prijava_godina-tekst {
+        font-size: calc(var(--prijava-design-width) * 14 / 1440);
+      }
     }
 
     &-field {
@@ -3301,7 +3391,6 @@
     &_godina-sekcija {
       align-self: start;
       width: calc(var(--prijava-design-width) * 420 / 1440);
-      margin-top: calc(var(--prijava-design-width) * 151 / 1440);
     }
 
     &_godina-heading {
@@ -3349,7 +3438,7 @@
     }
 
     &_godina-mrezica-ostalo {
-      grid-template-columns: 1fr 1.55fr;
+      grid-template-columns: 1fr 1fr;
       gap: calc(var(--prijava-design-width) * 12 / 1440);
       margin-top: calc(var(--prijava-design-width) * 4 / 1440);
     }
@@ -3384,6 +3473,8 @@
           calc(var(--prijava-design-width) * 5 / 1440)
           0
           $color-blue;
+        transform: translateY(calc(var(--prijava-design-width) * -1 / 1440))
+          rotate(-1deg);
       }
     }
 

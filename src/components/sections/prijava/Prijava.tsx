@@ -1,4 +1,11 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import {
+  Fragment,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import { createPortal } from "react-dom";
 import "./Prijava.scss";
 
@@ -29,7 +36,6 @@ const OSTALE_GODINE = [
 ];
 const RADIONICE = ["Radionica 1", "Radionica 2", "Radionica 3", "Radionica 4"];
 const NIVOI_ZNANJA: NivoZnanja[] = ["Osnovni", "Srednji", "Napredni"];
-const SMEROVI = ["ISIT", "Menadžment"];
 // CONTENT GAP: partneri trenutno nemaju canonical data source za pokrovitelje.
 const BROJ_POKROVITELJA = 1;
 
@@ -382,6 +388,8 @@ const WorkshopSelectVisual = ({
   );
 };
 
+const FON_PUN_NAZIV = "Fakultet organizacionih nauka";
+
 const jeFakultetFON = (fakultet: string) => {
   const normalizovanFakultet = fakultet.trim().toLocaleLowerCase("sr-Latn");
 
@@ -604,6 +612,8 @@ const Prijava = () => {
     setForma((prev) => ({ ...prev, [polje]: vrednost }));
     ocistiGreske(polje);
   };
+
+  const fonCekiran = forma.fakultet.trim() === FON_PUN_NAZIV;
 
   const promeniFakultet = (fakultet: string) => {
     setForma((prev) => ({
@@ -1126,175 +1136,197 @@ const Prijava = () => {
                 {korak === 1 ? (
                   <div className="form_step form_step--1">
                     <div className="prijava-step1__fields">
-                      {OSNOVNA_POLJA.map(({
-                        id,
-                        label,
-                        type,
-                        field,
-                        autoComplete,
-                        placeholder,
-                        inputMode,
-                      }) => {
-                        const key = field;
-                        const error = greske[key];
+                      {OSNOVNA_POLJA.map(
+                        ({
+                          id,
+                          label,
+                          type,
+                          field,
+                          autoComplete,
+                          placeholder,
+                          inputMode,
+                        }) => {
+                          const key = field;
+                          const error = greske[key];
 
-                        return (
-                          <div
-                            key={id}
-                            className={`prijava-field${
-                              forma[key].trim() ? " prijava-field--filled" : ""
-                            }${error ? " prijava-field--error" : ""}`}
-                          >
-                            <label
-                              className="prijava-field__label"
-                              htmlFor={id}
-                            >
-                              {label}
-                            </label>
-                            <div className="prijava-field__control">
-                              <input
-                                id={id}
-                                className="prijava-field__input"
-                                type={type}
-                                required
-                                autoComplete={autoComplete}
-                                placeholder={placeholder}
-                                inputMode={inputMode}
-                                value={forma[key]}
-                                onChange={(event) =>
-                                  key === "fakultet"
-                                    ? promeniFakultet(event.target.value)
-                                    : promeniPolje(key, event.target.value)
-                                }
-                                aria-invalid={Boolean(error)}
-                              />
-                            </div>
-                            <RequiredStar className="prijava-field__required" />
-                          </div>
-                        );
-                      })}
+                          const fakultetZakljucan =
+                            key === "fakultet" && fonCekiran;
+
+                          return (
+                            <Fragment key={id}>
+                              <div
+                                className={`prijava-field${
+                                  forma[key].trim()
+                                    ? " prijava-field--filled"
+                                    : ""
+                                }${error ? " prijava-field--error" : ""}${
+                                  fakultetZakljucan
+                                    ? " prijava-field--zakljucano"
+                                    : ""
+                                }`}
+                              >
+                                <label
+                                  className="prijava-field__label"
+                                  htmlFor={id}
+                                >
+                                  {label}
+                                </label>
+                                <div className="prijava-field__control">
+                                  <input
+                                    id={id}
+                                    className="prijava-field__input"
+                                    type={type}
+                                    required
+                                    autoComplete={autoComplete}
+                                    placeholder={placeholder}
+                                    inputMode={inputMode}
+                                    value={forma[key]}
+                                    onChange={(event) =>
+                                      key === "fakultet"
+                                        ? promeniFakultet(event.target.value)
+                                        : promeniPolje(key, event.target.value)
+                                    }
+                                    aria-invalid={Boolean(error)}
+                                    disabled={fakultetZakljucan}
+                                  />
+                                </div>
+                                <RequiredStar className="prijava-field__required" />
+                              </div>
+
+                              {key === "fakultet" ? (
+                                <button
+                                  type="button"
+                                  className="prijava_godina-polje-horizontalno prijava-fon-cek"
+                                  onClick={() =>
+                                    promeniFakultet(
+                                      fonCekiran ? "" : FON_PUN_NAZIV,
+                                    )
+                                  }
+                                  role="checkbox"
+                                  aria-checked={fonCekiran}
+                                >
+                                  <span
+                                    className="prijava_godina-box-wrapper"
+                                    aria-hidden="true"
+                                  >
+                                    <img
+                                      src={rombImg}
+                                      alt=""
+                                      className="prijava_godina-romb-img"
+                                    />
+                                    {fonCekiran ? (
+                                      <img
+                                        src={munjicaImg}
+                                        alt=""
+                                        className="prijava_godina-bolt"
+                                      />
+                                    ) : null}
+                                  </span>
+                                  <span className="prijava_godina-tekst">
+                                    Sa FON-a sam
+                                  </span>
+                                </button>
+                              ) : null}
+                            </Fragment>
+                          );
+                        },
+                      )}
                     </div>
 
-                    {jeFakultetFON(forma.fakultet) ? (
+                    <div className="prijava-step1__izbori">
                       <div
-                        className={`prijava_smer-sekcija${
-                          greske.smer ? " prijava_smer-sekcija--greska" : ""
+                        className={`prijava_godina-sekcija${
+                          greske.godinaStudija
+                            ? " prijava_godina-sekcija--greska"
+                            : ""
                         }`}
                       >
-                        <div className="prijava_smer-heading">
-                          <p className="prijava_labela">Smer</p>
+                        <div className="prijava_godina-heading">
+                          <p className="prijava_labela">Godina studija</p>
                           <RequiredStar className="prijava_required-marker" />
                         </div>
                         <div
-                          className="prijava_opcije"
+                          className="prijava_godina-kontejner"
                           role="radiogroup"
-                          aria-label="Smer"
+                          aria-label="Godina studija"
                           aria-required="true"
-                          aria-invalid={Boolean(greske.smer)}
+                          aria-invalid={Boolean(greske.godinaStudija)}
                         >
-                          {SMEROVI.map((smer) => (
-                            <button
-                              key={smer}
-                              type="button"
-                              className={`prijava_opcija ${forma.smer === smer ? "prijava_opcija-aktivna" : ""}`}
-                              onClick={() => promeniPolje("smer", smer)}
-                              role="radio"
-                              aria-checked={forma.smer === smer}
-                            >
-                              {smer}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    <div
-                      className={`prijava_godina-sekcija${
-                        greske.godinaStudija
-                          ? " prijava_godina-sekcija--greska"
-                          : ""
-                      }`}
-                    >
-                      <div className="prijava_godina-heading">
-                        <p className="prijava_labela">Godina studija</p>
-                        <RequiredStar className="prijava_required-marker" />
-                      </div>
-                      <div
-                        className="prijava_godina-kontejner"
-                        role="radiogroup"
-                        aria-label="Godina studija"
-                        aria-required="true"
-                        aria-invalid={Boolean(greske.godinaStudija)}
-                      >
-                        <div className="prijava_godina-mrezica-brojevi">
-                          {BROJEVI_GODINA.map((godina) => (
-                            <button
-                              key={godina.id}
-                              type="button"
-                              className="prijava_godina-polje-vertikalno"
-                              onClick={() =>
-                                promeniPolje("godinaStudija", godina.id)
-                              }
-                              role="radio"
-                              aria-checked={forma.godinaStudija === godina.id}
-                            >
-                              <span
-                                className="prijava_godina-box-wrapper"
-                                aria-hidden="true"
+                          <div className="prijava_godina-mrezica-brojevi">
+                            {BROJEVI_GODINA.map((godina) => (
+                              <button
+                                key={godina.id}
+                                type="button"
+                                className="prijava_godina-polje-vertikalno"
+                                onClick={() =>
+                                  promeniPolje("godinaStudija", godina.id)
+                                }
+                                role="radio"
+                                aria-checked={forma.godinaStudija === godina.id}
                               >
-                                <img
-                                  src={rombImg}
-                                  alt=""
-                                  className="prijava_godina-romb-img"
-                                />
-                                {forma.godinaStudija === godina.id ? (
+                                <span
+                                  className="prijava_godina-box-wrapper"
+                                  aria-hidden="true"
+                                >
                                   <img
-                                    src={munjicaImg}
+                                    src={rombImg}
                                     alt=""
-                                    className="prijava_godina-bolt"
+                                    className="prijava_godina-romb-img"
                                   />
-                                ) : null}
-                              </span>
-                              <span className="prijava_godina-tekst">
-                                {godina.label}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                        <div className="prijava_godina-mrezica-ostalo">
-                          {OSTALE_GODINE.map((godina) => (
-                            <button
-                              key={godina.id}
-                              type="button"
-                              className="prijava_godina-polje-horizontalno"
-                              onClick={() =>
-                                promeniPolje("godinaStudija", godina.id)
-                              }
-                              role="radio"
-                              aria-checked={forma.godinaStudija === godina.id}
-                            >
-                              <span className="prijava_godina-tekst">
-                                {godina.label}
-                              </span>
-                              <span
-                                className="prijava_godina-box-wrapper"
-                                aria-hidden="true"
+                                  {forma.godinaStudija === godina.id ? (
+                                    <img
+                                      src={munjicaImg}
+                                      alt=""
+                                      className="prijava_godina-bolt"
+                                    />
+                                  ) : null}
+                                </span>
+                                <span className="prijava_godina-tekst">
+                                  {godina.label}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                          <div className="prijava_godina-mrezica-ostalo">
+                            {OSTALE_GODINE.map((godina) => (
+                              <button
+                                key={godina.id}
+                                type="button"
+                                className="prijava_godina-polje-horizontalno"
+                                onClick={() =>
+                                  promeniPolje("godinaStudija", godina.id)
+                                }
+                                role="radio"
+                                aria-checked={forma.godinaStudija === godina.id}
                               >
-                                <img
-                                  src={rombImg}
-                                  alt=""
-                                  className="prijava_godina-romb-img"
-                                />
-                                {forma.godinaStudija === godina.id ? (
+                                <span className="prijava_godina-tekst">
+                                  {godina.label.split(" ").map((rec, i) => (
+                                    <Fragment key={rec}>
+                                      {i > 0 ? <br /> : null}
+                                      {rec}
+                                    </Fragment>
+                                  ))}
+                                </span>
+                                <span
+                                  className="prijava_godina-box-wrapper"
+                                  aria-hidden="true"
+                                >
                                   <img
-                                    src={munjicaImg}
+                                    src={rombImg}
                                     alt=""
-                                    className="prijava_godina-bolt"
+                                    className="prijava_godina-romb-img"
                                   />
-                                ) : null}
-                              </span>
-                            </button>
-                          ))}
+                                  {forma.godinaStudija === godina.id ? (
+                                    <img
+                                      src={munjicaImg}
+                                      alt=""
+                                      className="prijava_godina-bolt"
+                                    />
+                                  ) : null}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
