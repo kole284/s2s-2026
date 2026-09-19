@@ -1294,7 +1294,7 @@
     display: block;
     width: 100%;
     min-height: 104px;
-    padding: 13px 15px 13px 18px;
+    padding: 13px 15px 13px 32px;
     border: 0;
     color: $color-black;
     font-family: $font-body;
@@ -1462,10 +1462,10 @@
     min-width: 0;
     grid-template-columns: minmax(0, 0.34fr) minmax(0, 0.66fr);
     gap: 18px;
-    padding: 16px;
-    border: 2px solid $color-black;
+    padding: 0;
+    border: 0;
     box-sizing: border-box;
-    background: $color-white;
+    background: transparent;
   }
 
   &-panel-attendance {
@@ -1480,7 +1480,6 @@
     border: 2px solid $color-black;
     background: $color-white;
     box-shadow: 7px 7px 0 $color-blue;
-    clip-path: polygon(2% 0, 100% 0, 98% 100%, 0 100%);
 
     &--error {
       border-color: #b00020;
@@ -1887,7 +1886,7 @@
   &-panel-textarea {
     display: block;
     width: 100%;
-    padding: 13px 16px 13px 18px;
+    padding: 13px 16px 13px 32px;
     border: 0;
     box-sizing: border-box;
     color: $color-black;
@@ -2202,6 +2201,10 @@
     display: none;
   }
 
+  &_dugme--nazad &_dugme-shell {
+    transform: rotate(180deg);
+  }
+
   &_uspeh_tekst {
     max-width: 440px;
     margin: 72px auto 0;
@@ -2412,7 +2415,11 @@
       transform: translateX(-50%);
     }
 
+    // Papir je najviše 390px širok i centriran; oblici su na ivici ekrana,
+    // pa im se širina uvećava za razmak između ivice ekrana i canvasa.
     &__side-shape {
+      --prijava-shape-extra: calc((100vw - min(100vw, 390px)) / 2);
+
       position: absolute;
       display: none;
       pointer-events: none;
@@ -2426,7 +2433,7 @@
       &--blue-left {
         top: 118px;
         left: 0;
-        width: 113px;
+        width: calc(113px + var(--prijava-shape-extra));
         height: 81px;
         clip-path: polygon(0 10%, 100% 0, 75% 81%, 0 100%);
       }
@@ -2434,7 +2441,7 @@
       &--blue-right {
         top: 116px;
         right: 0;
-        width: 106px;
+        width: calc(106px + var(--prijava-shape-extra));
         height: 82px;
         clip-path: polygon(0 0, 100% 14%, 100% 100%, 23% 82%);
       }
@@ -2448,7 +2455,7 @@
       &--yellow-left {
         top: 201px;
         left: 0;
-        width: 73px;
+        width: calc(73px + var(--prijava-shape-extra));
         height: 79px;
         clip-path: polygon(0 35%, 100% 0, 75% 79%, 0 100%);
       }
@@ -2456,7 +2463,7 @@
       &--yellow-right {
         top: 199px;
         right: 0;
-        width: 70px;
+        width: calc(70px + var(--prijava-shape-extra));
         height: 78px;
         clip-path: polygon(0 0, 100% 35%, 100% 100%, 23% 80%);
       }
@@ -2468,12 +2475,13 @@
       top: 116px;
       width: 44px;
 
+      // Canvas je centriran i najviše 390px, pa su zvezdice uz krajeve naslova.
       &--left {
-        left: calc((100% - 100vw) / 2 + 20px);
+        left: 20px;
       }
 
       &--right {
-        right: calc((100% - 100vw) / 2 + 26px);
+        right: 26px;
       }
     }
 
@@ -2798,8 +2806,6 @@
     .prijava-panel-main {
       grid-template-columns: minmax(0, 1fr);
       gap: 18px;
-      padding: 12px;
-      border-width: 2px;
     }
 
     .prijava-panel-attendance {
@@ -2997,7 +3003,6 @@
 
 @media #{$tablet} {
   .prijava {
-    &__mobile-s2s-band,
     &__mobile-required-note,
     &__mobile-corner-stars {
       display: none;
@@ -3020,6 +3025,201 @@
 
     &__star {
       width: 72px;
+    }
+
+    /* Oblici sa ivice ekrana do papira (isti princip kao na mobilnom). */
+    &__side-shapes {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      left: 50%;
+      display: block;
+      width: 100vw;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      transform: translateX(-50%);
+    }
+
+    &__side-shape {
+      // Razmak od ivice ekrana do papira (canvas je centriran, papir uvučen 17px).
+      --prijava-shape-reach: calc((100vw - min(92vw, 760px)) / 2 + 17px);
+
+      position: absolute;
+      display: block;
+      pointer-events: none;
+
+      &--blue-left,
+      &--blue-right {
+        background: $color-blue-dark;
+      }
+
+      &--yellow-left,
+      &--yellow-right {
+        background: $color-yellow;
+      }
+
+      &--blue-left {
+        top: 36px;
+        left: 0;
+        width: calc(var(--prijava-shape-reach) + 99px);
+        height: 81px;
+        clip-path: polygon(0 10%, 100% 0, 75% 81%, 0 100%);
+      }
+
+      &--blue-right {
+        top: 34px;
+        right: 0;
+        width: calc(var(--prijava-shape-reach) + 92px);
+        height: 82px;
+        clip-path: polygon(0 0, 100% 14%, 100% 100%, 23% 82%);
+      }
+
+      &--yellow-left {
+        top: 119px;
+        left: 0;
+        width: calc(var(--prijava-shape-reach) + 59px);
+        height: 79px;
+        clip-path: polygon(0 35%, 100% 0, 75% 79%, 0 100%);
+      }
+
+      &--yellow-right {
+        top: 117px;
+        right: 0;
+        width: calc(var(--prijava-shape-reach) + 56px);
+        height: 78px;
+        clip-path: polygon(0 0, 100% 35%, 100% 100%, 23% 80%);
+      }
+    }
+
+    /* Animirana S2S traka, ispod papira (z-index 0 < papir 2). */
+    &__mobile-s2s-band {
+      --prijava-marquee-angle: 10.1deg;
+
+      position: absolute;
+      z-index: 0;
+      top: 400px;
+      left: 50%;
+      display: block;
+      width: 100vw;
+      height: calc(260px + 100vw * 0.18);
+      overflow: clip;
+      pointer-events: none;
+      transform: translateX(-50%);
+    }
+
+    &__mobile-s2s-ribbon {
+      position: absolute;
+      z-index: 0;
+      top: 98px;
+      left: 0;
+      width: calc(100% + 24px);
+      height: 150px;
+      transform: rotate(var(--prijava-marquee-angle));
+      transform-origin: top left;
+
+      &::before {
+        position: absolute;
+        z-index: 0;
+        inset: 0;
+        content: "";
+        background: $color-blue-dark;
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          100% 89%,
+          80% 86%,
+          74% 97%,
+          67% 87%,
+          60% 98%,
+          53% 83%,
+          45% 95%,
+          37% 81%,
+          29% 92%,
+          21% 79%,
+          13% 89%,
+          6% 77%,
+          0 84%
+        );
+      }
+    }
+
+    &__mobile-s2s-track {
+      position: absolute;
+      z-index: 1;
+      top: -45px;
+      left: 0;
+      display: flex;
+      width: max-content;
+      height: max-content;
+      align-items: flex-end;
+      gap: 0;
+      will-change: transform;
+      animation: prijava-mobile-s2s-scroll 12s linear infinite;
+    }
+
+    &__mobile-s2s-sequence {
+      display: block;
+      flex: none;
+      margin: 0;
+      padding: 0;
+      color: $color-blue-dark;
+      font-family: $font-display;
+      font-size: 62px;
+      font-weight: $font-black;
+      line-height: 0.78;
+      letter-spacing: -0.09em;
+      white-space: nowrap;
+    }
+
+    // Uska kolona za "Da li bi prisustvovao/la" seče sadržaj: slažemo u jednu kolonu.
+    .prijava-panel-main {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .prijava-panel-choice {
+      margin-left: 0;
+    }
+
+    // Ista plava dugmad (SVG) kao na mobilnom i desktopu.
+    &_dugme {
+      position: relative;
+      display: grid;
+      width: 189px;
+      min-width: 0;
+      min-height: 0;
+      flex: 0 1 189px;
+      padding: 0;
+      border: 0;
+      aspect-ratio: 189 / 56;
+      background: transparent;
+      clip-path: none;
+      place-items: center;
+
+      &--napred,
+      &--posalji {
+        background: transparent;
+      }
+    }
+
+    &_dugme-shell {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    &_dugme-text {
+      position: relative;
+      z-index: 1;
+      color: $color-black;
+      font-family: $font-display;
+      font-size: 17px;
+      font-weight: $font-black;
+      line-height: 1;
     }
   }
 }
@@ -4484,10 +4684,10 @@
       min-height: 0;
       flex: 1 1 auto;
       padding:
-        calc(var(--prijava-design-width) * 8 / 1440)
-        calc(var(--prijava-design-width) * 12 / 1440)
-        calc(var(--prijava-design-width) * 8 / 1440)
-        calc(var(--prijava-design-width) * 14 / 1440);
+        calc(var(--prijava-design-width) * 10 / 1440)
+        calc(var(--prijava-design-width) * 14 / 1440)
+        calc(var(--prijava-design-width) * 10 / 1440)
+        calc(var(--prijava-design-width) * 34 / 1440);
       font-size: calc(var(--prijava-design-width) * 14 / 1440);
       line-height: 1.3;
 
