@@ -390,15 +390,6 @@ const WorkshopSelectVisual = ({
 
 const FON_PUN_NAZIV = "Fakultet organizacionih nauka";
 
-const jeFakultetFON = (fakultet: string) => {
-  const normalizovanFakultet = fakultet.trim().toLocaleLowerCase("sr-Latn");
-
-  return (
-    normalizovanFakultet === "fon" ||
-    normalizovanFakultet === "fakultet organizacionih nauka"
-  );
-};
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 
 const jeValidanEmail = (email: string) => EMAIL_REGEX.test(email.trim());
@@ -468,7 +459,6 @@ const praznaForma: PrijavaForma = {
   email: "",
   telefon: "",
   fakultet: "",
-  smer: "",
   godinaStudija: "",
   prvaZeljaRadionica: "",
   prvaZeljaNivoZnanja: "",
@@ -491,7 +481,6 @@ type ApplicationPayload = {
   email: string;
   phone_number: string;
   faculty: string;
-  major?: string;
   study_year: string;
   previously_participated: boolean;
   s2s_experience: string;
@@ -551,8 +540,6 @@ const buildPayload = (forma: PrijavaForma): ApplicationPayload => {
     email: forma.email.trim(),
     phone_number: normalizujTelefon(forma.telefon),
     faculty: forma.fakultet.trim(),
-    ...(jeFakultetFON(forma.fakultet) ? { major: forma.smer.trim() } : {}),
-
     study_year: forma.godinaStudija.trim(),
     previously_participated: forma.ranijeUcestvovao ?? false,
     s2s_experience: forma.ranijeUcestvovao ? forma.s2sIskustvo.trim() : "",
@@ -616,12 +603,8 @@ const Prijava = () => {
   const fonCekiran = forma.fakultet.trim() === FON_PUN_NAZIV;
 
   const promeniFakultet = (fakultet: string) => {
-    setForma((prev) => ({
-      ...prev,
-      fakultet,
-      smer: jeFakultetFON(fakultet) ? prev.smer : "",
-    }));
-    ocistiGreske("fakultet", "smer");
+    setForma((prev) => ({ ...prev, fakultet }));
+    ocistiGreske("fakultet");
   };
 
   const promeniRanijeUcestvovao = (vrednost: boolean) => {
@@ -689,7 +672,6 @@ const Prijava = () => {
     email: "Email",
     telefon: "Broj telefona",
     fakultet: "Fakultet",
-    smer: "Smer",
     godinaStudija: "Godina studija",
     prvaZeljaRadionica: "Prva želja — radionica",
     prvaZeljaNivoZnanja: "Prva želja — nivo znanja",
@@ -732,10 +714,6 @@ const Prijava = () => {
 
       if (!forma.fakultet.trim()) {
         greskeKorak.fakultet = "Fakultet je obavezan.";
-      }
-
-      if (jeFakultetFON(forma.fakultet) && !forma.smer) {
-        greskeKorak.smer = "Smer je obavezan.";
       }
 
       if (!forma.godinaStudija) {

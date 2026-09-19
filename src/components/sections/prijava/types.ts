@@ -5,7 +5,6 @@ export interface PrijavaForma {
   email: string;
   telefon: string;
   fakultet: string;
-  smer: string;
   godinaStudija: string;
 
   prvaZeljaRadionica: string;
