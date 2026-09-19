@@ -4,8 +4,7 @@ import {
   useRef,
   useState,
   type AnimationEvent,
-  type CSSProperties,
-  type TouchEvent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 
 import graphIcon from "@/assets/lupa.svg";
@@ -103,21 +102,48 @@ const RADIONICE: Radionica[] = [
   },
 ];
 
-const INTERVAL_ROTACIJE_MS = 3000;
-
-const VIDLJIVI_POMERAJI = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
-
-/* Isti prelom kao `$mobile` u src/styles/_mediaqueries.scss. */
-const UPIT_MOBILNI = "(max-width: 768px)";
+/*
+ * Traka radionica radi po istom principu kao partnerski marquee:
+ * tri identične grupe u nizu, pomeraj u pikselima i modulo širine grupe, pa je
+ * kretanje beskonačno. Autoplay ide konstantnom brzinom, a prevlačenje ga
+ * privremeno preuzima i vraća posle kratke pauze.
+ */
+const BROJ_GRUPA = 3;
+const BRZINA_TRAKE_PX_PO_SEKUNDI = 52;
+const NASTAVAK_AUTOPLAYA_MS = 450;
+const MAX_KORAK_SEKUNDI = 0.1;
 
 /*
- * Na telefonu karusel vodi korisnik prstom.
- * Swipe se računa samo ako je pokret pretežno horizontalan, da vertikalni
- * scroll kroz sekciju ostane netaknut.
+ * Pokret postaje prevlačenje tek posle ovog praga i samo ako je pretežno
+ * horizontalan: tap na radionicu ostaje čist klik, a vertikalni scroll
+ * stranice ostaje netaknut.
  */
-const MIN_SWIPE_PX = 40;
+const PRAG_PREVLACENJA_PX = 6;
 
-type SmerRadionice = "next" | "previous";
+/* Klik prvo dovede radionicu u centar, pa tek onda kreće prelaz na predavača. */
+const TRAJANJE_CENTRIRANJA_MS = 340;
+
+/*
+ * Koliko širine i visine svoje kutije zauzima zgužvani oblik
+ * (`--rd-paper-crumpled-next` u Radionice.scss). Po ovome se računa Y faktor
+ * lopte. Y je uzet nešto manji od pravog gabarita (0.94) jer oblik ima usece
+ * gore i dole na sredini — oko čita telo oblika, ne krajnje tačke.
+ */
+const UDEO_OBLIKA_X = 0.96;
+const UDEO_OBLIKA_Y = 0.88;
+
+/*
+ * Nagib lopte u zgužvanom stanju (rotate u .radionice-page--view-*-crumpling).
+ * U transform listi rotacija ide PRE skaliranja, pa širina papira (cela sekcija)
+ * ulazi i u visinu lopte — bez toga račun ispadne pogrešan.
+ */
+const UGAO_LOPTE_STEPENI = 2.4;
+
+/*
+ * Sitna rezerva na računatoj visini, da skew i zaokruživanje ne preteraju.
+ */
+const REZERVA_VISINE_LOPTE = 1;
+
 type FazaPrikaza = "crumpling" | "exiting" | "entering" | "unfolding";
 
 type SmerPrikaza = "to-speaker" | "to-workshop";
@@ -127,12 +153,6 @@ type TranzicijaPrikaza = {
 };
 
 /*
- * Prelaz između dve radionice je samo horizontalni slide traka ikonica.
- * Mora da ostane sinhron sa `--rd-trajanje-slajda` u Radionice.scss.
- */
-const TRAJANJE_SLAJDA_MS = 420;
-
-/*
  * Jedna lopta kroz četiri beata:
  * 1) papir se skupča u sredinu i stara pozadina se uvuče u njega,
  * 2) lopta ode udesno iz kadra,
@@ -140,13 +160,13 @@ const TRAJANJE_SLAJDA_MS = 420;
  * 4) iz nje izlazi nova pozadina i širi se dok se papir odgužva.
  * Trajanja moraju da prate iste vrednosti u Radionice.scss.
  */
-const TRAJANJE_GUZVANJA_PRIKAZA_MS = 360;
-const TRAJANJE_IZLASKA_PRIKAZA_MS = 300;
-const TRAJANJE_ULASKA_PRIKAZA_MS = 340;
-const TRAJANJE_OTVARANJA_PRIKAZA_MS = 450;
+const TRAJANJE_GUZVANJA_PRIKAZA_MS = 270;
+const TRAJANJE_IZLASKA_PRIKAZA_MS = 225;
+const TRAJANJE_ULASKA_PRIKAZA_MS = 255;
+const TRAJANJE_OTVARANJA_PRIKAZA_MS = 338;
 
-type RadionicePaperProps = {
-  indeks: number;
+type RadioniceTrakaProps = {
+  pauza: boolean;
   interaktivno: boolean;
   onOpen: (radionica: Radionica) => void;
 };
@@ -155,60 +175,385 @@ const RadionicePaperSurface = () => (
   <div className="radionice-paper-surface" aria-hidden="true" />
 );
 
-const RadionicePaper = ({ indeks, interaktivno, onOpen }: RadionicePaperProps) => (
-  <div
-    className="radionice-stage"
-    style={{ "--rd-indeks": indeks } as CSSProperties}
-  >
-    {VIDLJIVI_POMERAJI.map((pomeraj) => {
-      const virtuelniIndeks = indeks + pomeraj;
-      const radionica =
-        RADIONICE[
-          ((virtuelniIndeks % RADIONICE.length) + RADIONICE.length) %
-            RADIONICE.length
-        ];
-      const jeCentar = pomeraj === 0;
+const RadioniceTraka = ({ pauza, interaktivno, onOpen }: RadioniceTrakaProps) => {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trakaRef = useRef<HTMLDivElement>(null);
+  const grupaRef = useRef<HTMLDivElement>(null);
 
-      return (
-        <div
-          key={virtuelniIndeks}
-          className={`radionice-slot${jeCentar ? " radionice-slot--centar" : ""}`}
-          style={{ "--rd-pozicija": virtuelniIndeks } as CSSProperties}
-        >
-          {jeCentar ? (
-            <button
-              type="button"
-              className="radionice-icon-button"
-              onClick={() => onOpen(radionica)}
-              aria-label={`Otvori detalje radionice ${radionica.fullTitle}`}
-              disabled={!interaktivno}
-            >
-              <img
-                src={radionica.icon}
-                alt=""
-                className="radionice-ikonica"
-                draggable={false}
-              />
-            </button>
-          ) : (
-            <img
-              src={radionica.icon}
-              alt=""
-              className="radionice-ikonica"
-              draggable={false}
-            />
-          )}
+  const pomerajRef = useRef(0);
+  const sirinaGrupeRef = useRef(0);
+  const korakRef = useRef(0);
+  const sirinaStavkeRef = useRef(0);
 
-          <p className="radionice-naziv">{radionica.shortTitle}</p>
-        </div>
-      );
-    })}
-  </div>
-);
+  /* Preostalo vreme pauze posle prevlačenja, u sekundama; petlja ga odbrojava. */
+  const cekanjeAutoplayaRef = useRef(0);
+
+  const prevlacenjeRef = useRef(false);
+  const pokazivacIdRef = useRef<number | null>(null);
+  const pocetakXRef = useRef(0);
+  const pocetakYRef = useRef(0);
+  const pocetniPomerajRef = useRef(0);
+  const pomerioSeRef = useRef(false);
+
+  const centriranjeRef = useRef<{
+    od: number;
+    cilj: number;
+    proteklo: number;
+    radionica: Radionica;
+  } | null>(null);
+
+  const pauzaRef = useRef(pauza);
+  const smanjenPokretRef = useRef(false);
+  const onOpenRef = useRef(onOpen);
+
+  /* Petlja živi u efektu, pa je handleri pokreću/zaustavljaju preko ovih komandi. */
+  const komandeRef = useRef<{ pokreni: () => void; zaustavi: () => void } | null>(
+    null,
+  );
+
+  const [centarKljuc, setCentarKljuc] = useState(-1);
+
+  useEffect(() => {
+    onOpenRef.current = onOpen;
+  }, [onOpen]);
+
+  const normalizovanPomeraj = useCallback(() => {
+    const sirina = sirinaGrupeRef.current;
+
+    if (sirina <= 0) return 0;
+
+    return ((pomerajRef.current % sirina) + sirina) % sirina;
+  }, []);
+
+  /*
+   * Naziv se ispisuje ispod one stavke koja je najbliža centru kadra.
+   * Račun je čisto aritmetički (pomeraj + korak), pa ne košta ništa po frejmu.
+   */
+  const primeniTransform = useCallback(() => {
+    const traka = trakaRef.current;
+    const viewport = viewportRef.current;
+
+    if (!traka || !viewport) return;
+
+    const renderPomeraj = sirinaGrupeRef.current + normalizovanPomeraj();
+
+    traka.style.transform = `translate3d(${-renderPomeraj}px, 0, 0)`;
+
+    const korak = korakRef.current;
+
+    if (korak <= 0) return;
+
+    const kljuc = Math.round(
+      (viewport.clientWidth / 2 + renderPomeraj - sirinaStavkeRef.current / 2) /
+        korak,
+    );
+
+    setCentarKljuc((prethodni) => (prethodni === kljuc ? prethodni : kljuc));
+  }, [normalizovanPomeraj]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const grupa = grupaRef.current;
+
+    if (!viewport || !grupa) return;
+
+    const smanjenPokret = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let frame: number | null = null;
+    let prethodniFrame: number | null = null;
+
+    const trebaPetlja = () =>
+      centriranjeRef.current !== null ||
+      (!pauzaRef.current && !smanjenPokretRef.current && !prevlacenjeRef.current);
+
+    const zaustavi = () => {
+      if (frame !== null) {
+        window.cancelAnimationFrame(frame);
+        frame = null;
+      }
+
+      prethodniFrame = null;
+    };
+
+    const korakAnimacije = (vreme: number) => {
+      frame = null;
+
+      const delta =
+        prethodniFrame === null
+          ? 0
+          : Math.min((vreme - prethodniFrame) / 1000, MAX_KORAK_SEKUNDI);
+
+      prethodniFrame = vreme;
+
+      const centriranje = centriranjeRef.current;
+
+      if (centriranje) {
+        centriranje.proteklo += delta * 1000;
+
+        const napredak = Math.min(
+          1,
+          centriranje.proteklo / TRAJANJE_CENTRIRANJA_MS,
+        );
+        const ublazeno = 1 - (1 - napredak) ** 3;
+
+        pomerajRef.current =
+          centriranje.od + (centriranje.cilj - centriranje.od) * ublazeno;
+        primeniTransform();
+
+        if (napredak >= 1) {
+          centriranjeRef.current = null;
+          onOpenRef.current(centriranje.radionica);
+        }
+      } else if (cekanjeAutoplayaRef.current > 0) {
+        cekanjeAutoplayaRef.current -= delta;
+      } else if (
+        !pauzaRef.current &&
+        !smanjenPokretRef.current &&
+        !prevlacenjeRef.current
+      ) {
+        pomerajRef.current += BRZINA_TRAKE_PX_PO_SEKUNDI * delta;
+        primeniTransform();
+      }
+
+      if (trebaPetlja()) {
+        frame = window.requestAnimationFrame(korakAnimacije);
+      } else {
+        prethodniFrame = null;
+      }
+    };
+
+    const pokreni = () => {
+      if (frame !== null || !trebaPetlja()) return;
+
+      prethodniFrame = null;
+      frame = window.requestAnimationFrame(korakAnimacije);
+    };
+
+    const izmeri = () => {
+      const stavke = grupa.querySelectorAll<HTMLElement>(".radionice-stavka");
+
+      if (stavke.length < 2) return;
+
+      const novaSirina = grupa.getBoundingClientRect().width;
+
+      if (novaSirina <= 0) return;
+
+      const prethodnaSirina = sirinaGrupeRef.current;
+
+      /*
+       * Korak se meri iz rect-ova, ne iz offsetLeft: offsetLeft je zaokružen na
+       * ceo piksel, pa bi se greška sabirala kroz grupu i klik bi centrirao
+       * radionicu nekoliko piksela pored sredine.
+       */
+      const prviRect = stavke[0].getBoundingClientRect();
+
+      korakRef.current = stavke[1].getBoundingClientRect().left - prviRect.left;
+      sirinaStavkeRef.current = prviRect.width;
+
+      if (prethodnaSirina > 0) {
+        const normalizovano =
+          ((pomerajRef.current % prethodnaSirina) + prethodnaSirina) %
+          prethodnaSirina;
+
+        pomerajRef.current = (normalizovano / prethodnaSirina) * novaSirina;
+      } else {
+        // Prvi kadar zatiče prvu radionicu tačno u centru, sa ispisanim nazivom.
+        pomerajRef.current =
+          sirinaStavkeRef.current / 2 - viewport.clientWidth / 2;
+      }
+
+      sirinaGrupeRef.current = novaSirina;
+      primeniTransform();
+    };
+
+    const naPromenuPokreta = () => {
+      smanjenPokretRef.current = smanjenPokret.matches;
+
+      if (smanjenPokretRef.current) {
+        zaustavi();
+      } else {
+        pokreni();
+      }
+    };
+
+    komandeRef.current = { pokreni, zaustavi };
+
+    const resizeObserver = new ResizeObserver(izmeri);
+
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(grupa);
+    smanjenPokret.addEventListener("change", naPromenuPokreta);
+
+    izmeri();
+    naPromenuPokreta();
+
+    return () => {
+      resizeObserver.disconnect();
+      smanjenPokret.removeEventListener("change", naPromenuPokreta);
+      zaustavi();
+      komandeRef.current = null;
+    };
+  }, [primeniTransform]);
+
+  /* Dok je predavač otvoren traka miruje: niko je ne vidi. */
+  useEffect(() => {
+    pauzaRef.current = pauza;
+
+    if (pauza) {
+      komandeRef.current?.zaustavi();
+    } else {
+      komandeRef.current?.pokreni();
+    }
+  }, [pauza]);
+
+  const naPokazivacDole = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (centriranjeRef.current) return;
+
+    pokazivacIdRef.current = event.pointerId;
+    pocetakXRef.current = event.clientX;
+    pocetakYRef.current = event.clientY;
+    pocetniPomerajRef.current = pomerajRef.current;
+    pomerioSeRef.current = false;
+  };
+
+  const naPokazivacPomeraj = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (pokazivacIdRef.current !== event.pointerId) return;
+
+    const pomerajX = event.clientX - pocetakXRef.current;
+    const pomerajY = event.clientY - pocetakYRef.current;
+
+    if (!prevlacenjeRef.current) {
+      if (
+        Math.abs(pomerajX) < PRAG_PREVLACENJA_PX ||
+        Math.abs(pomerajX) <= Math.abs(pomerajY)
+      ) {
+        return;
+      }
+
+      prevlacenjeRef.current = true;
+      pomerioSeRef.current = true;
+      cekanjeAutoplayaRef.current = 0;
+      komandeRef.current?.zaustavi();
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    pomerajRef.current = pocetniPomerajRef.current - pomerajX;
+    primeniTransform();
+  };
+
+  const zavrsiPrevlacenje = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (pokazivacIdRef.current !== event.pointerId) return;
+
+    pokazivacIdRef.current = null;
+
+    if (!prevlacenjeRef.current) return;
+
+    prevlacenjeRef.current = false;
+    cekanjeAutoplayaRef.current = NASTAVAK_AUTOPLAYA_MS / 1000;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    komandeRef.current?.pokreni();
+  };
+
+  /*
+   * Klik na bilo koju radionicu: prvo je dovedemo u centar kadra, pa tek onda
+   * puštamo prelaz na predavača. Tako lopta uvek nastaje na istom mestu i
+   * animacija ostaje nepromenjena.
+   */
+  const naKlikStavke = (radionica: Radionica, globalniIndeks: number) => {
+    if (pomerioSeRef.current) {
+      pomerioSeRef.current = false;
+      return;
+    }
+
+    if (!interaktivno || centriranjeRef.current) return;
+
+    const korak = korakRef.current;
+    const viewport = viewportRef.current;
+
+    if (korak <= 0 || !viewport) {
+      onOpen(radionica);
+      return;
+    }
+
+    const renderPomeraj = sirinaGrupeRef.current + normalizovanPomeraj();
+    const centarStavke =
+      globalniIndeks * korak + sirinaStavkeRef.current / 2 - renderPomeraj;
+    const razlika = centarStavke - viewport.clientWidth / 2;
+
+    if (Math.abs(razlika) < 1 || smanjenPokretRef.current) {
+      onOpen(radionica);
+      return;
+    }
+
+    centriranjeRef.current = {
+      od: pomerajRef.current,
+      cilj: pomerajRef.current + razlika,
+      proteklo: 0,
+      radionica,
+    };
+    cekanjeAutoplayaRef.current = 0;
+    komandeRef.current?.pokreni();
+  };
+
+  return (
+    <div
+      ref={viewportRef}
+      className="radionice-traka"
+      onPointerDown={naPokazivacDole}
+      onPointerMove={naPokazivacPomeraj}
+      onPointerUp={zavrsiPrevlacenje}
+      onPointerCancel={zavrsiPrevlacenje}
+    >
+      <div ref={trakaRef} className="radionice-traka-niz">
+        {Array.from({ length: BROJ_GRUPA }, (_, grupa) => (
+          <div
+            ref={grupa === 0 ? grupaRef : undefined}
+            className="radionice-traka-grupa"
+            key={grupa}
+            aria-hidden={grupa === 0 ? undefined : true}
+          >
+            {RADIONICE.map((radionica, indeks) => {
+              const globalniIndeks = grupa * RADIONICE.length + indeks;
+
+              return (
+                <button
+                  type="button"
+                  className={`radionice-stavka${
+                    globalniIndeks === centarKljuc
+                      ? " radionice-stavka--centar"
+                      : ""
+                  }`}
+                  key={radionica.id}
+                  onClick={() => naKlikStavke(radionica, globalniIndeks)}
+                  aria-label={`Otvori detalje radionice ${radionica.fullTitle}`}
+                  tabIndex={grupa === 0 ? undefined : -1}
+                  disabled={!interaktivno}
+                >
+                  <img
+                    src={radionica.icon}
+                    alt=""
+                    className="radionice-ikonica"
+                    draggable={false}
+                  />
+
+                  <span className="radionice-naziv">{radionica.shortTitle}</span>
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Radionice = () => {
-  const [aktivniIndeks, setAktivniIndeks] = useState(0);
-  const [slajdUToku, setSlajdUToku] = useState(false);
+  const sekcijaRef = useRef<HTMLElement>(null);
   const [tranzicijaPrikaza, setTranzicijaPrikaza] =
     useState<TranzicijaPrikaza | null>(null);
   const tranzicijaPrikazaUToku = useRef(false);
@@ -216,10 +561,6 @@ const Radionice = () => {
     null,
   );
   const [otvorenaRadionica, setOtvorenaRadionica] = useState<Radionica | null>(null);
-  const [jeMobilni, setJeMobilni] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(UPIT_MOBILNI).matches,
-  );
-  const pocetakDodira = useRef<{ x: number; y: number } | null>(null);
 
   const predavacOtvoren = aktivniPredavacId !== null;
   /*
@@ -231,8 +572,65 @@ const Radionice = () => {
     ? tranzicijaPrikaza.smer === "to-speaker"
     : predavacOtvoren;
 
-  const otvoriPredavaca = (radionica: Radionica) => {
+  /*
+   * Y faktor lopte se računa iz stvarnih dimenzija papira. Oba papira (traka
+   * radionica i list predavača) visoka su tačno koliko `--rd-stage-height`, a
+   * široka koliko sekcija — odnos tih stranica se menja sa prozorom, pa fiksan
+   * broj negde daje pljosnatu loptu. Cilj: zgužvani oblik otprilike kvadratan,
+   * nikako viši nego širi.
+   */
+  const izracunajRazmereLopte = useCallback(() => {
+    const sekcija = sekcijaRef.current;
+
+    if (!sekcija) return;
+
+    const traka = sekcija.querySelector<HTMLElement>(".radionice-band");
+
+    if (!traka) return;
+
+    const faktorX = Number.parseFloat(
+      getComputedStyle(sekcija).getPropertyValue("--rd-view-ball-scale-x"),
+    );
+
+    if (!Number.isFinite(faktorX)) return;
+
+    const sekcijaRect = sekcija.getBoundingClientRect();
+    const trakaRect = traka.getBoundingClientRect();
+
+    if (trakaRect.height <= 0) return;
+
+    const ugao = (UGAO_LOPTE_STEPENI * Math.PI) / 180;
+    const kutijaX = sekcijaRect.width;
+    const kutijaY = trakaRect.height;
+    const sirinaLopte =
+      (kutijaX * Math.cos(ugao) + kutijaY * Math.sin(ugao)) * UDEO_OBLIKA_X;
+    const visinaLopte =
+      (kutijaX * Math.sin(ugao) + kutijaY * Math.cos(ugao)) * UDEO_OBLIKA_Y;
+
+    sekcija.style.setProperty(
+      "--rd-view-ball-scale-y",
+      `${(faktorX * sirinaLopte * REZERVA_VISINE_LOPTE) / visinaLopte}`,
+    );
+  }, []);
+
+  useEffect(() => {
+    const sekcija = sekcijaRef.current;
+
+    if (!sekcija) return;
+
+    const resizeObserver = new ResizeObserver(izracunajRazmereLopte);
+
+    resizeObserver.observe(sekcija);
+    izracunajRazmereLopte();
+
+    return () => resizeObserver.disconnect();
+  }, [izracunajRazmereLopte]);
+
+  const otvoriPredavaca = useCallback((radionica: Radionica) => {
     if (tranzicijaPrikazaUToku.current) return;
+
+    // Faktor mora da bude svez: prozor je mogao da se promeni od poslednjeg racuna.
+    izracunajRazmereLopte();
     setOtvorenaRadionica(radionica);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setAktivniPredavacId(radionica.predavacId);
@@ -242,10 +640,13 @@ const Radionice = () => {
     tranzicijaPrikazaUToku.current = true;
     setAktivniPredavacId(radionica.predavacId);
     setTranzicijaPrikaza({ faza: "crumpling", smer: "to-speaker" });
-  };
+  }, [izracunajRazmereLopte]);
 
   const zatvoriPredavaca = () => {
     if (aktivniPredavacId === null || tranzicijaPrikazaUToku.current) return;
+
+    izracunajRazmereLopte();
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setAktivniPredavacId(null);
       setOtvorenaRadionica(null);
@@ -256,61 +657,6 @@ const Radionice = () => {
     setTranzicijaPrikaza({ faza: "crumpling", smer: "to-workshop" });
   };
 
-  /*
-   * Radionica -> radionica je čist horizontalni slide: samo se pomeri traka
-   * ikonica. `slajdUToku` postoji da klik/auto-rotacija ne preskoče slide.
-   */
-  const promeniRadionicu = useCallback(
-    (smer: SmerRadionice) => {
-      if (slajdUToku || tranzicijaPrikazaUToku.current || predavacOtvoren) return;
-
-      setAktivniIndeks((prethodni) => prethodni + (smer === "next" ? 1 : -1));
-
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-      setSlajdUToku(true);
-    },
-    [predavacOtvoren, slajdUToku],
-  );
-
-  const zapocniDodir = (event: TouchEvent<HTMLDivElement>) => {
-    const dodir = event.touches[0];
-    pocetakDodira.current = dodir ? { x: dodir.clientX, y: dodir.clientY } : null;
-  };
-
-  const zavrsiDodir = (event: TouchEvent<HTMLDivElement>) => {
-    const pocetak = pocetakDodira.current;
-    pocetakDodira.current = null;
-
-    const dodir = event.changedTouches[0];
-    if (!pocetak || !dodir) return;
-
-    const dx = dodir.clientX - pocetak.x;
-    const dy = dodir.clientY - pocetak.y;
-    if (Math.abs(dx) < MIN_SWIPE_PX || Math.abs(dx) <= Math.abs(dy)) return;
-
-    promeniRadionicu(dx < 0 ? "next" : "previous");
-  };
-
-  useEffect(() => {
-    const upit = window.matchMedia(UPIT_MOBILNI);
-    const naPromenu = () => setJeMobilni(upit.matches);
-
-    naPromenu();
-    upit.addEventListener("change", naPromenu);
-
-    return () => upit.removeEventListener("change", naPromenu);
-  }, []);
-
-  useEffect(() => {
-    if (!slajdUToku) return;
-
-    const tajmer = window.setTimeout(() => {
-      setSlajdUToku(false);
-    }, TRAJANJE_SLAJDA_MS);
-
-    return () => window.clearTimeout(tajmer);
-  }, [slajdUToku]);
 
   useEffect(() => {
     if (!tranzicijaPrikaza) return;
@@ -362,23 +708,9 @@ const Radionice = () => {
     }
   };
 
-  /* Auto-rotacija je samo desktop/tablet ponašanje; na telefonu vodi swipe. */
-  useEffect(() => {
-    if (jeMobilni || predavacOtvoren || slajdUToku || tranzicijaPrikaza) {
-      return;
-    }
-
-    const tajmer = window.setInterval(() => {
-      promeniRadionicu("next");
-    }, INTERVAL_ROTACIJE_MS);
-
-    return () => {
-      window.clearInterval(tajmer);
-    };
-  }, [jeMobilni, predavacOtvoren, promeniRadionicu, slajdUToku, tranzicijaPrikaza]);
-
   return (
     <section
+      ref={sekcijaRef}
       id="radionice"
       className={`radionice-page${
         predavacOtvoren ? " radionice-page--predavac-open" : ""
@@ -402,23 +734,15 @@ const Radionice = () => {
         <h1 className="radionice-title">Radionice</h1>
 
         <div className="radionice-band">
-          <div
-            className="radionice-paper-viewport"
-            id="radionice-carousel"
-            onTouchStart={zapocniDodir}
-            onTouchEnd={zavrsiDodir}
-            onTouchCancel={() => {
-              pocetakDodira.current = null;
-            }}
-          >
+          <div className="radionice-paper-viewport" id="radionice-carousel">
             <div className="radionice-paper">
               <div className="radionice-paper-sheet" onAnimationEnd={zavrsiOtvaranjePapira}>
                 <div className="radionice-paper-shape">
                   <RadionicePaperSurface />
                   <div className="radionice-paper-content">
-                    <RadionicePaper
-                      indeks={aktivniIndeks}
-                      interaktivno={!predavacOtvoren}
+                    <RadioniceTraka
+                      pauza={predavacOtvoren || tranzicijaPrikaza !== null}
+                      interaktivno={!predavacOtvoren && tranzicijaPrikaza === null}
                       onOpen={otvoriPredavaca}
                     />
                   </div>
