@@ -14,7 +14,7 @@ type Tezina = "Lako" | "Srednje" | "Teško";
 interface PredavacPodaci {
   id: number;
   ime: string;
-  tezina: Tezina;
+  tezina?: Tezina;
   opis: string[];
   slika?: string;
 }
@@ -69,6 +69,16 @@ const PREDAVACI: PredavacPodaci[] = [
   },
 ];
 
+const PROFILI_PO_IMENU = new Map(
+  PREDAVACI.map((predavac) => [predavac.ime, predavac]),
+);
+
+const napraviFallbackProfil = (ime: string): PredavacPodaci => ({
+  id: 0,
+  ime,
+  opis: ["Detalji o predavaču biće objavljeni uskoro."],
+});
+
 const Predavac = ({
   predavacId,
   workshopTitle,
@@ -88,8 +98,11 @@ const Predavac = ({
   );
 
   const [aktivniIndeks, setAktivniIndeks] = useState(pocetniIndeks);
-  const predavac = PREDAVACI[aktivniIndeks];
   const imePredavaca = lecturerNames[aktivniIndeks];
+  const predavac = lecturers?.length
+    ? (PROFILI_PO_IMENU.get(imePredavaca) ??
+      napraviFallbackProfil(imePredavaca))
+    : PREDAVACI[aktivniIndeks];
 
   const prikaziPrethodnog = () => {
     setAktivniIndeks(
@@ -126,7 +139,7 @@ const Predavac = ({
         <div className="predavac-content">
           <div className="predavac-card">
             <p className="predavac-tezina">
-              TEŽINA: <span>{predavac.tezina}</span>
+              TEŽINA: <span>{predavac.tezina ?? "Biće objavljeno"}</span>
             </p>
 
             <div className="predavac-visual">
