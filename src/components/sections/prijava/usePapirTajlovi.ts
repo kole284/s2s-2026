@@ -1,16 +1,17 @@
-// usePapirTajlovi.ts
-import { useEffect, useState, type RefObject } from 'react';
+import { useEffect, useState, useRef, type RefObject } from 'react';
 
-const MIN_TAJLOVA = 3;
+const MIN_TAJLOVA = 10;
+const EXTRA_TAJLOVA = 1;
 
 export function usePapirTajlovi(
-  spoljniRef: RefObject<HTMLElement | null>,   // .prijava_card__sadrzaj (dobija min-height)
-  sadrzajRef: RefObject<HTMLElement | null>,   // unutrašnji wrapper sa pravim sadržajem (samo za merenje)
+  spoljniRef: RefObject<HTMLElement | null>,
+  sadrzajRef: RefObject<HTMLElement | null>,
   tajlSrc: string,
-): { brojTajlova: number; visinaTajla: number } {
+): { visinaTajla: number } {
   const [visinaTajla, setVisinaTajla] = useState(0);
-  const [brojTajlova, setBrojTajlova] = useState(MIN_TAJLOVA);
+  const prirodneDimenzijeRef = useRef<{ sirina: number; visina: number } | null>(null);
 
+  // 1. Učitavanje slike i čuvanje prirodnih dimenzija + inicijalni proračun
   useEffect(() => {
     const spoljni = spoljniRef.current;
     if (!spoljni) return;
@@ -18,25 +19,39 @@ export function usePapirTajlovi(
     const img = new Image();
     img.src = tajlSrc;
     img.onload = () => {
-      const sirina = spoljni.offsetWidth;
-      setVisinaTajla((img.naturalHeight / img.naturalWidth) * sirina);
+      prirodneDimenzijeRef.current = { sirina: img.naturalWidth, visina: img.naturalHeight };
+      setVisinaTajla((img.naturalHeight / img.naturalWidth) * spoljni.offsetWidth);
     };
   }, [spoljniRef, tajlSrc]);
 
+  // 2. Reagovanje na promenu širine spoljnog kontejnera (window resize / responsive)
+  useEffect(() => {
+    const spoljni = spoljniRef.current;
+    if (!spoljni) return;
+
+    const posmatracSirine = new ResizeObserver(() => {
+      const dim = prirodneDimenzijeRef.current;
+      if (!dim || dim.sirina === 0) return;
+      setVisinaTajla((dim.visina / dim.sirina) * spoljni.offsetWidth);
+    });
+
+    posmatracSirine.observe(spoljni);
+    return () => posmatracSirine.disconnect();
+  }, [spoljniRef]);
+
+  // 3. Proračun minimalne visine na osnovu visine unutrašnjeg sadržaja
   useEffect(() => {
     const spoljni = spoljniRef.current;
     const sadrzaj = sadrzajRef.current;
     if (!spoljni || !sadrzaj || visinaTajla === 0) return;
 
     const izracunaj = () => {
-      // sadrzaj se meri nezavisno od min-height koji stavljamo na spoljni,
-      // pa nema petlje: menjamo spoljni, a posmatramo sadrzaj.
-      const stvarnaVisina = sadrzaj.offsetHeight;
-      const potrebno = Math.max(MIN_TAJLOVA, Math.ceil(stvarnaVisina / visinaTajla));
-      const zaokruzenaVisina = potrebno * visinaTajla;
+      const potrebnaVisina = sadrzaj.offsetHeight;
+      const potrebno =
+        Math.max(MIN_TAJLOVA, Math.ceil(potrebnaVisina / visinaTajla)) +
+        EXTRA_TAJLOVA;
 
-      spoljni.style.minHeight = `${zaokruzenaVisina}px`;
-      setBrojTajlova((prev) => (prev === potrebno ? prev : potrebno));
+      spoljni.style.minHeight = `${potrebno * visinaTajla}px`;
     };
 
     izracunaj();
@@ -45,5 +60,5 @@ export function usePapirTajlovi(
     return () => posmatrac.disconnect();
   }, [spoljniRef, sadrzajRef, visinaTajla]);
 
-  return { brojTajlova, visinaTajla };
+  return { visinaTajla };
 }

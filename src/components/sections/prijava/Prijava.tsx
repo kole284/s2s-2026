@@ -154,17 +154,28 @@ const Prijava = () => {
   const [duplicatePrompt, setDuplicatePrompt] =
     useState<DuplicatePrompt | null>(null);
 
-  const sadrzajRef = useRef<HTMLDivElement>(null);       // spoljni, dobija min-height
-  const sadrzajUnutraRef = useRef<HTMLDivElement>(null); // unutrašnji, za merenje
+  const sadrzajRef = useRef<HTMLDivElement>(null);
+  const sadrzajUnutraRef = useRef<HTMLDivElement>(null);
 
   const trenutnaSredina = jeSenkaCrna ? papirSredinaCrni : papirSredinaPlavi;
-  const { brojTajlova, visinaTajla } = usePapirTajlovi(sadrzajRef, sadrzajUnutraRef, trenutnaSredina);
+  const { visinaTajla } = usePapirTajlovi(sadrzajRef, sadrzajUnutraRef, trenutnaSredina);
 
   const promeniPolje = useCallback(<K extends keyof PrijavaForma>(
     polje: K,
     vrednost: PrijavaForma[K],
   ) => {
     setForma((prev) => ({ ...prev, [polje]: vrednost }));
+  }, []);
+
+  const ocistiGresku = useCallback((polje: string) => {
+    setGreske((prev) => {
+      if (!(polje in prev)) return prev;
+
+      const sledece = { ...prev };
+      delete sledece[polje];
+
+      return sledece;
+    });
   }, []);
 
   const validirajKorak = (): boolean => {
@@ -216,14 +227,6 @@ const Prijava = () => {
       if (forma.prisustvoPanelu === null) {
         greskeKorak.prisustvoPanelu =
           'Odgovori da li bi prisustvovao/la panelu.';
-      }
-
-      if (
-        forma.prisustvoPanelu === true &&
-        !forma.pitanjeZaPredavace.trim()
-      ) {
-        greskeKorak.pitanjeZaPredavace =
-          'Upiši pitanje za predavače.';
       }
 
       if (!forma.razloziZaS2S.trim()) {
@@ -637,45 +640,50 @@ const Prijava = () => {
           />
 
           <div className="prijava_card__telo">
-            <div className="prijava_card__sredina-stog" aria-hidden="true">
-              {Array.from({ length: brojTajlova }).map((_, i) => (
-                <div
-                  key={i}
-                  className="prijava_card__sredina-tajl"
-                  style={{ backgroundImage: `url(${trenutnaSredina})`, height: visinaTajla, flex: 'none' }}
-                />
-              ))}
-            </div>
             <div
               className="prijava_card__sadrzaj"
               ref={sadrzajRef}
-              style={{
-                backgroundImage: `url(${jeSenkaCrna ? papirSredinaCrni : papirSredinaPlavi})`,
-              }}
+              style={{ backgroundImage: `url(${trenutnaSredina})` }}
             >
               <div className="prijava_card__sadrzaj-unutra" ref={sadrzajUnutraRef}>
-                {korak === 1 && <FormStep1 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
-                {korak === 2 && <FormStep2 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
-                {korak === 3 && <FormStep3 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
-                {korak === 4 && <FormStep4 forma={forma} promeniPolje={promeniPolje} greske={greske} />}
-
+                {korak === 1 && (
+                  <FormStep1 forma={forma} promeniPolje={promeniPolje} greske={greske} ocistiGresku={ocistiGresku} />
+                )}
+                {korak === 2 && (
+                  <FormStep2
+                    forma={forma}
+                    promeniPolje={promeniPolje}
+                    greske={greske}
+                    ocistiGresku={ocistiGresku}
+                    visinaTajla={visinaTajla}
+                  />
+                )}
+                {korak === 3 && (
+                  <FormStep3 forma={forma} promeniPolje={promeniPolje} greske={greske} ocistiGresku={ocistiGresku} />
+                )}
+                {korak === 4 && (
+                  <FormStep4 forma={forma} promeniPolje={promeniPolje} greske={greske} ocistiGresku={ocistiGresku} />
+                )}
                 {status === 'error' && errorMessage && <p role="alert">{errorMessage}</p>}
-
-                <FormNavigacija
-                  korak={korak}
-                  onPrethodni={prethodniKorak}
-                  onSledeci={sledeciKorak}
-                  onPosalji={posaljiPrijavu}
-                />
               </div>
             </div>
           </div>
 
-          <img
-            src={jeSenkaCrna ? papirDnoCrni : papirDnoPlavi}
-            alt=""
-            className="prijava_card__dno"
-          />
+          <div className="prijava_card__dno-wrap">
+            <img
+              src={jeSenkaCrna ? papirDnoCrni : papirDnoPlavi}
+              alt=""
+              className="prijava_card__dno"
+            />
+            <div className="prijava_navigacija-pomeraj">
+              <FormNavigacija
+                korak={korak}
+                onPrethodni={prethodniKorak}
+                onSledeci={sledeciKorak}
+                onPosalji={posaljiPrijavu}
+              />
+            </div>
+          </div>
         </div>
 
         {duplicatePrompt ? (

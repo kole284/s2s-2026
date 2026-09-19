@@ -20,10 +20,10 @@
      inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.1965944"
-     inkscape:cx="177.58732"
-     inkscape:cy="-68.945666"
+     inkscape:deskcolor="#ffffff"
+     inkscape:zoom="2.3931888"
+     inkscape:cx="281.84153"
+     inkscape:cy="-21.101553"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
@@ -36,6 +36,7 @@
      transform="translate(0,-587)">
     <mask
        id="mask0_2052_143"
+       style="mask-type:alpha"
        maskUnits="userSpaceOnUse"
        x="0"
        y="587"

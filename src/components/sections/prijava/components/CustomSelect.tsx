@@ -9,9 +9,9 @@ interface CustomSelectProps {
   options: string[];
   onChange: (val: string) => void;
   placeholder?: string;
-  greska?: string;
   opcijaAsseti: Record<string, string>;
   placeholderAsset: string;
+  bezIzboraAsset?: string; // ako je prosleđeno, dodaje se kao PRVA stavka u listi
 }
 
 const CustomSelect = ({
@@ -21,9 +21,9 @@ const CustomSelect = ({
   options,
   onChange,
   placeholder = 'Izaberi radionicu',
-  greska,
   opcijaAsseti,
   placeholderAsset,
+  bezIzboraAsset,
 }: CustomSelectProps) => {
   const [otvoreno, setOtvoreno] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
@@ -60,21 +60,6 @@ const CustomSelect = ({
             <img src={trenutniTekstAsset} alt={value || placeholder} className="prijava_combobox-tekst-img" />
           </span>
 
-          {value && (
-            <button
-              type="button"
-              className="prijava_combobox-ocisti"
-              aria-label="Ukloni izbor"
-              onClick={(e) => {
-                e.stopPropagation();
-                onChange('');
-                setOtvoreno(false);
-              }}
-            >
-              ✕
-            </button>
-          )}
-
           <span
             className={`prijava_combobox-strelica ${otvoreno ? 'prijava_combobox-strelica--otvoreno' : ''}`}
             aria-hidden="true"
@@ -83,6 +68,21 @@ const CustomSelect = ({
 
         <div className="prijava_combobox-meni-wrap" data-otvoreno={otvoreno}>
           <div className="prijava_combobox-meni">
+            {bezIzboraAsset && (
+              <div
+                className={`prijava_combobox-opcija ${value === '' ? 'prijava_combobox-opcija--izabrana' : ''}`}
+                onClick={() => {
+                  onChange('');
+                  setOtvoreno(false);
+                }}
+              >
+                <img src={stavkaPozadina} alt="" className="prijava_combobox-opcija-img" />
+                <span className="prijava_combobox-opcija-tekst-zona">
+                  <img src={bezIzboraAsset} alt="Bez druge želje" className="prijava_combobox-tekst-img" />
+                </span>
+              </div>
+            )}
+
             {options.map((opt) => (
               <div
                 key={opt}
@@ -101,8 +101,6 @@ const CustomSelect = ({
           </div>
         </div>
       </div>
-
-      {greska && <p className="prijava_greska">{greska}</p>}
     </div>
   );
 };

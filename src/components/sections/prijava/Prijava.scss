@@ -115,6 +115,12 @@
     flex-direction: column;
     justify-content: flex-start;
 
+    &__dno-wrap {
+      position: relative;
+      z-index: 5;
+      margin-top: -2px;
+    }
+
     &__vrh {
       display: block;
       width: 100%;
@@ -123,19 +129,17 @@
       pointer-events: none;
       position: relative;
       z-index: 2;
-
-      margin-bottom: -1px; // Spaja vrh sa telom bez procepa
+      margin-bottom: -2px;
     }
 
     &__dno {
       display: block;
       width: 100%;
       height: auto;
-      flex-shrink: 0;
       pointer-events: none;
       position: relative;
       z-index: 1;
-      margin-top: -2px; // Spaja dno sa telom bez procepa
+      margin-top: 0;
     }
 
     &__telo {
@@ -145,21 +149,6 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-    }
-
-    &__sredina-stog {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      display: flex;
-      flex-direction: column;
-      pointer-events: none;
-    }
-
-    &__sredina-tajl {
-      width: 100%;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
     }
 
     &__sadrzaj {
@@ -174,10 +163,10 @@
       background-repeat: repeat-y;
       background-position: top center;
       background-size: 100% auto;
+      transition: min-height 0.25s ease;
     }
   }
 
-  // Kontejner unutar kartice
   .form_step {
     width: 100%;
     display: flex;
@@ -185,7 +174,6 @@
     height: auto;
   }
   
-  // Tri tačke u sredini druge kartice
   &_prazno-tri-tacke {
     display: flex;
     justify-content: center;
@@ -194,6 +182,13 @@
     font-weight: bold;
     color: $color-black;
     letter-spacing: 12px;
+  }
+
+  &_prazno-tri-tacke-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
   &_uspeh_tekst {
@@ -240,7 +235,10 @@
   }
 
   &_labela {
-    display: inline-block;
+    display: block;
+    width: fit-content;
+    margin: 0 auto 6px auto;
+    text-align: center;
     padding: 4px 12px;
     background: $color-blue;
     color: $color-white;
@@ -248,7 +246,6 @@
     font-weight: $font-black;
     font-size: 1rem;
     transform: rotate(-2deg);
-    margin-bottom: 6px;
   }
 
   &_opis {
@@ -278,25 +275,13 @@
     }
   }
 
-  &_greska {
-    position: absolute;
-    bottom: -15px;
-    left: 6px;
-    color: #d90429;
-    font-family: $font-body;
-    font-size: 0.72rem;
-    font-weight: 700;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
   // === CUSTOM COMBOBOX STILOVI ===
   &_combobox {
     position: relative;
     width: 100%;
     z-index: 5;
     box-sizing: border-box;
-    overflow: visible; // dropdown mora da se vidi van, ali roditelj ne sme da beži
+    overflow: visible;
 
     &-okvir {
       position: relative;
@@ -312,7 +297,7 @@
     &-okvir-img {
       display: block;
       width: 100%;
-      height: auto; // prati pravi SVG — ovo rešava i "sićušno" i "strelica izašla"
+      height: auto;
     }
 
     &-tekst-zona {
@@ -321,9 +306,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      // TODO: podesi % da tačno prati širinu crne zastavice (levo) i strelice (desno) na tvom assetu
       padding: 0 16% 0 26%;
-      transform: translateY(-12%); // podigni tekst bliže vizuelnom centru trake
+      transform: translateY(-12%);
       pointer-events: none;
     }
 
@@ -348,7 +332,7 @@
       pointer-events: none;
 
       &--otvoreno {
-        transform: translateY(-50%) rotate(180deg);
+        transform: translateY(-70%) rotate(180deg);
       }
     }
 
@@ -357,7 +341,6 @@
       top: calc(100% + 6px);
       left: 0;
       width: 100%;
-      z-index: 50;
       max-height: 0;
       opacity: 0;
       transform: translateY(-6px);
@@ -381,19 +364,18 @@
       overflow-y: auto;
       box-sizing: border-box;
 
-      // sakriva scrollbar, ali skrol ostaje funkcionalan
-      scrollbar-width: none;       // Firefox
-      -ms-overflow-style: none;    // starije Edge/IE
+      scrollbar-width: none;
+      -ms-overflow-style: none;
 
       &::-webkit-scrollbar {
-        display: none;             // Chrome, Safari, noviji Edge
+        display: none;
       }
     }
 
     &-opcija {
       position: relative;
       width: 100%;
-      margin-top: -1px;
+      margin-top: -2px;
       cursor: pointer;
 
       &:first-child { margin-top: 0; }
@@ -410,8 +392,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        pointer-events: none;
-        transform: translateY(-6%); // manja korekcija za stavke u meniju (ravnije su)
+        transform: translateY(-6%);
         pointer-events: none;
       }
 
@@ -458,8 +439,10 @@
 
   &_opcije {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    justify-content: center; // Centrira checkbox-ove (Osnovni, Srednji, Napredni / Da, Ne)
+    align-items: center;
+    gap: 12px;
+    width: 100%;
   }
 
   &_opcija {
@@ -492,8 +475,17 @@
   &_navigacija {
     display: flex;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: auto;
     padding-top: 16px;
+  }
+
+  &_navigacija-pomeraj {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 18px;
+    width: auto;
+    z-index: 1;
   }
 
   &_dugme {
@@ -504,7 +496,7 @@
     border: 2px solid $color-black;
     background: $color-white;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
     outline: none;
 
     &:focus,
@@ -513,10 +505,26 @@
     }
 
     &--nazad {
-      background: $color-white;
+      padding: 0;
+      border: none;
+      color: transparent;
 
-      &:hover {
-        background: $color-yellow;
+      width:48%;
+      aspect-ratio: 130 / 58;
+      height: auto;
+
+      background-image: url('@/assets/prijava/buttons/dugme_prethodna.svg') !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+      background-color: transparent !important;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: transparent !important;
+        background-image: url('@/assets/prijava/buttons/dugme_prethodna.svg') !important;
+        transform: scale(1.03);
       }
     }
 
@@ -527,7 +535,7 @@
       border: none;
       color: transparent;
 
-      width: 55%;
+      width: 48%;
       aspect-ratio: 168 / 58;
       height: auto;
 
@@ -550,10 +558,6 @@
   &_polje-slika {
     position: relative;
     width: 100%;
-
-    &--greska {
-      filter: drop-shadow(0px 0px 5px rgba(217, 4, 41, 0.8));
-    }
   }
 
   &_polje-pozadina {
@@ -722,18 +726,7 @@
     font-size: 0.9rem;
     color: $color-black;
   }
-  &-ocisti {
-    position: absolute;
-    top: 50%;
-    right: 14%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: $color-black;
-    z-index: 2;
-  }
+
   &_polje-textarea-input {
     position: absolute;
     top: 8%;
@@ -772,14 +765,10 @@
       max-width: 500px;
     }
 
-    // Uklonjen min-height odavde!
     _card {
-      padding: 0; // Padding ide na _sadrzaj, ne na celo karticu
+      padding: 0;
     }
   }
-
-
-  
 }
 
 @media #{$desktop} {
@@ -790,7 +779,6 @@
       max-width: 600px;
     }
 
-    // Uklonjen min-height i odavde!
     _card {
       padding: 0;
     }
@@ -819,4 +807,3 @@
   gap: 0.75rem;
   margin-top: 1rem;
 }
-
