@@ -22,6 +22,7 @@ import prijavaButtonShell from "@/assets/prijava/fields/prijava-button-shell.svg
 import radionicaRequired from "@/assets/prijava/fields/radionica-required.svg";
 import munjicaImg from "@/assets/prijava/icons/munjica.svg";
 import prijavaCornerStars from "@/assets/prijava/decor/zvezde.svg";
+import { WORKSHOPS } from "@/data/workshops";
 
 const NASLOVI_KORAKA = ["PRIJAVI SE", "RADIONICE", "PANEL", "ISKUSTVA"];
 const BROJEVI_GODINA = [
@@ -34,7 +35,7 @@ const OSTALE_GODINE = [
   { id: "Master", label: "Master studije" },
   { id: "Doktorske", label: "Doktorske studije" },
 ];
-const RADIONICE = ["Radionica 1", "Radionica 2", "Radionica 3", "Radionica 4"];
+const RADIONICE = WORKSHOPS.map((workshop) => workshop.shortName);
 const NIVOI_ZNANJA: NivoZnanja[] = ["Osnovni", "Srednji", "Napredni"];
 // CONTENT GAP: partneri trenutno nemaju canonical data source za pokrovitelje.
 const BROJ_POKROVITELJA = 1;
@@ -394,15 +395,14 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 
 const jeValidanEmail = (email: string) => EMAIL_REGEX.test(email.trim());
 
-// Skladišti se bez razmaka, da ista osoba ne završi kao dve prijave.
+// Lokalni broj prevodi u canonical +381 format koji se čuva i proverava za duplikate.
 const normalizujTelefon = (telefon: string) =>
-  telefon.replace(/[\s()\-./]/g, "");
+  telefon.startsWith("06") ? `+381${telefon.slice(1)}` : telefon;
 
-// Prihvata samo međunarodni format: + pozivni broj pa 7-14 cifara.
 const jeValidanTelefon = (telefon: string) =>
-  /^\+[1-9]\d{7,14}$/.test(normalizujTelefon(telefon));
+  /^(?:06\d{7,8}|\+3816\d{7,8})$/.test(telefon);
 
-const PRIMER_TELEFONA = "+381 60 123 4567";
+const PRIMER_TELEFONA = "0612345678";
 
 type OsnovnoPolje = {
   id: string;
@@ -473,7 +473,7 @@ const praznaForma: PrijavaForma = {
   s2sIskustvo: "",
   predlogRadionice: "",
   cvDriveLink: "",
-  zeliObavestenja: false,
+  receive_fonis_updates: false,
 };
 
 type ApplicationPayload = {
@@ -483,19 +483,19 @@ type ApplicationPayload = {
   faculty: string;
   study_year: string;
   previously_participated: boolean;
-  s2s_experience: string;
-  dream_workshop_topic: string;
+  s2s_experience: string | null;
+  dream_workshop_topic: string | null;
   receive_fonis_updates: boolean;
   motivation: string;
   attend_panel_discussion: boolean;
   question_for_lecturers: string | null;
-  first_workshop_choice: string | null;
-  first_choice_reason: string | null;
+  first_workshop_choice: string;
+  first_knowledge_level: NivoZnanja;
+  first_choice_reason: string;
   second_workshop_choice: string | null;
+  second_knowledge_level: NivoZnanja | null;
   second_choice_reason: string | null;
-  cv_drive_link: string;
-  accepted_workshop: null;
-  accepted_choice: null;
+  cv_drive_link: string | null;
 };
 
 type ExistingApplication = {
@@ -506,6 +506,14 @@ type ExistingApplication = {
 const emptyToNull = (value: string) => {
   const trimmed = value.trim();
   return trimmed === "" ? null : trimmed;
+};
+
+const requireKnowledgeLevel = (value: NivoZnanja | ""): NivoZnanja => {
+  if (!value) {
+    throw new Error("Nivo znanja nije izabran.");
+  }
+
+  return value;
 };
 
 const supabaseHeaders = (publishableKey: string) => ({
@@ -537,28 +545,34 @@ const isGoogleDriveLink = (value: string) => {
 const buildPayload = (forma: PrijavaForma): ApplicationPayload => {
   return {
     name_surname: forma.imePrezime.trim(),
-    email: forma.email.trim(),
+    email: forma.email.trim().toLowerCase(),
     phone_number: normalizujTelefon(forma.telefon),
     faculty: forma.fakultet.trim(),
     study_year: forma.godinaStudija.trim(),
     previously_participated: forma.ranijeUcestvovao ?? false,
-    s2s_experience: forma.ranijeUcestvovao ? forma.s2sIskustvo.trim() : "",
-    dream_workshop_topic: forma.predlogRadionice.trim(),
-    receive_fonis_updates: forma.zeliObavestenja,
+    s2s_experience: forma.ranijeUcestvovao
+      ? emptyToNull(forma.s2sIskustvo)
+      : null,
+    dream_workshop_topic: emptyToNull(forma.predlogRadionice),
+    receive_fonis_updates: forma.receive_fonis_updates,
     motivation: forma.razloziZaS2S.trim(),
     attend_panel_discussion: forma.prisustvoPanelu ?? false,
     question_for_lecturers: forma.prisustvoPanelu
       ? emptyToNull(forma.pitanjeZaPredavace)
       : null,
-    first_workshop_choice: emptyToNull(forma.prvaZeljaRadionica),
-    first_choice_reason: emptyToNull(forma.prvaZeljaPrimena),
+    first_workshop_choice: forma.prvaZeljaRadionica.trim(),
+    first_knowledge_level: requireKnowledgeLevel(
+      forma.prvaZeljaNivoZnanja,
+    ),
+    first_choice_reason: forma.prvaZeljaPrimena.trim(),
     second_workshop_choice: emptyToNull(forma.drugaZeljaRadionica),
+    second_knowledge_level: forma.drugaZeljaRadionica
+      ? requireKnowledgeLevel(forma.drugaZeljaNivoZnanja)
+      : null,
     second_choice_reason: forma.drugaZeljaRadionica
       ? emptyToNull(forma.drugaZeljaPrimena)
       : null,
-    cv_drive_link: forma.cvDriveLink.trim(),
-    accepted_workshop: null,
-    accepted_choice: null,
+    cv_drive_link: emptyToNull(forma.cvDriveLink),
   };
 };
 
@@ -709,7 +723,7 @@ const Prijava = () => {
       if (!forma.telefon.trim()) {
         greskeKorak.telefon = "Broj telefona je obavezan.";
       } else if (!jeValidanTelefon(forma.telefon)) {
-        greskeKorak.telefon = `Unesi broj u međunarodnom formatu, sa + i pozivnim brojem (npr. ${PRIMER_TELEFONA}).`;
+        greskeKorak.telefon = "Unesi broj u formatu 06... ili +3816...";
       }
 
       if (!forma.fakultet.trim()) {
@@ -886,6 +900,10 @@ const Prijava = () => {
   };
 
   const posaljiPrijavu = async () => {
+    if (status === "submitting") {
+      return;
+    }
+
     for (let proveriKorak = 1; proveriKorak <= 4; proveriKorak++) {
       if (!validirajKorak(proveriKorak)) {
         setKorak(proveriKorak);
@@ -931,11 +949,9 @@ const Prijava = () => {
       setGreske({});
       setKorak(1);
     } catch (error) {
+      console.error("Slanje prijave nije uspelo.", error);
       setStatus("error");
-
-      setErrorMessage(
-        error instanceof Error ? error.message : "Prijava nije poslata.",
-      );
+      setErrorMessage("Prijava trenutno nije poslata. Pokušaj ponovo.");
     }
   };
 
@@ -1308,6 +1324,7 @@ const Prijava = () => {
                         </div>
                       </div>
                     </div>
+
                   </div>
                 ) : null}
 
@@ -1727,7 +1744,7 @@ const Prijava = () => {
                         <section className="prijava-experience-card prijava-experience-card--text prijava-experience-card--proposal">
                           <div className="prijava-experience-field">
                             <label
-                              className="prijava-experience-ribbon"
+                              className="prijava-experience-ribbon prijava-experience-ribbon--multiline"
                               htmlFor="prijava-predlog-radionice"
                             >
                               Da li imaš predlog za radionicu koja do sada nije
@@ -1788,7 +1805,7 @@ const Prijava = () => {
                         >
                           <div className="prijava-experience-field">
                             <label
-                              className="prijava-experience-ribbon"
+                              className="prijava-experience-ribbon prijava-experience-ribbon--multiline"
                               htmlFor="prijava-s2s-iskustvo"
                             >
                               Šta ti se posebno dopalo, a šta bi voleo/la da
@@ -1818,7 +1835,8 @@ const Prijava = () => {
                           </div>
                         </section>
                       </div>
-                    </div>
+
+                  </div>
                   </div>
                 ) : null}
 
@@ -1890,6 +1908,48 @@ const Prijava = () => {
               </div>
 
               <div className="prijava_navigacija">
+                {korak === 4 ? (
+                  <label
+                    className={`prijava-newsletter${
+                      forma.receive_fonis_updates
+                        ? " prijava-newsletter--checked"
+                        : ""
+                    }`}
+                  >
+                    <input
+                      className="prijava-newsletter__input"
+                      type="checkbox"
+                      name="receive_fonis_updates"
+                      checked={forma.receive_fonis_updates}
+                      onChange={(event) =>
+                        promeniPolje(
+                          "receive_fonis_updates",
+                          event.target.checked,
+                        )
+                      }
+                    />
+                    <span
+                      className="prijava_godina-box-wrapper"
+                      aria-hidden="true"
+                    >
+                      <img
+                        src={rombImg}
+                        alt=""
+                        className="prijava_godina-romb-img"
+                      />
+                      {forma.receive_fonis_updates ? (
+                        <img
+                          src={munjicaImg}
+                          alt=""
+                          className="prijava_godina-bolt"
+                        />
+                      ) : null}
+                    </span>
+                    <span className="prijava-newsletter__text">
+                      Želim da primam obaveštenja o budućim događajima.
+                    </span>
+                  </label>
+                ) : null}
                 {korak > 1 ? (
                   <button
                     type="button"

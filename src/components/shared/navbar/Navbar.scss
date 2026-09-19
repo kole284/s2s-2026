@@ -609,3 +609,34 @@ body.navbar-menu-scroll-locked {
     width: calc(var(--navbar-design-width, 100vw) * 44 / 1440);
   }
 }
+
+/* The registration exit is a viewport control: it must stay in the same
+   upper-right position while the long form scrolls. */
+.navbar--prijava .mobile-menu-control--exit {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  left: auto;
+}
+
+.navbar--prijava.navbar--scrolled .mobile-menu-control--exit {
+  top: 14px;
+}
+
+@media #{$tablet} {
+  .navbar--prijava .mobile-menu-control--exit,
+  .navbar--prijava.navbar--scrolled .mobile-menu-control--exit {
+    top: 18px;
+    right: 20px;
+    left: auto;
+  }
+}
+
+@media #{$desktop} {
+  .navbar--prijava .mobile-menu-control--exit,
+  .navbar--prijava.navbar--scrolled .mobile-menu-control--exit {
+    top: calc(var(--navbar-design-width, 100vw) * 28 / 1440);
+    right: calc(var(--navbar-design-width, 100vw) * 44 / 1440);
+    left: auto;
+  }
+}

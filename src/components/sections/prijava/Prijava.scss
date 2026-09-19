@@ -1954,10 +1954,54 @@
     min-width: 0;
     gap: 18px;
     padding: 18px;
-    border: 2px solid $color-black;
+    border: 0;
     box-sizing: border-box;
-    background: $color-white;
-    box-shadow: 7px 7px 0 $color-yellow;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  &-newsletter {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 30px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    box-sizing: border-box;
+    color: $color-black;
+    font-family: $font-body;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+
+    &__input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    &__text {
+      min-width: 0;
+    }
+
+    &:hover .prijava_godina-box-wrapper {
+      transform: translateY(-1px);
+    }
+
+    &__input:focus-visible + .prijava_godina-box-wrapper {
+      outline: 3px solid $color-blue;
+      outline-offset: 3px;
+    }
   }
 
   &-experience-left,
@@ -2003,7 +2047,7 @@
     max-width: 100%;
     min-height: 34px;
     margin: 0 0 12px;
-    padding: 7px 24px 8px 16px;
+    padding: 7px 30px 8px 22px;
     align-items: center;
     box-sizing: border-box;
     color: $color-black;
@@ -2011,6 +2055,8 @@
     font-size: 15px;
     font-weight: $font-black;
     line-height: 1.14;
+    overflow-wrap: anywhere;
+    text-align: left;
     isolation: isolate;
 
     &::before {
@@ -2032,6 +2078,16 @@
         36% 100%,
         9% 88%
       );
+    }
+  }
+
+  &-experience-ribbon--multiline {
+    &::before {
+      /* Keep the original top and bottom geometry of the yellow paper. */
+      top: 0;
+      right: 0;
+      bottom: -6px;
+      left: 0;
     }
   }
 
@@ -2158,6 +2214,10 @@
     justify-content: flex-end;
     margin-top: auto;
     padding-top: 20px;
+
+    .prijava-newsletter {
+      margin-right: auto;
+    }
   }
 
   &_dugme {
@@ -2211,6 +2271,26 @@
     font-family: $font-body;
     font-size: 18px;
     line-height: 1.5;
+  }
+}
+
+/* The left-column two-line question needs a little more paper at its cut
+   leading edge; only the yellow shape moves, never its text. */
+.prijava .prijava-experience-card--proposal
+  .prijava-experience-ribbon--multiline::before {
+  left: -8px;
+}
+
+.prijava .prijava-experience-card--previous
+  .prijava-experience-ribbon--multiline::before {
+  left: -6px;
+}
+
+@media #{$mobile} {
+  .prijava .prijava-experience-card--previous
+    .prijava-experience-ribbon--multiline {
+    padding-top: 12px;
+    padding-bottom: 6px;
   }
 }
 
@@ -2494,6 +2574,17 @@
       // naslov ne sedi na ivici belog panela.
       margin-top: 186px;
       padding-top: 24px;
+    }
+
+    &__paper-shell:has(.form_step--4) {
+      min-height: 0;
+    }
+
+    &__form-area:has(.form_step--4),
+    &__form-area:has(.form_step--4) .prijava_sadrzaj,
+    &__form-area:has(.form_step--4) .form_step--4 {
+      min-height: 0;
+      flex: 0 0 auto;
     }
 
     &_dugme {
@@ -2918,6 +3009,27 @@
       padding: 12px;
     }
 
+    .prijava-newsletter {
+      flex: 0 0 100%;
+      width: 100%;
+      margin: 0 0 10px;
+      align-items: flex-start;
+      font-size: 14px;
+
+      &__box {
+        margin-top: 1px;
+      }
+    }
+
+    .prijava_navigacija:has(.prijava-newsletter) {
+      flex-wrap: wrap;
+
+      .prijava_dugme {
+        width: calc((100% - 14px) / 2);
+        flex: 0 0 calc((100% - 14px) / 2);
+      }
+    }
+
     .prijava-experience-left,
     .prijava-experience-right {
       display: contents;
@@ -2946,7 +3058,7 @@
     .prijava-experience-ribbon {
       width: 100%;
       min-height: 42px;
-      padding: 8px 26px 10px;
+      padding: 8px 32px 10px 24px;
       font-size: 15px;
       line-height: 1.16;
     }
@@ -3257,6 +3369,10 @@
       margin: 0;
       aspect-ratio: 1440 / 900;
       overflow: visible;
+    }
+
+    &-newsletter {
+      font-size: calc(var(--prijava-design-width) * 17 / 1440);
     }
 
     /* =======================================================
@@ -4115,13 +4231,9 @@
       padding:
         calc(var(--prijava-design-width) * 22 / 1440)
         calc(var(--prijava-design-width) * 24 / 1440);
-      border-width: var(--workshop-outline);
+      border-width: 0;
       align-items: start;
-      box-shadow:
-        calc(var(--prijava-design-width) * 7 / 1440)
-        calc(var(--prijava-design-width) * 7 / 1440)
-        0
-        $color-yellow;
+      box-shadow: none;
     }
 
     .prijava-experience-left,
@@ -4184,13 +4296,14 @@
     }
 
     .prijava-experience-ribbon {
+      width: 100%;
       min-height: calc(var(--prijava-design-width) * 34 / 1440);
       margin-bottom: calc(var(--prijava-design-width) * 10 / 1440);
       padding:
         calc(var(--prijava-design-width) * 6 / 1440)
-        calc(var(--prijava-design-width) * 24 / 1440)
+        calc(var(--prijava-design-width) * 34 / 1440)
         calc(var(--prijava-design-width) * 7 / 1440)
-        calc(var(--prijava-design-width) * 14 / 1440);
+        calc(var(--prijava-design-width) * 24 / 1440);
       font-size: calc(var(--prijava-design-width) * 16 / 1440);
       line-height: 1.12;
     }
@@ -4280,11 +4393,16 @@
 
       .prijava_navigacija {
         position: static;
+        width: 100%;
         justify-self: end;
         justify-content: flex-end;
         margin-top: 0;
         padding-top: 0;
         gap: calc(var(--prijava-design-width) * 16 / 1440);
+
+        .prijava-newsletter {
+          margin-left: calc(var(--prijava-design-width) * 24 / 1440);
+        }
       }
     }
 
@@ -5246,6 +5364,83 @@
     --experience-control-shadow:
       calc(var(--prijava-design-width) * 6 / 1440);
   }
+
+  .prijava .prijava-experience-card--cv .prijava-experience-input {
+    padding:
+      calc(var(--prijava-design-width) * 9 / 1440)
+      calc(var(--prijava-design-width) * 16 / 1440)
+      calc(var(--prijava-design-width) * 9 / 1440)
+      calc(var(--prijava-design-width) * 24 / 1440);
+  }
+
+  .prijava .prijava-experience-card--text .prijava-experience-textarea {
+    padding:
+      calc(var(--prijava-design-width) * 11 / 1440)
+      calc(var(--prijava-design-width) * 20 / 1440)
+      calc(var(--prijava-design-width) * 11 / 1440)
+      calc(var(--prijava-design-width) * 28 / 1440);
+  }
+}
+
+@media #{$mobile} {
+  .prijava .prijava-experience-card--participation,
+  .prijava .prijava-experience-card--proposal {
+    box-shadow: 6px 6px 0 $color-yellow;
+  }
+
+  .prijava .prijava-experience-card--participation {
+    padding-bottom: 26px;
+  }
+
+  .prijava .prijava-experience-card--previous,
+  .prijava .prijava-experience-card--cv {
+    box-shadow: 6px 6px 0 $color-blue;
+  }
+
+  .prijava .prijava-experience-card--proposal
+    .prijava-experience-control-shell {
+    --experience-control-shadow-color: #{$color-blue};
+  }
+
+  .prijava .prijava-experience-card--previous
+    .prijava-experience-control-shell,
+  .prijava .prijava-experience-card--cv
+    .prijava-experience-control-shell {
+    --experience-control-shadow-color: #{$color-yellow};
+  }
+
+  .prijava .prijava-experience-card--text .prijava-experience-control-shell {
+    display: block;
+    height: 160px;
+    min-height: 160px;
+    padding: 2px 8px 8px 2px;
+    flex: none;
+
+    &::before {
+      clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+    }
+
+    &::after {
+      display: block;
+      clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+    }
+  }
+
+  .prijava .prijava-experience-card--text .prijava-experience-textarea {
+    display: block;
+    height: 150px;
+    min-height: 150px;
+    border: 0;
+    box-sizing: border-box;
+    background: $color-white;
+    padding: 14px 20px 14px 38px;
+    flex: none;
+    clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+  }
+
+  .prijava .prijava-experience-input {
+    padding: 12px 20px 12px 26px;
+  }
 }
 
 /* PANEL and ISKUSTVA choices use the same cut-paper silhouette as the
@@ -5305,6 +5500,18 @@
   --choice-shadow: var(--experience-choice-shadow);
 }
 
+/* On phones the DA/NE choice gets one compact blue paper-shadow. Desktop
+   continues to use its existing yellow offset. */
+@media #{$mobile} {
+  .prijava .prijava-experience-card--participation
+    .prijava-experience-choice__button {
+    --experience-choice-shadow: 4px;
+    --choice-shadow: 4px;
+
+    filter: drop-shadow(4px 4px 0 $color-blue);
+  }
+}
+
 .prijava .prijava-panel-choice[aria-invalid="true"]
   .prijava-panel-choice__button::before {
   background: #b00020;
@@ -5332,6 +5539,22 @@
   .prijava *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Pointed one-line ribbons need a little more breathing room than the
+   generic question labels. */
+.prijava .prijava-experience-card--cv .prijava-experience-ribbon,
+.prijava .prijava-experience-card--participation .prijava-experience-ribbon {
+  padding-left: 32px;
+}
+
+@media #{$desktop} {
+  .prijava .prijava-experience-card--cv .prijava-experience-ribbon,
+  .prijava
+    .prijava-experience-card--participation
+    .prijava-experience-ribbon {
+    padding-left: calc(var(--prijava-design-width) * 32 / 1440);
   }
 }
 

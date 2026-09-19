@@ -7,7 +7,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
-import graphIcon from "@/assets/lupa.svg";
+import graphIcon from "@/assets/workshops/case.svg";
 import csharpIcon from "@/assets/workshops/csharp-development.svg";
 import marketingIcon from "@/assets/workshops/digital-marketing.svg";
 import gameIcon from "@/assets/workshops/game-development.svg";
@@ -15,92 +15,50 @@ import cIcon from "@/assets/workshops/intro-to-c.svg";
 import machineLearningIcon from "@/assets/workshops/machine-learning.svg";
 import startupIcon from "@/assets/workshops/startup.svg";
 import designIcon from "@/assets/workshops/ui-ux-design.svg";
+import aiIcon from "@/assets/workshops/ai-llm.svg";
+import cyberIcon from "@/assets/workshops/cybersec.svg";
+import { WORKSHOPS, type Workshop } from "@/data/workshops";
 
 import Predavac from "../predavac/Predavac";
 import "./Radionice.scss";
 
-interface Radionica {
-  id: number;
-  shortTitle: string;
-  fullTitle: string;
+interface Radionica extends Workshop {
   icon: string;
   predavacId: number;
 }
 
 // Graph je privremena ikonica za radionice za koje ZIP ne sadrži poseban SVG.
-// Predavački podaci su još demonstracioni; naslov i ikonica detalja uvek dolaze odavde.
-const RADIONICE: Radionica[] = [
-  {
-    id: 1,
-    shortTitle: "UI/UX dizajn",
-    fullTitle: "Figma & Wonder: UI/UX dizajn",
-    icon: designIcon,
-    predavacId: 4,
-  },
-  {
-    id: 2,
-    shortTitle: "C# Dev",
-    fullTitle: "C# Development",
-    icon: csharpIcon,
-    predavacId: 2,
-  },
-  {
-    id: 3,
-    shortTitle: "Cybersecurity",
-    fullTitle: "Cybersecurity",
-    icon: graphIcon,
-    predavacId: 1,
-  },
-  {
-    id: 4,
-    shortTitle: "CASE",
-    fullTitle: "Case Method & Case Cracking",
-    icon: graphIcon,
-    predavacId: 4,
-  },
-  {
-    id: 5,
-    shortTitle: "Digitalni marketing",
-    fullTitle: "Digitalni marketing koji prodaje",
-    icon: marketingIcon,
-    predavacId: 4,
-  },
-  {
-    id: 6,
-    shortTitle: "Uvod u C",
-    fullTitle: "Uvod u C",
-    icon: cIcon,
-    predavacId: 2,
-  },
-  {
-    id: 7,
-    shortTitle: "Game Dev",
-    fullTitle: "Game development",
-    icon: gameIcon,
-    predavacId: 2,
-  },
-  {
-    id: 8,
-    shortTitle: "AI agenti",
-    fullTitle: "AI agenti u akciji",
-    icon: graphIcon,
-    predavacId: 3,
-  },
-  {
-    id: 9,
-    shortTitle: "Startup",
-    fullTitle: "Startup 101: Od ideje do MVP-a",
-    icon: startupIcon,
-    predavacId: 4,
-  },
-  {
-    id: 10,
-    shortTitle: "Mašinsko učenje",
-    fullTitle: "Analitika Starter Pack: Uvod u mašinsko učenje",
-    icon: machineLearningIcon,
-    predavacId: 3,
-  },
-];
+const WORKSHOP_ICONS: Record<number, string> = {
+  1: designIcon,
+  2: csharpIcon,
+  3: cyberIcon,
+  4: graphIcon,
+  5: marketingIcon,
+  6: cIcon,
+  7: gameIcon,
+  8: aiIcon,
+  9: startupIcon,
+  10: machineLearningIcon,
+};
+
+const PREDAVAC_IDS: Record<number, number> = {
+  1: 4,
+  2: 2,
+  3: 1,
+  4: 4,
+  5: 4,
+  6: 2,
+  7: 2,
+  8: 3,
+  9: 4,
+  10: 3,
+};
+
+const RADIONICE: Radionica[] = WORKSHOPS.map((workshop) => ({
+  ...workshop,
+  icon: WORKSHOP_ICONS[workshop.id],
+  predavacId: PREDAVAC_IDS[workshop.id],
+}));
 
 /*
  * Traka radionica radi po istom principu kao partnerski marquee:
@@ -175,7 +133,11 @@ const RadionicePaperSurface = () => (
   <div className="radionice-paper-surface" aria-hidden="true" />
 );
 
-const RadioniceTraka = ({ pauza, interaktivno, onOpen }: RadioniceTrakaProps) => {
+const RadioniceTraka = ({
+  pauza,
+  interaktivno,
+  onOpen,
+}: RadioniceTrakaProps) => {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trakaRef = useRef<HTMLDivElement>(null);
   const grupaRef = useRef<HTMLDivElement>(null);
@@ -207,9 +169,10 @@ const RadioniceTraka = ({ pauza, interaktivno, onOpen }: RadioniceTrakaProps) =>
   const onOpenRef = useRef(onOpen);
 
   /* Petlja živi u efektu, pa je handleri pokreću/zaustavljaju preko ovih komandi. */
-  const komandeRef = useRef<{ pokreni: () => void; zaustavi: () => void } | null>(
-    null,
-  );
+  const komandeRef = useRef<{
+    pokreni: () => void;
+    zaustavi: () => void;
+  } | null>(null);
 
   const [centarKljuc, setCentarKljuc] = useState(-1);
 
@@ -264,7 +227,9 @@ const RadioniceTraka = ({ pauza, interaktivno, onOpen }: RadioniceTrakaProps) =>
 
     const trebaPetlja = () =>
       centriranjeRef.current !== null ||
-      (!pauzaRef.current && !smanjenPokretRef.current && !prevlacenjeRef.current);
+      (!pauzaRef.current &&
+        !smanjenPokretRef.current &&
+        !prevlacenjeRef.current);
 
     const zaustavi = () => {
       if (frame !== null) {
@@ -530,7 +495,7 @@ const RadioniceTraka = ({ pauza, interaktivno, onOpen }: RadioniceTrakaProps) =>
                   }`}
                   key={radionica.id}
                   onClick={() => naKlikStavke(radionica, globalniIndeks)}
-                  aria-label={`Otvori detalje radionice ${radionica.fullTitle}`}
+                  aria-label={`Otvori detalje radionice ${radionica.fullName}`}
                   tabIndex={grupa === 0 ? undefined : -1}
                   disabled={!interaktivno}
                 >
@@ -541,7 +506,7 @@ const RadioniceTraka = ({ pauza, interaktivno, onOpen }: RadioniceTrakaProps) =>
                     draggable={false}
                   />
 
-                  <span className="radionice-naziv">{radionica.shortTitle}</span>
+                  <span className="radionice-naziv">{radionica.shortName}</span>
                 </button>
               );
             })}
@@ -560,7 +525,9 @@ const Radionice = () => {
   const [aktivniPredavacId, setAktivniPredavacId] = useState<number | null>(
     null,
   );
-  const [otvorenaRadionica, setOtvorenaRadionica] = useState<Radionica | null>(null);
+  const [otvorenaRadionica, setOtvorenaRadionica] = useState<Radionica | null>(
+    null,
+  );
 
   const predavacOtvoren = aktivniPredavacId !== null;
   /*
@@ -626,21 +593,24 @@ const Radionice = () => {
     return () => resizeObserver.disconnect();
   }, [izracunajRazmereLopte]);
 
-  const otvoriPredavaca = useCallback((radionica: Radionica) => {
-    if (tranzicijaPrikazaUToku.current) return;
+  const otvoriPredavaca = useCallback(
+    (radionica: Radionica) => {
+      if (tranzicijaPrikazaUToku.current) return;
 
-    // Faktor mora da bude svez: prozor je mogao da se promeni od poslednjeg racuna.
-    izracunajRazmereLopte();
-    setOtvorenaRadionica(radionica);
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Faktor mora da bude svez: prozor je mogao da se promeni od poslednjeg racuna.
+      izracunajRazmereLopte();
+      setOtvorenaRadionica(radionica);
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setAktivniPredavacId(radionica.predavacId);
+        return;
+      }
+
+      tranzicijaPrikazaUToku.current = true;
       setAktivniPredavacId(radionica.predavacId);
-      return;
-    }
-
-    tranzicijaPrikazaUToku.current = true;
-    setAktivniPredavacId(radionica.predavacId);
-    setTranzicijaPrikaza({ faza: "crumpling", smer: "to-speaker" });
-  }, [izracunajRazmereLopte]);
+      setTranzicijaPrikaza({ faza: "crumpling", smer: "to-speaker" });
+    },
+    [izracunajRazmereLopte],
+  );
 
   const zatvoriPredavaca = () => {
     if (aktivniPredavacId === null || tranzicijaPrikazaUToku.current) return;
@@ -657,13 +627,13 @@ const Radionice = () => {
     setTranzicijaPrikaza({ faza: "crumpling", smer: "to-workshop" });
   };
 
-
   useEffect(() => {
     if (!tranzicijaPrikaza) return;
     if (
       tranzicijaPrikaza.smer === "to-workshop" &&
       tranzicijaPrikaza.faza === "unfolding"
-    ) return;
+    )
+      return;
 
     const trajanje =
       tranzicijaPrikaza.faza === "crumpling"
@@ -730,19 +700,27 @@ const Radionice = () => {
           aria-hidden="true"
         />
       )}
-      <div className="radionice-default-view" aria-hidden={predavacOtvoren && !tranzicijaPrikaza}>
+      <div
+        className="radionice-default-view"
+        aria-hidden={predavacOtvoren && !tranzicijaPrikaza}
+      >
         <h1 className="radionice-title">Radionice</h1>
 
         <div className="radionice-band">
           <div className="radionice-paper-viewport" id="radionice-carousel">
             <div className="radionice-paper">
-              <div className="radionice-paper-sheet" onAnimationEnd={zavrsiOtvaranjePapira}>
+              <div
+                className="radionice-paper-sheet"
+                onAnimationEnd={zavrsiOtvaranjePapira}
+              >
                 <div className="radionice-paper-shape">
                   <RadionicePaperSurface />
                   <div className="radionice-paper-content">
                     <RadioniceTraka
                       pauza={predavacOtvoren || tranzicijaPrikaza !== null}
-                      interaktivno={!predavacOtvoren && tranzicijaPrikaza === null}
+                      interaktivno={
+                        !predavacOtvoren && tranzicijaPrikaza === null
+                      }
                       onOpen={otvoriPredavaca}
                     />
                   </div>
@@ -757,8 +735,9 @@ const Radionice = () => {
         <div className="radionice-predavac-view">
           <Predavac
             predavacId={aktivniPredavacId}
-            workshopTitle={otvorenaRadionica.fullTitle}
+            workshopTitle={otvorenaRadionica.fullName}
             workshopIcon={otvorenaRadionica.icon}
+            lecturers={otvorenaRadionica.lecturers}
             onClose={zatvoriPredavaca}
           />
         </div>

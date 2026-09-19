@@ -24,5 +24,5 @@ export interface PrijavaForma {
   predlogRadionice: string;
 
   cvDriveLink: string;
-  zeliObavestenja: boolean;
+  receive_fonis_updates: boolean;
 }

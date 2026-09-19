@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import arrowDefault from "@/assets/Vector.svg";
-import arrowHover from "@/assets/Group_58.svg";
 import closeIcon from "@/assets/Layer_1.svg";
 import petarSlika from "@/assets/petar.jpg";
 import anaSlika from "@/assets/ana.jpg";
@@ -24,6 +23,7 @@ type PredavacProps = {
   predavacId?: number;
   workshopTitle?: string;
   workshopIcon?: string;
+  lecturers?: string[];
   onClose?: () => void;
 };
 const PREDAVACI: PredavacPodaci[] = [
@@ -73,28 +73,32 @@ const Predavac = ({
   predavacId,
   workshopTitle,
   workshopIcon,
+  lecturers,
   onClose,
 }: PredavacProps) => {
+  const lecturerNames = lecturers?.length
+    ? lecturers
+    : PREDAVACI.map((predavac) => predavac.ime);
+  const imaVisePredavaca = lecturerNames.length > 1;
   const pocetniIndeks = Math.max(
     0,
-    PREDAVACI.findIndex((predavac) => predavac.id === predavacId),
+    lecturers?.length
+      ? 0
+      : PREDAVACI.findIndex((predavac) => predavac.id === predavacId),
   );
 
   const [aktivniIndeks, setAktivniIndeks] = useState(pocetniIndeks);
-  const [aktivnaStrelica, setAktivnaStrelica] = useState<
-    "prev" | "next" | null
-  >(null);
-
   const predavac = PREDAVACI[aktivniIndeks];
+  const imePredavaca = lecturerNames[aktivniIndeks];
 
   const prikaziPrethodnog = () => {
     setAktivniIndeks(
-      (indeks) => (indeks - 1 + PREDAVACI.length) % PREDAVACI.length,
+      (indeks) => (indeks - 1 + lecturerNames.length) % lecturerNames.length,
     );
   };
 
   const prikaziSledeceg = () => {
-    setAktivniIndeks((indeks) => (indeks + 1) % PREDAVACI.length);
+    setAktivniIndeks((indeks) => (indeks + 1) % lecturerNames.length);
   };
 
   return (
@@ -130,14 +134,14 @@ const Predavac = ({
                 {predavac.slika ? (
                   <img
                     src={predavac.slika}
-                    alt={predavac.ime}
+                    alt={imePredavaca}
                     className="predavac-photo"
                   />
                 ) : (
                   <div className="predavac-photo predavac-photo--placeholder" />
                 )}
 
-                <figcaption className="predavac-name">{predavac.ime}</figcaption>
+                <figcaption className="predavac-name">{imePredavaca}</figcaption>
               </figure>
 
               <img src={workshopIcon} alt="" className="predavac-shield" />
@@ -151,33 +155,27 @@ const Predavac = ({
           </div>
         </div>
 
-        <button
-          type="button"
-          className="predavac-arrow predavac-arrow--prev"
-          onClick={prikaziPrethodnog}
-          onMouseEnter={() => setAktivnaStrelica("prev")}
-          onMouseLeave={() => setAktivnaStrelica(null)}
-          aria-label="Prethodni predavač"
-        >
-          <img
-            src={aktivnaStrelica === "prev" ? arrowHover : arrowDefault}
-            alt=""
-          />
-        </button>
+        {imaVisePredavaca && (
+          <>
+            <button
+              type="button"
+              className="predavac-arrow predavac-arrow--prev"
+              onClick={prikaziPrethodnog}
+              aria-label="Prethodni predavač"
+            >
+              <img src={arrowDefault} alt="" />
+            </button>
 
-        <button
-          type="button"
-          className="predavac-arrow predavac-arrow--next"
-          onClick={prikaziSledeceg}
-          onMouseEnter={() => setAktivnaStrelica("next")}
-          onMouseLeave={() => setAktivnaStrelica(null)}
-          aria-label="Sledeći predavač"
-        >
-          <img
-            src={aktivnaStrelica === "next" ? arrowHover : arrowDefault}
-            alt=""
-          />
-        </button>
+            <button
+              type="button"
+              className="predavac-arrow predavac-arrow--next"
+              onClick={prikaziSledeceg}
+              aria-label="Sledeći predavač"
+            >
+              <img src={arrowDefault} alt="" />
+            </button>
+          </>
+        )}
       </div>
 
       <footer className="predavac-footer" />

@@ -36,8 +36,16 @@
    * Sada je telo oblika 9-92% visine.
    */
   --rd-paper-crumpled-next: polygon(
-    4% 22%, 27% 5%, 50% 9%, 73% 3%, 96% 21%,
-    98% 78%, 74% 97%, 50% 92%, 26% 95%, 2% 79%
+    4% 22%,
+    27% 5%,
+    50% 9%,
+    73% 3%,
+    96% 21%,
+    98% 78%,
+    74% 97%,
+    50% 92%,
+    26% 95%,
+    2% 79%
   );
 
   /*
@@ -70,15 +78,7 @@
   left: 0;
   height: var(--rd-zigzag-depth);
   background: $color-white;
-  clip-path: polygon(
-    0 0,
-    25% 100%,
-    50% 0,
-    75% 100%,
-    100% 0,
-    100% 100%,
-    0 100%
-  );
+  clip-path: polygon(0 0, 25% 100%, 50% 0, 75% 100%, 100% 0, 100% 100%, 0 100%);
   pointer-events: none;
 }
 
@@ -151,8 +151,7 @@
   display: block;
   width: var(--rd-mobile-design-width);
   margin: 0 auto;
-  padding: 12px
-    calc(var(--rd-mobile-design-width) * 24 / 390)
+  padding: 12px calc(var(--rd-mobile-design-width) * 24 / 390)
     clamp(24px, 5vw, 38px);
   font-family: $font-display;
   font-weight: $font-black;
@@ -244,15 +243,34 @@
 
 .radionice-paper-sheet::before {
   background:
-    linear-gradient(29deg, transparent 0 23%, rgb(255 255 255 / 0.22) 24% 26%, transparent 27% 100%),
-    linear-gradient(151deg, transparent 0 36%, rgb(0 0 0 / 0.12) 37% 40%, transparent 41% 100%),
-    linear-gradient(73deg, transparent 0 54%, rgb(255 255 255 / 0.16) 55% 58%, transparent 59% 100%);
+    linear-gradient(
+      29deg,
+      transparent 0 23%,
+      rgb(255 255 255 / 0.22) 24% 26%,
+      transparent 27% 100%
+    ),
+    linear-gradient(
+      151deg,
+      transparent 0 36%,
+      rgb(0 0 0 / 0.12) 37% 40%,
+      transparent 41% 100%
+    ),
+    linear-gradient(
+      73deg,
+      transparent 0 54%,
+      rgb(255 255 255 / 0.16) 55% 58%,
+      transparent 59% 100%
+    );
   mix-blend-mode: overlay;
 }
 
 .radionice-paper-sheet::after {
   background:
-    radial-gradient(ellipse at 28% 30%, rgb(255 255 255 / 0.2) 0 7%, transparent 8%),
+    radial-gradient(
+      ellipse at 28% 30%,
+      rgb(255 255 255 / 0.2) 0 7%,
+      transparent 8%
+    ),
     radial-gradient(ellipse at 69% 38%, rgb(0 0 0 / 0.1) 0 9%, transparent 10%),
     radial-gradient(ellipse at 43% 72%, rgb(0 0 0 / 0.08) 0 8%, transparent 9%);
 }
@@ -355,7 +373,7 @@
   font-weight: $font-black;
   font-size: calc(var(--rd-mobile-design-width) * 24 / 390);
   letter-spacing: 0.04em;
-  line-height: 1;
+  line-height: 1.2;
   text-transform: uppercase;
   text-align: center;
   color: $color-yellow;
@@ -564,9 +582,24 @@
 .radionice-page--view-transition .radionice-band::before,
 .radionice-page--view-transition .predavac-content::before {
   background:
-    linear-gradient(28deg, transparent 0 34%, rgb(255 255 255 / 0.2) 35% 38%, transparent 39% 100%),
-    linear-gradient(144deg, transparent 0 42%, rgb(0 0 0 / 0.12) 43% 46%, transparent 47% 100%),
-    linear-gradient(78deg, transparent 0 52%, rgb(255 255 255 / 0.15) 53% 56%, transparent 57% 100%);
+    linear-gradient(
+      28deg,
+      transparent 0 34%,
+      rgb(255 255 255 / 0.2) 35% 38%,
+      transparent 39% 100%
+    ),
+    linear-gradient(
+      144deg,
+      transparent 0 42%,
+      rgb(0 0 0 / 0.12) 43% 46%,
+      transparent 47% 100%
+    ),
+    linear-gradient(
+      78deg,
+      transparent 0 52%,
+      rgb(255 255 255 / 0.15) 53% 56%,
+      transparent 57% 100%
+    );
   mix-blend-mode: overlay;
 }
 
@@ -574,10 +607,22 @@
 .radionice-page--view-transition .predavac-content::after {
   inset: 8%;
   background:
-    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.26) 0 8%, transparent 9%),
-    radial-gradient(circle at 70% 38%, rgb(0 0 0 / 0.12) 0 10%, transparent 11%),
+    radial-gradient(
+      circle at 32% 28%,
+      rgb(255 255 255 / 0.26) 0 8%,
+      transparent 9%
+    ),
+    radial-gradient(
+      circle at 70% 38%,
+      rgb(0 0 0 / 0.12) 0 10%,
+      transparent 11%
+    ),
     radial-gradient(circle at 42% 72%, rgb(0 0 0 / 0.1) 0 9%, transparent 10%),
-    radial-gradient(circle at 74% 72%, rgb(255 255 255 / 0.18) 0 7%, transparent 8%);
+    radial-gradient(
+      circle at 74% 72%,
+      rgb(255 255 255 / 0.18) 0 7%,
+      transparent 8%
+    );
   filter: blur(0.7px);
 }
 
@@ -673,18 +718,17 @@
  */
 .radionice-page--view-transition .radionice-default-view,
 .radionice-page--view-transition .radionice-predavac-view {
-  --rd-view-ball:
-    scaleX(var(--rd-view-ball-scale-x))
+  --rd-view-ball: scaleX(var(--rd-view-ball-scale-x))
     scaleY(var(--rd-view-ball-scale-y));
 }
-
 
 /* Lopta u centru: kraj gužvanja i kraj ulaska. */
 .radionice-page--view-to-speaker-crumpling .radionice-default-view,
 .radionice-page--view-to-speaker-entering .radionice-predavac-view,
 .radionice-page--view-to-workshop-crumpling .radionice-predavac-view,
 .radionice-page--view-to-workshop-entering .radionice-default-view {
-  transform: translate3d(0, 0, 0) var(--rd-view-ball) rotate(-2.4deg) skewX(-2deg);
+  transform: translate3d(0, 0, 0) var(--rd-view-ball) rotate(-2.4deg)
+    skewX(-2deg);
 }
 
 /* Lopta otišla udesno iz kadra. */
@@ -694,7 +738,8 @@
 .radionice-page--view-to-workshop-exiting .radionice-predavac-view,
 .radionice-page--view-to-workshop-entering .radionice-predavac-view,
 .radionice-page--view-to-workshop-unfolding .radionice-predavac-view {
-  transform: translate3d(85%, 0, 0) var(--rd-view-ball) rotate(4deg) skewX(-1deg);
+  transform: translate3d(85%, 0, 0) var(--rd-view-ball) rotate(4deg)
+    skewX(-1deg);
 }
 
 /* Nova lopta čeka levo van kadra dok stara ne ode. */
@@ -702,7 +747,8 @@
 .radionice-page--view-to-speaker-exiting .radionice-predavac-view,
 .radionice-page--view-to-workshop-crumpling .radionice-default-view,
 .radionice-page--view-to-workshop-exiting .radionice-default-view {
-  transform: translate3d(-85%, 0, 0) var(--rd-view-ball) rotate(-4deg) skewX(1deg);
+  transform: translate3d(-85%, 0, 0) var(--rd-view-ball) rotate(-4deg)
+    skewX(1deg);
 }
 
 /* Papir u lopti: nepravilna kontura i senka. */
@@ -821,31 +867,63 @@
 }
 
 @keyframes rd-view-workshop-shape-crumple {
-  0% { clip-path: var(--rd-paper-shape); }
+  0% {
+    clip-path: var(--rd-paper-shape);
+  }
   55% {
     clip-path: polygon(
-      5% 19%, 25% 8%, 50% 18%, 75% 6%, 95% 21%,
-      94% 79%, 75% 93%, 50% 82%, 25% 95%, 5% 78%
+      5% 19%,
+      25% 8%,
+      50% 18%,
+      75% 6%,
+      95% 21%,
+      94% 79%,
+      75% 93%,
+      50% 82%,
+      25% 95%,
+      5% 78%
     );
   }
-  100% { clip-path: var(--rd-paper-crumpled-next); }
+  100% {
+    clip-path: var(--rd-paper-crumpled-next);
+  }
 }
 
 @keyframes rd-view-workshop-shape-unfold {
-  0% { clip-path: var(--rd-paper-crumpled-next); }
+  0% {
+    clip-path: var(--rd-paper-crumpled-next);
+  }
   35% {
     clip-path: polygon(
-      6% 22%, 26% 9%, 50% 18%, 74% 7%, 94% 23%,
-      94% 78%, 75% 92%, 50% 82%, 25% 94%, 6% 77%
+      6% 22%,
+      26% 9%,
+      50% 18%,
+      74% 7%,
+      94% 23%,
+      94% 78%,
+      75% 92%,
+      50% 82%,
+      25% 94%,
+      6% 77%
     );
   }
   70% {
     clip-path: polygon(
-      0 9%, 25% 2%, 50% 9%, 75% 2%, 100% 9%,
-      100% 91%, 75% 98%, 50% 91%, 25% 98%, 0 91%
+      0 9%,
+      25% 2%,
+      50% 9%,
+      75% 2%,
+      100% 9%,
+      100% 91%,
+      75% 98%,
+      50% 91%,
+      25% 98%,
+      0 91%
     );
   }
-  100% { clip-path: var(--rd-paper-shape); }
+  100% {
+    clip-path: var(--rd-paper-shape);
+  }
 }
 
 .radionice-page--view-to-speaker-crumpling .radionice-paper-sheet {

@@ -132,6 +132,7 @@
 
 // Paper geometry follows the measured 1440 × 1454 target vertices.
 .sponsor-section {
+  z-index: 2;
   top: calc(228 * var(--partner-u));
 
   height: calc(322 * var(--partner-u));
@@ -515,19 +516,19 @@
   }
 
   .annual-section .hexagon-svg {
-    animation: partneri-desktop-hex-spin 24s linear infinite;
+    animation: none;
   }
 
   .financial-section .hexagon-svg {
-    animation: partneri-desktop-hex-spin 28s linear infinite reverse;
+    animation: none;
   }
 
   .goods-section .hexagon-svg {
-    animation: partneri-desktop-hex-spin 26s linear infinite;
+    animation: none;
   }
 
   .media-section .hexagon-svg {
-    animation: partneri-desktop-hex-spin 30s linear infinite reverse;
+    animation: none;
   }
 
   .hexagon-svg-polygon {
@@ -896,7 +897,7 @@
   }
 
   .illustration-calendar {
-    top: calc(23 * var(--partner-u));
+    top: calc(55 * var(--partner-u));
     right: calc(-10 * var(--partner-u));
     left: auto;
 

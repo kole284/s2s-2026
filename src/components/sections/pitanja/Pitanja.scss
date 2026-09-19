@@ -564,9 +564,9 @@
   z-index: 4;
 
   top: 25%;
-  right: 5%;
+  right: -8%;
 
-  width: min(16.8vw, 24dvh);
+  width: min(20.16vw, 28.8dvh);
   height: auto;
 
   pointer-events: none;
@@ -663,10 +663,10 @@
     );
     right: calc(
       (100vw - var(--pitanja-design-width)) / 2 - var(--pitanja-design-width) *
-        20 / 1440
+        140 / 1440
     );
 
-    width: calc(var(--pitanja-design-width) * 241.92 / 1440);
+    width: calc(var(--pitanja-design-width) * 290.304 / 1440);
   }
 }
 

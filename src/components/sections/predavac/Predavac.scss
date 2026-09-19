@@ -70,6 +70,12 @@
   background: none;
   cursor: pointer;
   transform: translateY(-50%);
+  transition: transform 150ms ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-50%) scale(1.08);
+  }
 }
 
 .predavac-close-icon {
