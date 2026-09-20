@@ -1,20 +1,15 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 import panelSparkDesktop from "@/assets/panel/panel-spark-desktop.svg";
-import featuredPanelist from "@/assets/panel/featured-panelist.png";
 import arrow from "@/assets/panel/arrow.svg";
 import microphone from "@/assets/panel/microphone.svg";
 import questionMark from "@/assets/panel/question-mark.svg";
 
 import "./Panel.scss";
 
-const PANELISTS = [
-  "Charlie Kirk",
-  "Miroljub Petrovic",
-  "Moma Kovacevic",
-  "Ivan Rados",
-  "Gandi",
-];
+const PANELISTS = ["Panelista 1", "Panelista 2", "Panelista 3", "Panelista 4", "Panelista 5"];
+
+const COMING_SOON = "Coming Soon";
 
 type TransitionPhase = "idle" | "exit" | "enter";
 type TransitionDirection = "previous" | "next";
@@ -70,28 +65,12 @@ const Panel = () => {
     };
   }, [phase, direction]);
 
-  const selectedPanelist = PANELISTS[selectedIndex];
-
   const remainingPanelists = Array.from(
     {
       length: PANELISTS.length - 1,
     },
     (_, offset) => PANELISTS[(selectedIndex + offset + 1) % PANELISTS.length],
   );
-
-  /*
-   * MOBILE:
-   *
-   * Koristimo samo dva panelista:
-   * jedan na levoj i jedan na desnoj strani.
-   *
-   * Svaki dobija sopstveni stage-side wrapper,
-   * pa više ne zavisimo od jednog ogromnog
-   * centralnog clip-path poligona.
-   */
-  const mobileLeftPanelist = remainingPanelists[0];
-
-  const mobileRightPanelist = remainingPanelists[remainingPanelists.length - 1];
 
   const selectPanelist = (nextDirection: TransitionDirection) => {
     if (transitionLocked.current) {
@@ -142,8 +121,9 @@ const Panel = () => {
               <div className="panel-mobile-panelist-cutout">
                 <img
                   className="panel-mobile-panelist-image"
-                  src={featuredPanelist}
-                  alt={mobileLeftPanelist}
+                  src={questionMark}
+                  alt=""
+                  aria-hidden="true"
                   draggable={false}
                 />
               </div>
@@ -158,8 +138,9 @@ const Panel = () => {
               <div className="panel-mobile-panelist-cutout">
                 <img
                   className="panel-mobile-panelist-image"
-                  src={featuredPanelist}
-                  alt={mobileRightPanelist}
+                  src={questionMark}
+                  alt=""
+                  aria-hidden="true"
                   draggable={false}
                 />
               </div>
@@ -193,8 +174,9 @@ const Panel = () => {
 
             <img
               className={`panel-featured-person-image panel-featured-person-image--${phase}-${direction}`}
-              src={featuredPanelist}
-              alt={selectedPanelist}
+              src={questionMark}
+              alt=""
+              aria-hidden="true"
               draggable={false}
             />
           </div>
@@ -205,7 +187,7 @@ const Panel = () => {
             <div
               className={`panel-featured-card-name panel-featured-card-name--${phase}`}
             >
-              {selectedPanelist.split(" ").map((part, index) => (
+              {COMING_SOON.split(" ").map((part, index) => (
                 <span key={`${part}-${index}`}>{part}</span>
               ))}
             </div>
@@ -261,32 +243,21 @@ const Panel = () => {
 
                 <img
                   className="panel-stage-panelist-image"
-                  src={featuredPanelist}
-                  alt={name}
+                  src={questionMark}
+                  alt=""
+                  aria-hidden="true"
                   draggable={false}
                 />
               </div>
 
               <p className="panel-stage-panelist-name">
-                {name.split(" ").map((part, index) => (
+                {COMING_SOON.split(" ").map((part, index) => (
                   <span key={`${part}-${index}`}>{part}</span>
                 ))}
               </p>
             </div>
           ))}
         </div>
-
-        {/* =================================================
-            QUESTION MARK
-            ================================================= */}
-
-        <img
-          className="panel-question-mark"
-          src={questionMark}
-          alt=""
-          aria-hidden="true"
-          draggable={false}
-        />
 
         {/* =================================================
             TITLE
@@ -298,25 +269,7 @@ const Panel = () => {
             QUESTION
             ================================================= */}
 
-        <p className="panel-question">Da li zapravo nosimo plamen?</p>
-
-        {/* =================================================
-            DESCRIPTION
-            ================================================= */}
-
-        <p className="panel-description">
-          They always said that Charlie Kirk was a Nazi, then they celebrated
-          after they killed him
-          <br />
-          They tried to tell us that black lives matter, and that white people
-          have always been villains
-          <br />
-          They burnin' flags in the streets, and they scream at police
-          <span className="panel-description-mobile-ending" hidden>
-            {" "}
-            taking illegals to prison
-          </span>
-        </p>
+        <p className="panel-question">Coming Soon</p>
       </div>
     </section>
   );

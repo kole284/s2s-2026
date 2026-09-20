@@ -80,7 +80,9 @@ $panel-yellow: #ffd100;
 
   z-index: 2;
 
-  transform: translateX(calc(50cqw - 50vw));
+  /* Shifted ~5% right on desktop; the spark below cancels this
+     shift so it stays pinned to the viewport edge. */
+  transform: translateX(calc(50cqw - 50vw + 5cqw));
 
   pointer-events: none;
 }
@@ -95,11 +97,18 @@ $panel-yellow: #ffd100;
   z-index: 2;
 
   top: 12.6953%;
-  left: -2.0833%;
+  left: -6.5432%;
 
   display: block;
 
-  width: 18.6111%;
+  /* Kept at its original scale/position (relative to the circle) and left to
+     shift together with the circle (no counter-transform): this preserves
+     the exact original overlap between the spark's branches and the circle.
+     The SVG's viewBox was widened to the left (previously clipped at x=0) so
+     its leftmost tip is now visible and bleeds past the screen edge again;
+     width/left below are scaled/offset to match that wider viewBox while
+     keeping every previously-visible point at the exact same position. */
+  width: 23.0709%;
   height: auto;
 
   pointer-events: none;
@@ -184,18 +193,17 @@ $panel-yellow: #ffd100;
 
   z-index: 2;
 
+  top: 50%;
   left: 50%;
-  bottom: -13%;
 
   display: block;
 
-  width: 140%;
-  height: 122%;
+  width: 42%;
+  height: auto;
 
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 
   object-fit: contain;
-  object-position: center bottom;
 
   pointer-events: none;
   user-select: none;
@@ -450,20 +458,25 @@ $panel-yellow: #ffd100;
 .panel-stage-panelist-image {
   position: absolute;
 
-  z-index: 2;
-
+  /* Centered on the visual centroid of the cutout polygon above (not the
+     box center), which sits lower since the shape is a wide "shoulders"
+     silhouette with a narrower peak. */
+  top: 61.3%;
   left: 50%;
-  bottom: -14%;
+
+  z-index: 2;
 
   display: block;
 
-  width: 116%;
-  height: 116%;
+  width: 40%;
+  height: auto;
 
-  transform: translateX(-50%);
+  /* question-mark.svg's own ink isn't centered in its viewBox (it sits at
+     ~69%/53% of the box), so translate by the glyph's own center instead
+     of 50/50 to actually center the visible mark. */
+  transform: translate(-68.96%, -52.87%);
 
   object-fit: contain;
-  object-position: center bottom;
 
   pointer-events: none;
   user-select: none;
@@ -494,27 +507,6 @@ $panel-yellow: #ffd100;
 
 .panel-stage-panelist-name span {
   display: block;
-}
-
-/* =========================================================
-   QUESTION MARK
-   ========================================================= */
-
-.panel-question-mark {
-  position: absolute;
-
-  z-index: 4;
-
-  top: 61.9141%;
-  left: 88.1944%;
-
-  display: block;
-
-  width: 16.3889%;
-  height: auto;
-
-  pointer-events: none;
-  user-select: none;
 }
 
 /* =========================================================
@@ -553,8 +545,8 @@ $panel-yellow: #ffd100;
 
   z-index: 5;
 
-  top: 29.6875%;
-  left: 39.3056%;
+  top: 28%;
+  left: 58.98%;
 
   width: 58%;
 
@@ -569,36 +561,10 @@ $panel-yellow: #ffd100;
   line-height: 1;
 
   white-space: nowrap;
+  text-transform: uppercase;
 
-  transform: rotate(-4.5deg);
+  transform: rotate(-5.9deg);
   transform-origin: left center;
-}
-
-/* =========================================================
-   DESCRIPTION
-   ========================================================= */
-
-.panel-description {
-  position: absolute;
-
-  z-index: 5;
-
-  top: 61.6211%;
-  left: 44.7917%;
-
-  width: 41.3889%;
-
-  margin: 0;
-
-  color: $color-black;
-
-  font-family: $font-body;
-  font-size: 1.5972cqw;
-  font-weight: $font-regular;
-
-  line-height: 1.2;
-
-  overflow-wrap: break-word;
 }
 
 /* =========================================================
@@ -651,13 +617,13 @@ $panel-yellow: #ffd100;
   from {
     opacity: 1;
 
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
   }
 
   to {
     opacity: 0;
 
-    transform: translateX(-50%) translate(var(--panel-exit-x), -0.8333cqw)
+    transform: translate(-50%, -50%) translate(var(--panel-exit-x), -0.8333cqw)
       rotate(var(--panel-exit-angle)) scale(0.98);
   }
 }
@@ -666,14 +632,14 @@ $panel-yellow: #ffd100;
   from {
     opacity: 0;
 
-    transform: translateX(-50%) translate(var(--panel-enter-x), 0.8333cqw)
+    transform: translate(-50%, -50%) translate(var(--panel-enter-x), 0.8333cqw)
       rotate(var(--panel-enter-angle)) scale(0.98);
   }
 
   to {
     opacity: 1;
 
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
   }
 }
 
@@ -934,20 +900,24 @@ $panel-yellow: #ffd100;
   .panel-mobile-panelist-image {
     position: absolute;
 
-    z-index: 2;
+    /* Centered on the visual centroid of the cutout polygon above, which
+       sits lower/right of the box center. */
+    top: 69%;
+    left: 52%;
 
-    left: 50%;
-    bottom: -14%;
+    z-index: 2;
 
     display: block;
 
-    width: calc(73.5 * var(--panel-mobile-unit));
-    height: calc(108.9375 * var(--panel-mobile-unit));
+    width: calc(40 * var(--panel-mobile-unit));
+    height: auto;
 
-    transform: translateX(-50%);
+    /* question-mark.svg's own ink isn't centered in its viewBox (it sits at
+       ~69%/53% of the box), so translate by the glyph's own center instead
+       of 50/50 to actually center the visible mark. */
+    transform: translate(-68.96%, -52.87%);
 
     object-fit: contain;
-    object-position: center bottom;
 
     pointer-events: none;
     user-select: none;
@@ -1121,36 +1091,5 @@ $panel-yellow: #ffd100;
 
   .panel-arrow--next {
     left: calc(50% + 147 * var(--panel-mobile-unit));
-  }
-
-  /* =======================================================
-     DESCRIPTION
-     ======================================================= */
-
-  .panel-description {
-    position: relative;
-
-    top: auto;
-    left: auto;
-
-    width: calc(290 * var(--panel-mobile-unit));
-
-    margin: 0 auto;
-
-    font-size: clamp(16px, 4.4872vw, 19px);
-
-    line-height: 1.25;
-  }
-
-  .panel-description-mobile-ending {
-    display: inline;
-  }
-
-  /* =======================================================
-     QUESTION MARK
-     ======================================================= */
-
-  .panel-question-mark {
-    display: none;
   }
 }
