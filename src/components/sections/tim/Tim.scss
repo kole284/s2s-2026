@@ -15,12 +15,9 @@
      zamrznuti rezultat prethodnog "min(100vw,140.625dvh)*1.1" na
      referentnoj 1440×1024 rezoluciji (mobile ispod ima svoj, i dalje
      responsive, --team-mobile-design-width). */
-  --team-design-width: 1584px;
+  --team-design-width: min(1584px, 110vw, 154.6875dvh);
   --team-unit: calc(var(--team-design-width) / 1000);
-  /* Centriranje sekcije na sredini ekrana i dalje prati širinu prozora
-     (to je pozicija, ne veličina) — sadržaj sam po sebi ostaje fiksan. */
   --team-side-space: calc((100vw - var(--team-design-width)) / 2);
-
   position: relative;
   isolation: isolate;
   display: grid;
@@ -87,14 +84,18 @@
 }
 
 .team-coordinator {
-  /* Lokalno uvećanje SAMO koordinatora (kaskadira na sve team-size()
-     pozive unutar njega -- caption, label, ime), da mu gornja/donja ivica
-     poklopi tim karticu. translateY(20) nudge je uklonjen jer je taj
-     iznos sad "utopljen" u samo poravnanje gornje ivice sa tim karticom.
-     Izvedeno direktno iz --team-design-width (ne iz --team-unit) da se
-     izbegne kružna referenca (--team-unit: calc(var(--team-unit) * N) je
-     ciklično i CSS ga tiho poništi na guaranteed-invalid). */
-  --team-unit: calc(var(--team-design-width) / 1000 * 1.3294);
+  /*
+   * Desktop coordinator je sada 10% manji, ali njegova grid kolona ostaje
+   * iste širine. Tako se TEAM kartica uopšte ne pomera, a coordinator se
+   * smanjuje oko svog centra umesto da "povuče" ostatak layout-a ulevo.
+   *
+   * 1.3294 × 0.90 = 1.19646
+   */
+  --team-unit: calc(var(--team-design-width) / 1000 * 1.19646);
+
+  width: 90%;
+  justify-self: center;
+  align-self: center;
 }
 
 .team-coordinator-frame {
@@ -221,7 +222,7 @@
 
 .team-arrow {
   position: absolute;
-  top: 58%;
+  top: 50%;
   z-index: 3;
   display: flex;
   align-items: center;
@@ -256,11 +257,11 @@
 }
 
 .team-arrow-left {
-  left: team-size(-90);
+  left: team-size(-40);
 }
 
 .team-arrow-right {
-  right: team-size(0);
+  right: team-size(-40);
 
   img {
     transform: rotate(180deg);
@@ -353,10 +354,7 @@
   max-width: none;
   height: auto;
 
-  /*
-   * Dva inline SVG-a imaju namerno produžen samo jedan konkretan krak van
-   * originalnog viewBox-a. Zato overflow mora ostati vidljiv.
-   */
+  /* Path-ovi dodiruju ivice viewBox-a, pa overflow ostaje vidljiv. */
   overflow: visible;
 
   pointer-events: none;
@@ -400,16 +398,13 @@
 /* Coordinator -> team kartica. */
 .team-lightning-between {
   /*
-   * Munja između koordinatora i tima.
-   *
-   * Repozicionirano/prošireno pošto je koordinator uvećan (vidi
-   * .team-coordinator): levi vrh ulazi pod uvećanu coordinator karticu,
-   * desni ostaje sigurno pod team frame-om.
+   * Originalna Figma proporcija; pozicija ostavlja mali overlap ispod obe
+   * kartice bez horizontalnog razvlačenja path-a.
    */
   top: calc(var(--team-design-width) * 288 / 1440);
-  left: calc(var(--team-side-space) + var(--team-design-width) * 520 / 1440);
+  left: calc(var(--team-side-space) + var(--team-design-width) * 650 / 1440);
 
-  width: calc(var(--team-design-width) * 363.6 / 1440);
+  width: calc(var(--team-design-width) * 209 / 1440);
 }
 
 /* Team kartica -> desna ivica, gornji konektor. */
@@ -467,7 +462,7 @@
 .team-lightning-edge--left path {
   fill: none;
   stroke: $color-white;
-  stroke-width: calc(var(--team-design-width) * 20 / 1440);
+  stroke-width: calc(var(--team-design-width) * 40 / 1440);
   stroke-linecap: butt;
   stroke-linejoin: miter;
 }
@@ -477,6 +472,7 @@
   top: calc(var(--team-design-width) * 235 / 1440);
   right: 0;
 
+  /* Mali overlap sa originalnim SVG-om sprečava anti-aliasing seam. */
   width: calc(var(--team-side-space) + 3px);
   height: calc(var(--team-design-width) * 70 / 1440);
 
@@ -505,6 +501,7 @@
   top: calc(var(--team-design-width) * 520 / 1440);
   right: 0;
 
+  /* Isti mali overlap protiv seama kao na gornjoj grani. */
   width: calc(var(--team-side-space) + 3px);
   height: calc(var(--team-design-width) * 100 / 1440);
 

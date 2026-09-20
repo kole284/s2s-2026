@@ -394,48 +394,14 @@ const Tim = () => {
       <div className="team-lightnings" aria-hidden="true">
         <svg
           className="team-lightning team-lightning-left-large"
-          viewBox="0 0 294 232"
+          viewBox="0 0 292 232"
           overflow="visible"
           aria-hidden="true"
           focusable="false"
         >
           <path
-            fill="none"
-            stroke="white"
-            strokeWidth="20"
-            strokeLinejoin="miter"
-            strokeLinecap="butt"
-            d="M0 190
-               L30 155
-               L60 195
-               L90 150
-               L119 185
-               L145 205
-               L163 178
-               L183 169
-               L192 139
-               L214 128
-               L222 96
-               L243 87
-               L250 57
-               L270 45"
-          />
-
-          <path
-            fill="none"
-            stroke="white"
-            strokeWidth="20"
-            strokeLinejoin="miter"
-            strokeLinecap="butt"
-            d="M119 185
-               L91 151
-               L105 123
-               L96 94
-               L132 72
-               L138 44
-               L176 22
-               L203 0
-               L221 -18"
+            fill="white"
+            d="M111.5 144.5L-1.5 177.5V231.5L123.5 182L171.5 218L222 170.5L242 136.5L268.5 91.5L292 28.5H256L261.5 65.5L242 96L212 136.5L171.5 182L138.5 139.5L131 91.5L162.5 77L168.5 46.5L199 22.5L201.5 0L141.5 21L131 52.5L87.5 91.5L111.5 144.5Z"
           />
         </svg>
 
@@ -451,43 +417,14 @@ const Tim = () => {
           focusable="false"
         >
           <path
-            fill="none"
-            stroke="white"
-            strokeWidth="20"
-            strokeLinejoin="miter"
-            strokeLinecap="butt"
-            d="M0 85
-               L20 78
-               L42 89
-               L64 76
-               L86 89
-               L103 95
-               L120 72
-               L135 49
-               L151 38
-               L163 28
-               L176 21
-               L187 16"
-          />
-
-          {/*
-           * Nastavak ulazi ispod koordinatora bez promene debljine.
-           */}
-          <path
-            fill="none"
-            stroke="white"
-            strokeWidth="20"
-            strokeLinejoin="miter"
-            strokeLinecap="butt"
-            d="M187 16 L207 15"
+            fill="white"
+            d="M101 85L16.5 78.5L12.5 74.5L0 96L107 112.5L139.5 50L187.5 26L178 14.5L187.5 0L165 3L155.5 22.5L115.5 50L101 85Z"
           />
         </svg>
 
         {/*
          * Munja koordinator -> tim.
-         * Menjamo SAMO levi, coordinator-side krak: produžen je ulevo.
-         * Sredina i desni kraj originalnog Vector 219 ostaju na istom mestu,
-         * pa ne kvarimo spoj sa team frame-om.
+         * Originalni Vector 219 u prirodnim proporcijama.
          */}
         <svg
           className="team-lightning team-lightning-between"
@@ -496,60 +433,29 @@ const Tim = () => {
           aria-hidden="true"
           focusable="false"
         >
-          {/* Originalni Vector 219 ostaje netaknut. */}
           <path
             fill="white"
-            d="M44.5 72
+            d="M44.5 59
                L0 96.5
                V112.5
                L44.5 82
                L69.5 93.5
                L91.5 65.5
-               L112 75
-               L128 65
-               L145 73
                L166 70
                L209 25.5
                L200 0
                L166 55
-               L145 58
-               L128 50
-               L112 59
                L91.5 46.5
                L63 74.5
-               L44.5 72
-               Z"
-          />
-
-          {/*
-           * SAMO coordinator-side krak.
-           * Produžen ulevo i napravljen malo deblji na ulazu, dok sredina i
-           * desni kraj konektora ostaju potpuno isti.
-           */}
-          <path
-            fill="white"
-            d="M40 75
-               L-48 137
-               L-48 147
-               L40 85
-               Z"
-          />
-
-          <path
-            fill="white"
-            d="M188 -8
-               L246 -15
-               L254 14
-               L205 34
+               L44.5 59
                Z"
           />
         </svg>
 
         {/*
          * Munja tim -> desna ivica, gornja grana.
-         * Coordinator-side krak je produžen ulevo (isti princip kao
-         * .team-lightning-between) da i dalje dodiruje team-group-frame
-         * pošto je frame povučen ulevo/suzen da ne dodiruje ivicu ekrana.
+         * Originalni levi vrh se naslanja na team frame bez dodatnog
+         * podvlačenja ispod belog oblika.
          */}
         <svg
           className="team-lightning team-lightning-right-upper"
@@ -558,12 +464,10 @@ const Tim = () => {
           aria-hidden="true"
           focusable="false"
         >
-          <g transform="translate(-64 0)">
-            <path
-              fill="white"
-              d="M124.5 0L198.5 5V21.5H160L146 30L132 20L120 48L103 31L88 60L68 38L50 51L28 32L0 54.5V35.5L28 18L49 36L70 22L86 43L101 9L117 27L124.5 0Z"
-            />
-          </g>
+          <path
+            fill="white"
+            d="M124.5 0L198.5 5V21.5H160L146 30L132 20L120 48L103 31L88 60L68 38L50 51L28 32L0 54.5V35.5L28 18L49 36L70 22L86 43L101 9L117 27L124.5 0Z"
+          />
         </svg>
 
         <svg
@@ -573,12 +477,10 @@ const Tim = () => {
           aria-hidden="true"
           focusable="false"
         >
-          <g transform="translate(-64 0)">
-            <path
-              fill="white"
-              d="M184 83.5L225 125V151L184 116.5L168 126L154 145L160 163L149 178L156 190L132 198L120 220L104 214L89.5 225L70 233.5L24.5 238L39 225L72 214L96 207L88 190L112 178L103 160L118 143L108 127L91 139L73 124L55 136L36 119L0 125L10.5 116.5L29 105L47 116L65 101L82 115L99 101L110.5 92.5L103 49.5L75.5 70.5L46 37.5L24.5 29V0L46 4.5L82 49.5L103 19L133 83.5L157 109L184 83.5Z"
-            />
-          </g>
+          <path
+            fill="white"
+            d="M184 83.5L225 125V151L184 116.5L168 126L154 145L160 163L149 178L156 190L132 198L120 220L104 214L89.5 225L70 233.5L24.5 238L39 225L72 214L96 207L88 190L112 178L103 160L118 143L108 127L91 139L73 124L55 136L36 119L0 125L10.5 116.5L29 105L47 116L65 101L82 115L99 101L110.5 92.5L103 49.5L75.5 70.5L46 37.5L24.5 29V0L46 4.5L82 49.5L103 19L133 83.5L157 109L184 83.5Z"
+          />
         </svg>
 
         {/*
