@@ -10,14 +10,23 @@
    * Interni Tim layout je i dalje nacrtan u svom 1000-unit koordinatnom
    * sistemu, ali je sada ceo sistem vezan za jedan design-width token.
    */
-  --team-design-width: min(100vw, 140.625dvh);
+  /* FIKSNA veličina na desktopu — ne prati vw/dvh, pa se ništa u sekciji
+     ne menja pri browser zoom-u ili promeni širine prozora. Vrednost je
+     zamrznuti rezultat prethodnog "min(100vw,140.625dvh)*1.1" na
+     referentnoj 1440×1024 rezoluciji (mobile ispod ima svoj, i dalje
+     responsive, --team-mobile-design-width). */
+  --team-design-width: 1584px;
   --team-unit: calc(var(--team-design-width) / 1000);
-  --team-side-space: max(0px, calc((100vw - var(--team-design-width)) / 2));
+  /* Centriranje sekcije na sredini ekrana i dalje prati širinu prozora
+     (to je pozicija, ne veličina) — sadržaj sam po sebi ostaje fiksan. */
+  --team-side-space: calc((100vw - var(--team-design-width)) / 2);
 
   position: relative;
   isolation: isolate;
   display: grid;
   place-items: center;
+  justify-content: center;
+  align-content: center;
   box-sizing: border-box;
   width: 100%;
   min-height: 100svh;
@@ -51,10 +60,15 @@
   z-index: 3;
 
   display: grid;
-  grid-template-columns: team-size(290) team-size(380);
+  /* Kolona 1 (koordinator) je uvećana faktorom 1.3294 da njegov oblik
+     visinom prati tim. Kolona 2 (tim) je minimalno smanjena faktorom
+     0.9223 -- bez ovoga desna ivica tim oblika izlazi van ekrana (dodiruje
+     ivicu umesto munje); ovaj faktor je izmeren tako da tim oblik i dalje
+     visinom praktično identično poklapa koordinator oblik (razlika < 1px). */
+  grid-template-columns: team-size(290 * 1.3294) team-size(380 * 0.9223);
   align-items: start;
   gap: team-size(48);
-  width: team-size(718);
+  width: team-size(290 * 1.3294 + 48 + 380 * 0.9223);
 }
 
 .team-group-photo {
@@ -73,7 +87,14 @@
 }
 
 .team-coordinator {
-  transform: translateY(team-size(20));
+  /* Lokalno uvećanje SAMO koordinatora (kaskadira na sve team-size()
+     pozive unutar njega -- caption, label, ime), da mu gornja/donja ivica
+     poklopi tim karticu. translateY(20) nudge je uklonjen jer je taj
+     iznos sad "utopljen" u samo poravnanje gornje ivice sa tim karticom.
+     Izvedeno direktno iz --team-design-width (ne iz --team-unit) da se
+     izbegne kružna referenca (--team-unit: calc(var(--team-unit) * N) je
+     ciklično i CSS ga tiho poništi na guaranteed-invalid). */
+  --team-unit: calc(var(--team-design-width) / 1000 * 1.3294);
 }
 
 .team-coordinator-frame {
@@ -111,7 +132,6 @@
 .team-group {
   width: 100%;
   justify-self: center;
-  transform: translateX(team-size(15));
 }
 
 .team-coordinator-caption,
@@ -131,7 +151,6 @@
   min-height: team-size(120);
   margin: team-size(-62) 0 0 0%;
   padding: team-size(24) team-size(16);
-  left: team-size(-38);
   z-index: auto;
   background-image: none;
 
@@ -383,13 +402,14 @@
   /*
    * Munja između koordinatora i tima.
    *
-   * Još malo ulevo i mrvu šira, tako da njen levi beli vrh dublje uđe pod
-   * coordinator karticu, a desni i dalje ostane sigurno pod team frame-om.
+   * Repozicionirano/prošireno pošto je koordinator uvećan (vidi
+   * .team-coordinator): levi vrh ulazi pod uvećanu coordinator karticu,
+   * desni ostaje sigurno pod team frame-om.
    */
   top: calc(var(--team-design-width) * 288 / 1440);
-  left: calc(var(--team-side-space) + var(--team-design-width) * 492 / 1440);
+  left: calc(var(--team-side-space) + var(--team-design-width) * 520 / 1440);
 
-  width: calc(var(--team-design-width) * 236 / 1440);
+  width: calc(var(--team-design-width) * 363.6 / 1440);
 }
 
 /* Team kartica -> desna ivica, gornji konektor. */
@@ -832,16 +852,16 @@
   }
 
   .team-coordinator {
+    /* Resetuje desktop-only 1.3294x uvećanje (definisano u baznom
+       .team-coordinator pravilu) nazad na običnu mobilnu jedinicu --
+       inače nasleđuje desktop skalu vezanu za (sad fiksni) --team-design-width. */
+    --team-unit: calc(var(--team-mobile-design-width) / 390);
     width: team-size(340);
     transform: translateY(team-size(38));
   }
 
   .team-coordinator-caption {
-    left: team-size(5);
     margin-top: team-size(-40);
-  }
-  .team-coordinator-photo {
-    transform: translateX(team-size(50));
   }
 
   .team-group {
@@ -1047,5 +1067,19 @@
 
   .team-mobile-ribbon-bottom {
     top: calc(100% + #{team-size(30)});
+  }
+}
+
+@media #{$tablet} {
+  .team-section {
+    /*
+     * Tablet nema dovoljno širine za zamrznuti 1584px desktop dizajn --
+     * dobija sopstvenu, viewport-relative skalu (isti princip kao već
+     * postojeći mobilni --team-mobile-design-width), bez *1.1
+     * multiplikatora (za razliku od zamrznute desktop vrednosti) jer bi
+     * taj multiplikator ponovo gurnuo dizajn preko 100vw i vratio isti
+     * problem sečenja koji ovim rešavamo.
+     */
+    --team-design-width: min(100vw, 140.625dvh);
   }
 }

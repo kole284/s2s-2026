@@ -171,6 +171,9 @@ const COORDINATOR_FRAME_PATH = `
   L158.963 297.39
   L124.737 285.221
   L69.9742 297.39
+  H47.917
+  H21.296
+  H11.409
   H0
   Z
 `;
@@ -542,17 +545,41 @@ const Tim = () => {
           />
         </svg>
 
-        <img
+        {/*
+         * Munja tim -> desna ivica, gornja grana.
+         * Coordinator-side krak je produžen ulevo (isti princip kao
+         * .team-lightning-between) da i dalje dodiruje team-group-frame
+         * pošto je frame povučen ulevo/suzen da ne dodiruje ivicu ekrana.
+         */}
+        <svg
           className="team-lightning team-lightning-right-upper"
-          src="/tim/lightning-right-upper.svg"
-          alt=""
-        />
+          viewBox="0 0 199 60"
+          overflow="visible"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <g transform="translate(-64 0)">
+            <path
+              fill="white"
+              d="M124.5 0L198.5 5V21.5H160L146 30L132 20L120 48L103 31L88 60L68 38L50 51L28 32L0 54.5V35.5L28 18L49 36L70 22L86 43L101 9L117 27L124.5 0Z"
+            />
+          </g>
+        </svg>
 
-        <img
+        <svg
           className="team-lightning team-lightning-right-lower"
-          src="/tim/lightning-right-lower.svg"
-          alt=""
-        />
+          viewBox="0 0 223 238"
+          overflow="visible"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <g transform="translate(-64 0)">
+            <path
+              fill="white"
+              d="M184 83.5L225 125V151L184 116.5L168 126L154 145L160 163L149 178L156 190L132 198L120 220L104 214L89.5 225L70 233.5L24.5 238L39 225L72 214L96 207L88 190L112 178L103 160L118 143L108 127L91 139L73 124L55 136L36 119L0 125L10.5 116.5L29 105L47 116L65 101L82 115L99 101L110.5 92.5L103 49.5L75.5 70.5L46 37.5L24.5 29V0L46 4.5L82 49.5L103 19L133 83.5L157 109L184 83.5Z"
+            />
+          </g>
+        </svg>
 
         {/*
          * Ovi spanovi NISU nove munje. Oni samo produžavaju krajnji beli
@@ -689,7 +716,7 @@ const Tim = () => {
             </button>
             <svg
               className="team-coordinator-photo"
-              viewBox="0 0 485 298"
+              viewBox="-70.607 0 485 298"
               role="img"
               aria-label={`Koordinator — ${activeTeam.coordinator.firstName} ${activeTeam.coordinator.lastName}`}
             >
