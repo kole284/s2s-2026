@@ -37,6 +37,15 @@ const OSTALE_GODINE = [
 ];
 const RADIONICE = WORKSHOPS.map((workshop) => workshop.shortName);
 const NIVOI_ZNANJA: NivoZnanja[] = ["Osnovni", "Srednji", "Napredni"];
+// Moraju odgovarati LIMITS u submit-application/index.ts; backend odbija duže tekstove.
+const LIMITI_POLJA = {
+  razlogPrveRadionice: 5000,
+  razlogDrugeRadionice: 5000,
+  pitanjeZaPredavace: 3000,
+  razloziZaS2S: 5000,
+  predlogRadionice: 2000,
+  s2sIskustvo: 5000,
+} as const;
 // CONTENT GAP: partneri trenutno nemaju canonical data source za pokrovitelje.
 const BROJ_POKROVITELJA = 1;
 
@@ -511,17 +520,10 @@ const requireKnowledgeLevel = (value: NivoZnanja | ""): NivoZnanja => {
   return value;
 };
 
-const supabaseHeaders = (publishableKey: string) => ({
-  apikey: publishableKey,
-  Authorization: `Bearer ${publishableKey}`,
-  "Content-Type": "application/json",
-});
-
-type SupabaseErrorResponse = {
-  code?: string;
-  details?: string;
-  hint?: string;
-  message?: string;
+type SubmitApplicationResponse = {
+  success?: boolean;
+  error?: string;
+  field?: "email" | "phone_number" | "unknown" | string;
 };
 
 class DuplicateApplicationError extends Error {
@@ -531,18 +533,16 @@ class DuplicateApplicationError extends Error {
   }
 }
 
-const getDuplicateApplicationMessage = (error: SupabaseErrorResponse) => {
-  if (error.code !== "23505") {
+const getDuplicateApplicationMessage = (response: SubmitApplicationResponse) => {
+  if (response.error !== "duplicate_application") {
     return null;
   }
 
-  const errorText = `${error.message ?? ""} ${error.details ?? ""}`;
-
-  if (errorText.includes("application_email_ci_unique")) {
+  if (response.field === "email") {
     return "Već postoji prijava sa ovom mejl adresom.";
   }
 
-  if (errorText.includes("application_phone_unique")) {
+  if (response.field === "phone_number") {
     return "Već postoji prijava sa ovim brojem telefona.";
   }
 
@@ -858,32 +858,37 @@ const Prijava = () => {
     supabasePublishableKey: string,
     payload: ApplicationPayload,
   ) => {
-    const response = await fetch(`${supabaseUrl}/rest/v1/Application`, {
+    const response = await fetch(`${supabaseUrl}/functions/v1/submit-application`, {
       method: "POST",
       headers: {
-        ...supabaseHeaders(supabasePublishableKey),
-        Prefer: "return=minimal",
+        apikey: supabasePublishableKey,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
 
+    let responseBody: SubmitApplicationResponse = {};
+
+    try {
+      responseBody = (await response.json()) as SubmitApplicationResponse;
+    } catch {
+      // Ako odgovor nije JSON, tretira se kao standardna greška ispod.
+    }
+
     if (!response.ok) {
-      const errorText = await response.text();
-      let errorResponse: SupabaseErrorResponse = {};
-
-      try {
-        errorResponse = JSON.parse(errorText) as SupabaseErrorResponse;
-      } catch {
-        // Ako odgovor nije JSON, tretira se kao standardna greška ispod.
-      }
-
-      const duplicateMessage = getDuplicateApplicationMessage(errorResponse);
+      const duplicateMessage = getDuplicateApplicationMessage(responseBody);
 
       if (duplicateMessage) {
         throw new DuplicateApplicationError(duplicateMessage);
       }
 
-      throw new Error(errorText || `Request failed with ${response.status}`);
+      throw new Error(
+        `submit-application failed with status ${response.status}`,
+      );
+    }
+
+    if (!responseBody.success) {
+      throw new Error("submit-application returned an invalid success response");
     }
   };
 
@@ -1298,6 +1303,7 @@ const Prijava = () => {
                             >
                               <textarea
                                 id="prijava-prva-primena"
+                                maxLength={LIMITI_POLJA.razlogPrveRadionice}
                                 required
                                 className="prijava_textarea prijava-workshop-textarea"
                                 rows={4}
@@ -1408,6 +1414,7 @@ const Prijava = () => {
                             >
                               <textarea
                                 id="prijava-druga-primena"
+                                maxLength={LIMITI_POLJA.razlogDrugeRadionice}
                                 required={imaDruguRadionicu}
                                 className="prijava_textarea prijava-workshop-textarea"
                                 rows={4}
@@ -1509,6 +1516,7 @@ const Prijava = () => {
                           <div className="prijava-panel-textarea-shell prijava-panel-textarea-shell--question">
                             <textarea
                               id="prijava-pitanje-predavaci"
+                              maxLength={LIMITI_POLJA.pitanjeZaPredavace}
                               aria-labelledby="prijava-pitanje-predavaci-label"
                               className="prijava-panel-textarea prijava-panel-textarea--question"
                               rows={6}
@@ -1560,6 +1568,7 @@ const Prijava = () => {
                         >
                           <textarea
                             id="prijava-razlozi-s2s"
+                            maxLength={LIMITI_POLJA.razloziZaS2S}
                             required
                             className="prijava-panel-textarea prijava-panel-textarea--reasons"
                             rows={4}
@@ -1641,6 +1650,7 @@ const Prijava = () => {
                             <div className="prijava-experience-control-shell">
                               <textarea
                                 id="prijava-predlog-radionice"
+                                maxLength={LIMITI_POLJA.predlogRadionice}
                                 className="prijava-experience-textarea"
                                 rows={5}
                                 value={forma.predlogRadionice}
@@ -1702,6 +1712,7 @@ const Prijava = () => {
                             <div className="prijava-experience-control-shell prijava-experience-control-shell--scribble">
                               <textarea
                                 id="prijava-s2s-iskustvo"
+                                maxLength={LIMITI_POLJA.s2sIskustvo}
                                 className="prijava-experience-textarea"
                                 rows={4}
                                 value={forma.s2sIskustvo}
