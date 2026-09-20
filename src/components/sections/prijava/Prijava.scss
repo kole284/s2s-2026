@@ -1363,6 +1363,15 @@
       line-height: 1.35;
     }
 
+    &__success-message {
+      max-width: 510px;
+      margin: 0 0 32px;
+      color: $color-black;
+      font-family: $font-body;
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
     &__list {
       display: grid;
       gap: 12px;
@@ -5581,6 +5590,12 @@
       margin-bottom: 18px;
       font-size: 16px;
       line-height: 1.45;
+    }
+
+    &__success-message {
+      margin-bottom: 26px;
+      font-size: 16px;
+      line-height: 1.5;
     }
 
     &__list {

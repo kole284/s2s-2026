@@ -498,11 +498,6 @@ type ApplicationPayload = {
   cv_drive_link: string | null;
 };
 
-type ExistingApplication = {
-  email: string;
-  phone_number: string;
-};
-
 const emptyToNull = (value: string) => {
   const trimmed = value.trim();
   return trimmed === "" ? null : trimmed;
@@ -522,8 +517,36 @@ const supabaseHeaders = (publishableKey: string) => ({
   "Content-Type": "application/json",
 });
 
-const quoteFilterValue = (value: string) => {
-  return `"${value.replaceAll('"', "")}"`;
+type SupabaseErrorResponse = {
+  code?: string;
+  details?: string;
+  hint?: string;
+  message?: string;
+};
+
+class DuplicateApplicationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DuplicateApplicationError";
+  }
+}
+
+const getDuplicateApplicationMessage = (error: SupabaseErrorResponse) => {
+  if (error.code !== "23505") {
+    return null;
+  }
+
+  const errorText = `${error.message ?? ""} ${error.details ?? ""}`;
+
+  if (errorText.includes("application_email_ci_unique")) {
+    return "Već postoji prijava sa ovom mejl adresom.";
+  }
+
+  if (errorText.includes("application_phone_unique")) {
+    return "Već postoji prijava sa ovim brojem telefona.";
+  }
+
+  return "Već postoji prijava sa ovom mejl adresom ili brojem telefona.";
 };
 
 const isGoogleDriveLink = (value: string) => {
@@ -795,13 +818,14 @@ const Prijava = () => {
   };
 
   useEffect(() => {
-    if (!prikaziValidaciju) {
+    if (!prikaziValidaciju && !poslato) {
       return;
     }
 
     const zatvoriNaEscape = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") {
         setPrikaziValidaciju(false);
+        setPoslato(false);
       }
     };
 
@@ -810,7 +834,7 @@ const Prijava = () => {
     return () => {
       document.removeEventListener("keydown", zatvoriNaEscape);
     };
-  }, [prikaziValidaciju]);
+  }, [prikaziValidaciju, poslato]);
 
   const getSupabaseConfig = () => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -829,55 +853,6 @@ const Prijava = () => {
     };
   };
 
-  const findExistingApplication = async (
-    supabaseUrl: string,
-    supabasePublishableKey: string,
-    email: string,
-    phoneNumber: string,
-  ) => {
-    const params = new URLSearchParams({
-      or: `(email.ilike.${quoteFilterValue(
-        email,
-      )},phone_number.eq.${quoteFilterValue(phoneNumber)})`,
-      select: "email,phone_number",
-    });
-
-    const response = await fetch(
-      `${supabaseUrl}/rest/v1/Application?${params.toString()}`,
-      {
-        headers: supabaseHeaders(supabasePublishableKey),
-      },
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-
-      throw new Error(errorText || `Request failed with ${response.status}`);
-    }
-
-    const rows = (await response.json()) as ExistingApplication[];
-
-    const zauzetEmail = rows.some(
-      (row) => row.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    const zauzetTelefon = rows.some((row) => row.phone_number === phoneNumber);
-
-    if (zauzetEmail && zauzetTelefon) {
-      return "Već postoji prijava sa ovom mejl adresom i ovim brojem telefona.";
-    }
-
-    if (zauzetEmail) {
-      return "Već postoji prijava sa ovom mejl adresom.";
-    }
-
-    if (zauzetTelefon) {
-      return "Već postoji prijava sa ovim brojem telefona.";
-    }
-
-    return null;
-  };
-
   const createApplication = async (
     supabaseUrl: string,
     supabasePublishableKey: string,
@@ -894,6 +869,19 @@ const Prijava = () => {
 
     if (!response.ok) {
       const errorText = await response.text();
+      let errorResponse: SupabaseErrorResponse = {};
+
+      try {
+        errorResponse = JSON.parse(errorText) as SupabaseErrorResponse;
+      } catch {
+        // Ako odgovor nije JSON, tretira se kao standardna greška ispod.
+      }
+
+      const duplicateMessage = getDuplicateApplicationMessage(errorResponse);
+
+      if (duplicateMessage) {
+        throw new DuplicateApplicationError(duplicateMessage);
+      }
 
       throw new Error(errorText || `Request failed with ${response.status}`);
     }
@@ -927,20 +915,6 @@ const Prijava = () => {
     try {
       const { supabaseUrl, supabasePublishableKey } = getSupabaseConfig();
 
-      const existing = await findExistingApplication(
-        supabaseUrl,
-        supabasePublishableKey,
-        payload.email,
-        payload.phone_number,
-      );
-
-      if (existing) {
-        setStatus("idle");
-        setDuplicatePrompt(existing);
-
-        return;
-      }
-
       await createApplication(supabaseUrl, supabasePublishableKey, payload);
 
       setStatus("idle");
@@ -949,6 +923,12 @@ const Prijava = () => {
       setGreske({});
       setKorak(1);
     } catch (error) {
+      if (error instanceof DuplicateApplicationError) {
+        setStatus("idle");
+        setDuplicatePrompt(error.message);
+        return;
+      }
+
       console.error("Slanje prijave nije uspelo.", error);
       setStatus("error");
       setErrorMessage("Prijava trenutno nije poslata. Pokušaj ponovo.");
@@ -959,98 +939,6 @@ const Prijava = () => {
     setDuplicatePrompt(null);
     setStatus("idle");
   };
-
-  if (poslato) {
-    return (
-      <section className="prijava" id="prijava">
-        <div className="prijava__scroll-content">
-          <div className="prijava__canvas">
-            <div className="prijava__mobile-s2s-band" aria-hidden="true">
-              <div className="prijava__mobile-s2s-ribbon">
-                <div className="prijava__mobile-s2s-track">
-                  <span className="prijava__mobile-s2s-sequence">
-                    S2S2S2S2S2S2S2S2S
-                  </span>
-                  <span className="prijava__mobile-s2s-sequence">
-                    S2S2S2S2S2S2S2S2S
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="prijava__side-shapes" aria-hidden="true">
-              <span className="prijava__side-shape prijava__side-shape--blue-left" />
-              <span className="prijava__side-shape prijava__side-shape--yellow-left" />
-              <span className="prijava__side-shape prijava__side-shape--blue-right" />
-              <span className="prijava__side-shape prijava__side-shape--yellow-right" />
-            </div>
-
-            <img
-              src={prijavaStarLeft}
-              alt=""
-              className="prijava__star prijava__star--left"
-              aria-hidden="true"
-            />
-
-            <img
-              src={prijavaStarRight}
-              alt=""
-              className="prijava__star prijava__star--right"
-              aria-hidden="true"
-            />
-
-            <img
-              src={prijavaDesktopStar}
-              alt=""
-              className="prijava__star prijava__star--desktop prijava__star--left"
-              aria-hidden="true"
-            />
-
-            <img
-              src={prijavaDesktopStar}
-              alt=""
-              className="prijava__star prijava__star--desktop prijava__star--right"
-              aria-hidden="true"
-            />
-
-            <div className="prijava__paper-shell prijava__paper-shell--success">
-              <img
-                src={prijavaPaperMobile}
-                alt=""
-                className="prijava__paper prijava__paper--mobile"
-                aria-hidden="true"
-              />
-              <img
-                src={prijavaPaperDesktop}
-                alt=""
-                className="prijava__paper prijava__paper--desktop"
-                aria-hidden="true"
-              />
-
-              <div className="prijava__header" aria-hidden="true">
-                <span className="prijava__header-yellow" />
-                <span className="prijava__header-line" />
-              </div>
-
-              <div className="prijava__success">
-                <h1 className="prijava__title">USPEŠNO!</h1>
-                <p className="prijava_uspeh_tekst">
-                  Tvoja prijava je zabeležena. Proveri svoj email – tamo ćeš
-                  dobiti jedinstveni kod za pristup igrici.
-                </p>
-              </div>
-            </div>
-
-            <img
-              src={prijavaCornerStars}
-              alt=""
-              className="prijava__mobile-corner-stars"
-              aria-hidden="true"
-            />
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="prijava" id="prijava">
@@ -1893,6 +1781,57 @@ const Prijava = () => {
                             autoFocus
                           >
                             ISPRAVI
+                          </button>
+                        </div>
+                      </div>,
+                      document.body,
+                    )
+                  : null}
+
+                {poslato
+                  ? createPortal(
+                      <div
+                        className="prijava-workshop-validation-backdrop"
+                        role="presentation"
+                        onMouseDown={(event) => {
+                          if (event.target === event.currentTarget) {
+                            setPoslato(false);
+                          }
+                        }}
+                      >
+                        <div
+                          className="prijava-workshop-validation-popup prijava-workshop-validation-popup--success"
+                          role="dialog"
+                          aria-modal="true"
+                          aria-labelledby="prijava-success-title"
+                          aria-describedby="prijava-success-description"
+                        >
+                          <strong
+                            id="prijava-success-title"
+                            className="prijava-workshop-validation-popup__title"
+                          >
+                            USPEŠNO!
+                          </strong>
+
+                          <p className="prijava-workshop-validation-popup__intro">
+                            Tvoja prijava je zabeležena.
+                          </p>
+
+                          <p
+                            id="prijava-success-description"
+                            className="prijava-workshop-validation-popup__success-message"
+                          >
+                            Proveri svoj email — tamo ćeš dobiti jedinstveni kod
+                            za pristup igrici.
+                          </p>
+
+                          <button
+                            type="button"
+                            className="prijava-workshop-validation-popup__button"
+                            onClick={() => setPoslato(false)}
+                            autoFocus
+                          >
+                            U REDU
                           </button>
                         </div>
                       </div>,
