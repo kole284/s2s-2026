@@ -883,6 +883,9 @@
   transition:
     transform 160ms ease,
     filter 160ms ease;
+
+  /* Jača verzija desktop animacije: lebdi i pulsira da se vidi da je dugme. */
+  animation: agenda-day-switch-attention 2.4s ease-in-out infinite;
 }
 
 .agenda__day-switch img {
@@ -931,6 +934,21 @@
 .agenda__day-switch:focus-visible {
   outline: 2px solid $color-yellow;
   outline-offset: 3px;
+}
+
+@keyframes agenda-day-switch-attention {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: 0.8deg;
+    scale: 1;
+  }
+
+  50% {
+    translate: 0 -12%;
+    rotate: -1.2deg;
+    scale: 1.1;
+  }
 }
 
 /* =========================================================
@@ -991,7 +1009,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .agenda__desktop-day--inactive-slot {
+  .agenda__desktop-day--inactive-slot,
+  .agenda__day-switch {
     animation: none;
   }
 
