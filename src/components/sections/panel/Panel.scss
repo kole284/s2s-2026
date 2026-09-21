@@ -723,7 +723,8 @@ $panel-yellow: #ffd100;
 
 @media #{$mobile} {
   .panel-section {
-    min-height: 100dvh;
+    /* svh, ne dvh: visina ne sme da prati Android Chrome adresnu traku. */
+    min-height: 100svh;
 
     height: auto;
     aspect-ratio: auto;
@@ -739,7 +740,7 @@ $panel-yellow: #ffd100;
     left: auto;
 
     width: 100%;
-    min-height: 100dvh;
+    min-height: 100svh;
 
     aspect-ratio: auto;
 

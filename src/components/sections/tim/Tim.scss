@@ -649,6 +649,10 @@
     --team-mobile-design-width: calc(100vw - 32px);
     --team-unit: calc(var(--team-mobile-design-width) / 390);
 
+    /* Bez dvh: dvh se menja dok se adresna traka animira. U portretu je
+       vrednost ista kao min(110vw, 154.6875dvh) iz baznog pravila. */
+    --team-design-width: 110vw;
+
     display: block;
     min-height: 100svh;
     padding: team-size(24) 16px team-size(170);

@@ -117,7 +117,9 @@
 
 @media #{$mobile} {
   .naslovna {
-    --naslovna-mobile-design-width: min(100vw, 46.2085dvh);
+    /* svh umesto dvh: dvh se menja sa Android Chrome adresnom trakom, pa bi
+       se hero (i sve ispod njega) pomerao pri svakom prikazu/skrivanju trake. */
+    --naslovna-mobile-design-width: min(100vw, 46.2085svh);
     --naslovna-mobile-canvas-height: calc(
       var(--naslovna-mobile-design-width) * 844 / 390
     );
@@ -125,6 +127,7 @@
       var(--naslovna-mobile-design-width) * 48 / 390
     );
 
+    height: 100svh;
     min-height: 0;
     overflow: clip;
     background: $color-blue;
