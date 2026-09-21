@@ -260,12 +260,12 @@
     position: absolute;
     z-index: 5;
 
-    top: calc(-1 * min(4vw, 1.8483dvh));
-    right: calc(-1 * min(3.9vw, 1.8021dvh));
+    top: calc(var(--naslovna-mobile-design-width) * -0.04);
+    right: calc(var(--naslovna-mobile-design-width) * -0.039);
 
     display: block;
 
-    width: min(38.5vw, 17.7903dvh);
+    width: calc(var(--naslovna-mobile-design-width) * 0.385);
     aspect-ratio: 38.5 / 43;
 
     pointer-events: none;
@@ -310,7 +310,7 @@
     --naslovna-mobile-s2s-font-size: clamp(108px, 30vw, 147.6px);
     --naslovna-mobile-band-height: clamp(159.12px, 44.2vw, 217.464px);
     --naslovna-mobile-band-top: calc(
-      min(47vw, 21.7192dvh) - clamp(4px, 1.2vw, 8px)
+      var(--naslovna-mobile-design-width) * 0.47 - clamp(4px, 1.2vw, 8px)
     );
 
     position: absolute;
@@ -379,7 +379,9 @@
     position: absolute;
     z-index: 1;
 
-    top: calc(min(47vw, 21.7192dvh) - clamp(4px, 1.2vw, 8px));
+    top: calc(
+      var(--naslovna-mobile-design-width) * 0.47 - clamp(4px, 1.2vw, 8px)
+    );
     left: 0;
 
     width: 100%;
@@ -585,6 +587,18 @@
    TABLET — full-width composition, independent of the desktop canvas
    ========================================================= */
 
+/* Kratki ekrani (telefon u landscapeu, ekstremni browser zoom, npr. 500% =
+   ~384 × 216 CSS px): dizajn od 390 × 844 se ne skalira po visini (sabio bi se
+   na ~100px), nego po širini, kao na telefonu. Hero je visok koliko i canvas,
+   pa se stranica skroluje. Normalni telefoni (visina > 430px) nisu pogođeni. */
+@media #{$mobile} and (max-height: 430px) {
+  .naslovna {
+    --naslovna-mobile-design-width: min(100vw, 390px);
+
+    height: var(--naslovna-mobile-canvas-height);
+  }
+}
+
 @media #{$tablet} {
   .naslovna {
     height: auto;
@@ -683,12 +697,16 @@
   }
 
   .naslovna__mobile-top-logo {
+    // Kao na mobilnom: logo viri preko gornje i desne ivice (~10% svoje
+    // širine), pa munje dodiruju čoškove. Sekcija ima overflow: clip.
+    --naslovna-top-logo-width: clamp(145px, 18vw, 190px);
+
     position: absolute;
     z-index: 5;
-    top: clamp(12px, 2vh, 24px);
-    right: clamp(22px, 3vw, 36px);
+    top: calc(var(--naslovna-top-logo-width) * -0.104);
+    right: calc(var(--naslovna-top-logo-width) * -0.101);
     display: block;
-    width: clamp(145px, 18vw, 190px);
+    width: var(--naslovna-top-logo-width);
     aspect-ratio: 38.5 / 43;
     pointer-events: none;
   }
@@ -808,6 +826,62 @@
     .naslovna__mobile-s2s-track {
       animation: none;
     }
+  }
+}
+
+/* Tablet portrait: donja bela munja je zalepljena za donju belu ivicu
+   (.naslovna::after) strukturno, bez računanja iz viewporta.
+
+   Kompozicija datuma je display: contents, pa su datum i munja direktna deca
+   canvasa (flex kolona). Prazan prostor canvasa se deli na dva jednaka dela:
+   gornji ::before i munju (flex: 1), pa je sadržaj centriran kao i pre, a
+   munja počinje odmah ispod datuma i završava na dnu canvasa, uvučena 40%
+   visine ivice u belu površinu (bela na beloj, bez šava). Datum je uvećan
+   srazmerno munji. Munja zadržava odnos stranica asseta (596 × 299) i nikad
+   nije šira od 75vw. */
+@media #{$tablet} and (orientation: portrait) {
+  .naslovna__canvas {
+    justify-content: flex-start;
+    padding-bottom: 0;
+  }
+
+  .naslovna__canvas::before {
+    content: "";
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .naslovna__date-composition {
+    display: contents;
+  }
+
+  .naslovna__date {
+    position: relative;
+    z-index: 4;
+    top: auto;
+    left: auto;
+    flex: none;
+    width: clamp(320px, 46vw, 470px);
+    margin-top: clamp(20px, 2.5vw, 28px);
+    pointer-events: none;
+  }
+
+  .naslovna__date-zigzag {
+    position: relative;
+    z-index: 4;
+    top: auto;
+    left: auto;
+    flex: 1 1 0;
+    align-self: center;
+    width: auto;
+    max-width: 75vw;
+    height: auto;
+    min-height: 0;
+    margin: 8px 0 calc(0.4 * clamp(56px, 7vw, 72px));
+    aspect-ratio: 596 / 299;
+    object-fit: fill;
+    transform: none;
+    pointer-events: none;
   }
 }
 

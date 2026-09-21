@@ -10,7 +10,15 @@ $panel-yellow: #ffd100;
   position: relative;
 
   width: 100%;
-  height: 100dvh;
+
+  /*
+   * Visina prati canvas (1440 × 1024), ali nikad ne prelazi viewport.
+   * Fiksnih 100dvh ostavljalo je na tabletu u portretu stotine px praznog
+   * belog prostora iznad i ispod canvasa, koji je ograničen širinom.
+   */
+  height: auto;
+  aspect-ratio: 1440 / 1024;
+  max-height: 100dvh;
 
   overflow: hidden;
 
@@ -686,6 +694,28 @@ $panel-yellow: #ffd100;
   }
 }
 
+/*
+ * Tablet u portretu: canvas je ograničen širinom, pa ispod poslednjeg
+ * elementa ostaje beo prostor. Agenda se podiže preko njega (Agenda je kasnije
+ * u DOM-u), čime se razmak Panel → Agenda smanjuje bez skaliranja sekcija.
+ */
+@media #{$tablet} and (orientation: portrait) {
+  .panel-section {
+    margin-bottom: -7vw;
+  }
+}
+
+/*
+ * Tablet u landscapeu (uključujući iPad Pro, 1194–1366px, koji već spada u
+ * desktop opseg): isto podizanje Agende, ali blaže. Samo za dodirne ekrane,
+ * da uski desktop prozori ostanu netaknuti.
+ */
+@media (min-width: 769px) and (max-width: 1366px) and (orientation: landscape) and (pointer: coarse) {
+  .panel-section {
+    margin-bottom: -5vw;
+  }
+}
+
 /* =========================================================
    MOBILE
    Reference: 390 × 844
@@ -696,6 +726,8 @@ $panel-yellow: #ffd100;
     min-height: 100dvh;
 
     height: auto;
+    aspect-ratio: auto;
+    max-height: none;
   }
 
   .panel-canvas {

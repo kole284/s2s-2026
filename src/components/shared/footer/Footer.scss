@@ -72,7 +72,13 @@
     minmax(calc(var(--footer-u) * 200), 1fr);
   align-items: center;
 
-  width: calc(var(--footer-u) * 1324);
+  // 1324 * 1.1 jedinica je ~101% design širine, pa je footer bio širi od
+  // ekrana čim je design width vezan za 100vw (tablet, uži prozori) i pravio
+  // horizontalni overflow. Ograničeno na dostupnu širinu uz bočne margine.
+  width: min(
+    calc(var(--footer-u) * 1324),
+    calc(100% - var(--footer-u) * 120)
+  );
   margin: 0 auto;
 }
 

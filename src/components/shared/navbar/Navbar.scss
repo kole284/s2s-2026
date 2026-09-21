@@ -172,8 +172,14 @@ body.navbar-menu-scroll-locked {
   padding: 90px 50px 60px 65px;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  // Centriranje preko auto margina (ispod), a ne justify-content: center, da
+  // se na niskim ekranima (npr. 500% zoom = ~216px visine) sadržaj ne seče
+  // gore i dole, nego se poravna na vrh i meni se skroluje.
+  justify-content: flex-start;
   gap: 28px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
   background-color: $color-white;
   clip-path: polygon(
     13% 0%,
@@ -213,6 +219,18 @@ body.navbar-menu-scroll-locked {
     4% 10%,
     11% 4%
   );
+}
+
+.navbar-mobile-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.navbar-mobile-menu > :first-child {
+  margin-top: auto;
+}
+
+.navbar-mobile-menu > :last-child {
+  margin-bottom: auto;
 }
 
 .navbar-mobile-menu .navbar-links,
@@ -347,7 +365,11 @@ body.navbar-menu-scroll-locked {
 
 @media #{$desktop} {
   .navbar {
-    --navbar-design-width: min(100vw, 140.625dvh);
+    // Sadržaj navbara (logo + linkovi + CTA) je ~1.096 × design širine. Kad je
+    // design width vezan za 100vw (svaki ekran uži od ~1.4:1, npr. tablet u
+    // landscapeu), logo i CTA su izlazili van ekrana. 88vw ostavlja isti
+    // razmak od ivica kao na 1440 × 900, gde je design width 1265px (87.8vw).
+    --navbar-design-width: min(88vw, 140.625dvh);
     --navbar-white-top-inset: calc(var(--navbar-design-width) * 11 / 1440);
     --navbar-white-bottom-inset: calc(
       var(--navbar-design-width) * 35 / 1440
@@ -573,10 +595,41 @@ body.navbar-menu-scroll-locked {
   }
 
   .navbar-mobile-menu {
+    // Veličina linkova prati širinu, ali je ograničena i visinom ekrana, da
+    // svih 9 linkova + CTA stane i na tabletu u landscapeu.
+    --navbar-tablet-link-size: clamp(30px, min(5.4vw, 4.4dvh), 52px);
+
     left: 50%;
     width: min(72vw, 540px);
     max-width: none;
+    gap: calc(var(--navbar-tablet-link-size) * 0.64);
     transform: translateX(-50%);
+  }
+
+  .navbar-mobile-menu .navbar-links {
+    gap: calc(var(--navbar-tablet-link-size) * 0.23);
+  }
+
+  .navbar-mobile-menu .navbar-link {
+    padding: calc(var(--navbar-tablet-link-size) * 0.14) 0;
+    font-size: var(--navbar-tablet-link-size);
+  }
+
+  .navbar-mobile-menu .navbar-cta {
+    min-height: calc(var(--navbar-tablet-link-size) * 1.9);
+    padding:
+      calc(var(--navbar-tablet-link-size) * 0.32)
+      calc(var(--navbar-tablet-link-size) * 0.86)
+      calc(var(--navbar-tablet-link-size) * 0.32)
+      calc(var(--navbar-tablet-link-size) * 0.68);
+    font-size: calc(var(--navbar-tablet-link-size) * 0.62);
+    line-height: calc(var(--navbar-tablet-link-size) * 0.75);
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      calc(100% - var(--navbar-tablet-link-size) * 0.43) 100%,
+      0 100%
+    );
   }
 }
 

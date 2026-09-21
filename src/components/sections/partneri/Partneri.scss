@@ -471,6 +471,11 @@
 @media only screen and (min-width: 769px) {
   .partneri-page {
     height: calc(1675 * var(--partner-u));
+
+    // Visina dizajna (1675u ≈ 116vw) je viša od viewporta samo na desktopu.
+    // Na tabletu u portretu je 100vh viši od sadržaja, pa je min-height
+    // dodavao stotine px praznog plavog prostora ispod poslednjeg reda.
+    min-height: 0;
   }
 
   .partneri-page::after {

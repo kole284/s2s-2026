@@ -10,12 +10,13 @@
    * Interni Tim layout je i dalje nacrtan u svom 1000-unit koordinatnom
    * sistemu, ali je sada ceo sistem vezan za jedan design-width token.
    */
-  /* FIKSNA veličina na desktopu — ne prati vw/dvh, pa se ništa u sekciji
-     ne menja pri browser zoom-u ili promeni širine prozora. Vrednost je
-     zamrznuti rezultat prethodnog "min(100vw,140.625dvh)*1.1" na
-     referentnoj 1440×1024 rezoluciji (mobile ispod ima svoj, i dalje
-     responsive, --team-mobile-design-width). */
-  --team-design-width: min(1584px, 110vw, 154.6875dvh);
+  /* Bez čvrstog px ograničenja: vw i dvh se pri browser zoom-u menjaju
+     obrnuto srazmerno zoom-u, pa je fizička veličina sekcije ista na svakom
+     zoom-u (čvrsti 1584px se skalirao sa zoom-om, pa je Tim bio manji pri
+     zoom-outu, a veći pri zoom-inu od ostatka sajta). Ista vrednost kao ranije
+     na svim viewportima do 1440 × 1024 (mobile ispod ima svoj,
+     --team-mobile-design-width). */
+  --team-design-width: min(110vw, 154.6875dvh);
   --team-unit: calc(var(--team-design-width) / 1000);
   --team-side-space: calc((100vw - var(--team-design-width)) / 2);
   position: relative;
@@ -113,6 +114,17 @@
 
 .team-coordinator-photo {
   margin-inline: auto;
+}
+
+/*
+ * Donja granica fotografije koordinatora (SVG user units, viewBox 0 0 .. 298).
+ * Na desktopu/tabletu "KOORDINATOR" label zauzima y ≈ 234–291; rez na y = 272
+ * prolazi kroz donji deo slova, pa ga label potpuno sakriva, a ispod njega
+ * fotografije više nema. Na mobilnom je label niže (y ≈ 275–324) i fotografija
+ * se već završava iza njega, pa je rez pomeren van kadra.
+ */
+.team-coordinator-bottom-clip {
+  height: 1272px;
 }
 
 .team-coordinator-filter {
@@ -594,7 +606,9 @@
 .team-mobile-heading {
   position: absolute;
   z-index: 4;
-  top: calc(#{team-size(60)} - 5svh);
+  /* max(0.25em, ...) drži kvačicu na "Š" unutar sekcije (overflow: hidden)
+     na visokim tablet ekranima gde je izraz u calc() negativan. */
+  top: max(0.25em, calc(#{team-size(60)} - 5svh));
   left: 50%;
 
   box-sizing: border-box;
@@ -697,6 +711,10 @@
 
   .team-coordinator-caption {
     margin-top: team-size(-40);
+  }
+
+  .team-coordinator-bottom-clip {
+    height: 2000px;
   }
 
   .team-group {
@@ -911,5 +929,16 @@
      * problem sečenja koji ovim rešavamo.
      */
     --team-design-width: min(100vw, 140.625dvh);
+  }
+}
+
+/*
+ * Tablet u portretu: 100svh je viši od stage-a (650 jedinica), pa je
+ * min-height dodavao stotine px praznog plavog prostora iznad kartica i
+ * ispod njih. Visinu sada određuju stage i postojeći padding sekcije.
+ */
+@media #{$tablet} and (orientation: portrait) {
+  .team-section {
+    min-height: 0;
   }
 }

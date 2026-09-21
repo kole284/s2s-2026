@@ -297,6 +297,7 @@ const preloadTeamsAround = (index: number) => {
 const Tim = () => {
   const teamPhotoClipId = useId();
   const coordinatorClipId = useId();
+  const coordinatorBottomClipId = useId();
   const desktopBandTrackRef = useRef<HTMLDivElement>(null);
   const desktopBandGroupRef = useRef<HTMLDivElement>(null);
   const mobileRibbonRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -632,6 +633,18 @@ const Tim = () => {
                     transform="translate(5.157 4.461) scale(0.97)"
                   />
                 </clipPath>
+
+                <clipPath
+                  id={coordinatorBottomClipId}
+                  clipPathUnits="userSpaceOnUse"
+                >
+                  <rect
+                    className="team-coordinator-bottom-clip"
+                    x="-1000"
+                    y="-1000"
+                    width="3000"
+                  />
+                </clipPath>
               </defs>
 
               <path
@@ -639,15 +652,17 @@ const Tim = () => {
                 d={COORDINATOR_FRAME_PATH}
               />
 
-              <image
-                href={activeTeam.coordinator.image}
-                x={activeTeam.coordinator.imagePosition.x}
-                y={activeTeam.coordinator.imagePosition.y}
-                width={activeTeam.coordinator.imagePosition.width}
-                height={activeTeam.coordinator.imagePosition.height}
-                preserveAspectRatio="xMidYMid meet"
-                clipPath={`url(#${coordinatorClipId})`}
-              />
+              <g clipPath={`url(#${coordinatorBottomClipId})`}>
+                <image
+                  href={activeTeam.coordinator.image}
+                  x={activeTeam.coordinator.imagePosition.x}
+                  y={activeTeam.coordinator.imagePosition.y}
+                  width={activeTeam.coordinator.imagePosition.width}
+                  height={activeTeam.coordinator.imagePosition.height}
+                  preserveAspectRatio="xMidYMid meet"
+                  clipPath={`url(#${coordinatorClipId})`}
+                />
+              </g>
             </svg>
 
             <div className="team-coordinator-caption">

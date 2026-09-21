@@ -576,6 +576,11 @@
 @media (min-width: 769px) and (orientation: landscape), (min-width: 1025px) {
   .pitanja {
     overflow: visible;
+
+    // Donja traka je skalirana scaleX(1.27) i viri i do ~400px van ekrana,
+    // što je pravilo horizontalni scroll stranice. Klipuje se samo x osa,
+    // vertikalne dekoracije ostaju vidljive.
+    overflow-x: clip;
   }
 
   .pitanja__left-zigzag {

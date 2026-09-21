@@ -18,9 +18,19 @@
   width: 100%;
 }
 
+/*
+ * Visina sekcije prati Figma frame (1440 × 1024, vidljivih 95.5%), ali nikad
+ * ne prelazi viewport. Ranije je bila fiksnih 95.5dvh, pa je na tabletu u
+ * portretu canvas (ograničen širinom) bio manji od sekcije, a plavi paper je
+ * počinjao na ~14% visine SEKCIJE, tj. iznad naslova koji je na 5.57% visine
+ * CANVASA. Sada su paper i canvas iste visine, pa beli header (gornjih ~12–16%
+ * frame-a) uvek sadrži naslov.
+ */
 @media (min-width: 769px) {
   .agenda {
-    height: 95.5dvh;
+    aspect-ratio: 1440 / 977.92;
+    min-height: 0;
+    max-height: 95.5dvh;
   }
 }
 
@@ -83,7 +93,9 @@
   display: flex;
 
   width: 100%;
-  height: 100dvh;
+  height: auto;
+  aspect-ratio: 1440 / 1024;
+  max-height: 100dvh;
 
   align-items: center;
   justify-content: center;
