@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import Layout from '@/components/-layout/Layout';
 import Main from '@/pages/main/Main';
-import Home from '@/pages/home/Home';
 import { SECTION_ROUTES } from '@/routes/sectionRoutes';
 import './App.scss';
 
@@ -35,7 +34,6 @@ const App = () => {
               </Suspense>
             }
           />
-          <Route path="/test" element={<Home />} />
         </Route>
       </Routes>
     </HashRouter>
