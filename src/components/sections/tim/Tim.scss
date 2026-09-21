@@ -211,6 +211,14 @@
   text-transform: uppercase;
 }
 
+.team-coordinator-name span {
+  display: block;
+}
+
+.team-coordinator-name--pr span + span {
+  margin-top: team-size(5);
+}
+
 .team-group-title {
   font-size: team-size(22);
   line-height: 1.35;

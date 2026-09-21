@@ -558,10 +558,13 @@ const Tim = () => {
                 alt="Koordinator"
               />
 
-              <p className="team-coordinator-name">
-                {activeTeam.coordinator.firstName}
-                <br />
-                {activeTeam.coordinator.lastName}
+              <p
+                className={`team-coordinator-name${
+                  activeTeam.id === "pr" ? " team-coordinator-name--pr" : ""
+                }`}
+              >
+                <span>{activeTeam.coordinator.firstName}</span>
+                <span>{activeTeam.coordinator.lastName}</span>
               </p>
             </div>
           </div>
