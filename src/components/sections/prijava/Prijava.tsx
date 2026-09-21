@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom";
 import "./Prijava.scss";
 
 import type { NivoZnanja, PrijavaForma } from "./types";
@@ -48,6 +49,18 @@ const LIMITI_POLJA = {
 } as const;
 // CONTENT GAP: partneri trenutno nemaju canonical data source za pokrovitelje.
 const BROJ_POKROVITELJA = 1;
+const PRIJAVE_SE_OTVARAJU = new Date("2026-09-28T00:00:00+02:00").getTime();
+
+const formatirajOdbrojavanje = (preostaloMs: number) => {
+  const ukupnoSekundi = Math.max(0, Math.floor(preostaloMs / 1000));
+  const dani = Math.floor(ukupnoSekundi / 86400);
+  const sati = Math.floor((ukupnoSekundi % 86400) / 3600);
+  const minuti = Math.floor((ukupnoSekundi % 3600) / 60);
+  const sekunde = ukupnoSekundi % 60;
+  const dveCifre = (vrednost: number) => String(vrednost).padStart(2, "0");
+
+  return `${dani}d ${dveCifre(sati)}h ${dveCifre(minuti)}m ${dveCifre(sekunde)}s`;
+};
 
 const RequiredStar = ({ className = "" }: { className?: string }) => (
   <img
@@ -600,6 +613,10 @@ const buildPayload = (forma: PrijavaForma): ApplicationPayload => {
 };
 
 const Prijava = () => {
+  const navigate = useNavigate();
+  const [sada, setSada] = useState(() => Date.now());
+  const prijaveZakljucane = sada < PRIJAVE_SE_OTVARAJU;
+  const odbrojavanje = formatirajOdbrojavanje(PRIJAVE_SE_OTVARAJU - sada);
   const [forma, setForma] = useState<PrijavaForma>(praznaForma);
   const [korak, setKorak] = useState(1);
   const [poslato, setPoslato] = useState(false);
@@ -610,6 +627,16 @@ const Prijava = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [duplicatePrompt, setDuplicatePrompt] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!prijaveZakljucane) {
+      return;
+    }
+
+    const interval = window.setInterval(() => setSada(Date.now()), 1000);
+
+    return () => window.clearInterval(interval);
+  }, [prijaveZakljucane]);
 
   const ocistiGreske = (...polja: Array<keyof PrijavaForma>) => {
     setGreske((prev) => {
@@ -893,6 +920,10 @@ const Prijava = () => {
   };
 
   const posaljiPrijavu = async () => {
+    if (prijaveZakljucane) {
+      return;
+    }
+
     if (status === "submitting") {
       return;
     }
@@ -947,8 +978,9 @@ const Prijava = () => {
 
   return (
     <section className="prijava" id="prijava">
-      <div className="prijava__scroll-content">
-        <div className="prijava__canvas">
+      {!prijaveZakljucane ? (
+        <div className="prijava__scroll-content">
+          <div className="prijava__canvas">
           <div className="prijava__mobile-s2s-band" aria-hidden="true">
             <div className="prijava__mobile-s2s-ribbon">
               <div className="prijava__mobile-s2s-track">
@@ -1973,8 +2005,63 @@ const Prijava = () => {
               </div>
             </div>
           ) : null}
+
+          </div>
         </div>
-      </div>
+      ) : null}
+
+      {prijaveZakljucane
+        ? createPortal(
+            <div
+              className="prijava-workshop-validation-backdrop prijava-workshop-validation-backdrop--locked"
+              role="presentation"
+            >
+              <div
+                className="prijava-workshop-validation-popup"
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="prijava-locked-title"
+                aria-describedby="prijava-locked-description"
+              >
+                <strong
+                  id="prijava-locked-title"
+                  className="prijava-workshop-validation-popup__title"
+                >
+                  PRIJAVE USKORO
+                </strong>
+
+                <p className="prijava-workshop-validation-popup__intro">
+                  Prijave se otvaraju 28. septembra.
+                </p>
+
+                <p
+                  id="prijava-locked-description"
+                  className="prijava-workshop-validation-popup__success-message"
+                >
+                  Vrati se uskoro i rezerviši svoje mesto na S2S-u.
+                </p>
+
+                <p
+                  className="prijava-workshop-validation-popup__countdown"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  {odbrojavanje}
+                </p>
+
+                <button
+                  type="button"
+                  className="prijava-workshop-validation-popup__button"
+                  onClick={() => navigate("/")}
+                  autoFocus
+                >
+                  NA NASLOVNU
+                </button>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </section>
   );
 };

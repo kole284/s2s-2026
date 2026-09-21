@@ -1333,6 +1333,12 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     place-items: center;
+
+    &--locked {
+      background: $color-blue;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
   }
 
   &-workshop-validation-popup {
@@ -1370,6 +1376,17 @@
       font-family: $font-body;
       font-size: 17px;
       line-height: 1.5;
+    }
+
+    &__countdown {
+      margin: -12px 0 32px;
+      color: $color-blue;
+      font-family: $font-display;
+      font-size: 28px;
+      font-weight: $font-black;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     &__list {
