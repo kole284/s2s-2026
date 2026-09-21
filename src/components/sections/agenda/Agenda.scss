@@ -107,7 +107,7 @@
   z-index: 3;
 
   background-color: $color-blue;
-  background-image: url("/agenda/paper-texture.webp");
+  background-image: url("@/assets/agenda/paper-texture.webp");
 
   background-repeat: no-repeat;
   background-size: 232% auto;
@@ -587,7 +587,7 @@
   z-index: 3;
 
   background-color: $color-blue;
-  background-image: url("/agenda/paper-texture-mobile.webp");
+  background-image: url("@/assets/agenda/paper-texture-mobile.webp");
 
   background-repeat: no-repeat;
   background-size: cover;

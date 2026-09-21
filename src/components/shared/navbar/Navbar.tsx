@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import closeIcon from '@/assets/Layer_1.svg';
 import hamburgerIcon from '@/assets/Group(2).svg';
-import logoS2S from '@/assets/logo-s2s.svg';
+import logoS2S from '@/assets/branding/s2s-logo-navbar.webp';
 import { SECTION_ROUTE_BY_PATH, SECTION_ROUTES } from '@/routes/sectionRoutes';
 
 const NAV_ITEMS = SECTION_ROUTES.filter(({ path }) => path !== '/prijava');

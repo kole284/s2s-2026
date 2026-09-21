@@ -1,4 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import desktopTimelinePath from "@/assets/agenda/desktop/timeline-path.svg";
+import desktopStar01 from "@/assets/agenda/desktop/event-star-01.svg";
+import desktopStar02 from "@/assets/agenda/desktop/event-star-02.svg";
+import desktopStar03 from "@/assets/agenda/desktop/event-star-03.svg";
+import desktopStar04 from "@/assets/agenda/desktop/event-star-04.svg";
+import desktopStar05 from "@/assets/agenda/desktop/event-star-05.svg";
+import desktopStar06 from "@/assets/agenda/desktop/event-star-06.svg";
+import desktopStar07 from "@/assets/agenda/desktop/event-star-07.svg";
+import desktopStar08 from "@/assets/agenda/desktop/event-star-08.svg";
+import desktopStar09 from "@/assets/agenda/desktop/event-star-09.svg";
+import mobileTimelinePath from "@/assets/agenda/mobile/timeline-path.svg";
+import mobileDay1Badge from "@/assets/agenda/mobile/day-1-badge.svg";
+import mobileDay2Badge from "@/assets/agenda/mobile/day-2-badge.svg";
+import mobileDay2Marker from "@/assets/agenda/mobile/day-2-marker.svg";
+import sharedDay1Badge from "@/assets/agenda/shared/day-1-badge.svg";
+import sharedDay2Marker from "@/assets/agenda/shared/day-2-marker.svg";
 import "./Agenda.scss";
 
 type AgendaDay = 1 | 2;
@@ -395,19 +411,19 @@ const desktopStarPositions: StarPosition[] = [
 ];
 
 const desktopStarAssets = [
-  "/agenda/desktop/event-star-01.svg",
-  "/agenda/desktop/event-star-02.svg",
-  "/agenda/desktop/event-star-03.svg",
-  "/agenda/desktop/event-star-04.svg",
-  "/agenda/desktop/event-star-05.svg",
-  "/agenda/desktop/event-star-06.svg",
-  "/agenda/desktop/event-star-07.svg",
-  "/agenda/desktop/event-star-08.svg",
-  "/agenda/desktop/event-star-09.svg",
+  desktopStar01,
+  desktopStar02,
+  desktopStar03,
+  desktopStar04,
+  desktopStar05,
+  desktopStar06,
+  desktopStar07,
+  desktopStar08,
+  desktopStar09,
 
   // Originalna poslednja dva exporta su bila prazna.
-  "/agenda/desktop/event-star-08.svg",
-  "/agenda/desktop/event-star-02.svg",
+  desktopStar08,
+  desktopStar02,
 ];
 
 const desktopSlots: DesktopSlot[] = desktopLabelPositions.map(
@@ -520,26 +536,33 @@ const mobileStarPositions: StarPosition[] = [
   },
 ];
 
-const getMobileAsset = (
-  name: "event-star" | "event-connector",
-  index: number,
-) => {
-  const number = String(index + 1).padStart(2, "0");
+const mobileStarAssets = Object.values(
+  import.meta.glob("@/assets/agenda/mobile/event-star-*.svg", {
+    eager: true,
+    import: "default",
+    query: "?url",
+  }),
+) as string[];
 
-  return `/agenda/mobile/${name}-${number}.svg`;
-};
+const mobileConnectorAssets = Object.values(
+  import.meta.glob("@/assets/agenda/mobile/event-connector-*.svg", {
+    eager: true,
+    import: "default",
+    query: "?url",
+  }),
+) as string[];
 
 const mobileSlots: MobileSlot[] = mobileLabelPositions.map((label, index) => ({
   label,
   connector: mobileConnectorPositions[index]!,
   star: mobileStarPositions[index]!,
-  starAsset: getMobileAsset("event-star", index),
-  connectorAsset: getMobileAsset("event-connector", index),
+  starAsset: mobileStarAssets[index]!,
+  connectorAsset: mobileConnectorAssets[index]!,
 }));
 
 const mobileDayBadges: Record<AgendaDay, string> = {
-  1: "/agenda/mobile/day-1-badge.svg",
-  2: "/agenda/mobile/day-2-badge.svg",
+  1: mobileDay1Badge,
+  2: mobileDay2Badge,
 };
 
 /* =========================================================
@@ -604,7 +627,7 @@ const Agenda = () => {
 
           <img
             className="agenda__desktop-path"
-            src="/agenda/desktop/timeline-path.svg"
+            src={desktopTimelinePath}
             alt=""
             aria-hidden="true"
           />
@@ -619,8 +642,8 @@ const Agenda = () => {
             <img
               src={
                 activeDay === 1
-                  ? "/agenda/shared/day-1-badge.svg"
-                  : "/agenda/shared/day-2-marker.svg"
+                  ? sharedDay1Badge
+                  : sharedDay2Marker
               }
               alt=""
               aria-hidden="true"
@@ -638,8 +661,8 @@ const Agenda = () => {
             <img
               src={
                 alternateDay === 1
-                  ? "/agenda/shared/day-1-badge.svg"
-                  : "/agenda/shared/day-2-marker.svg"
+                  ? sharedDay1Badge
+                  : sharedDay2Marker
               }
               alt=""
               aria-hidden="true"
@@ -717,7 +740,7 @@ const Agenda = () => {
 
           <img
             className="agenda__mobile-path"
-            src="/agenda/mobile/timeline-path.svg"
+            src={mobileTimelinePath}
             alt=""
             aria-hidden="true"
           />
@@ -816,7 +839,7 @@ const Agenda = () => {
             aria-label={`Prikaži dan ${alternateDay}`}
           >
             <img
-              src="/agenda/mobile/day-2-marker.svg"
+              src={mobileDay2Marker}
               alt=""
               aria-hidden="true"
             />

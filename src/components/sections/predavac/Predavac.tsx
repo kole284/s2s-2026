@@ -2,18 +2,18 @@ import { useState } from "react";
 
 import arrowDefault from "@/assets/Vector.svg";
 import closeIcon from "@/assets/Layer_1.svg";
-import aleksandarIlankovic from "./images/aleksandar-ilankovic.webp";
-import anaMilivojevic from "./images/ana-milivojevic.webp";
-import damirVelovic from "./images/damir-velovic.webp";
-import dorisSmulja from "./images/doris-smulja.webp";
-import kristinaJovanovic from "./images/kristina-jovanovic.webp";
-import lazarJocic from "./images/lazar-jocic.webp";
-import magdalenaBojanic from "./images/magdalena-bojanic.webp";
-import matijaVujic from "./images/matija-vujic.webp";
-import minaPopovic from "./images/mina-popovic.webp";
-import petarNikolic from "./images/petar-nikolic.webp";
-import tamaraKukic from "./images/tamara-kukic.webp";
-import taraMilojkovic from "./images/tara-milojkovic.webp";
+import aleksandarIlankovic from "@/assets/predavaci/aleksandar-ilankovic.webp";
+import anaMilivojevic from "@/assets/predavaci/ana-milivojevic.webp";
+import damirVelovic from "@/assets/predavaci/damir-velovic.webp";
+import dorisSmulja from "@/assets/predavaci/doris-smulja.webp";
+import kristinaJovanovic from "@/assets/predavaci/kristina-jovanovic.webp";
+import lazarJocic from "@/assets/predavaci/lazar-jocic.webp";
+import magdalenaBojanic from "@/assets/predavaci/magdalena-bojanic.webp";
+import matijaVujic from "@/assets/predavaci/matija-vujic.webp";
+import minaPopovic from "@/assets/predavaci/mina-popovic.webp";
+import petarNikolic from "@/assets/predavaci/petar-nikolic.webp";
+import tamaraKukic from "@/assets/predavaci/tamara-kukic.webp";
+import taraMilojkovic from "@/assets/predavaci/tara-milojkovic.webp";
 
 import "./Predavac.scss";
 
@@ -138,13 +138,21 @@ const Predavac = ({
                     src={predavac.slika}
                     alt={imePredavaca}
                     className="predavac-photo"
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
 
                 <figcaption className="predavac-name">{imePredavaca}</figcaption>
               </figure>
 
-              <img src={workshopIcon} alt="" className="predavac-shield" />
+              <img
+                src={workshopIcon}
+                alt=""
+                className="predavac-shield"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
 
             <div className="predavac-text">

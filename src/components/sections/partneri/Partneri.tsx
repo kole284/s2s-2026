@@ -118,6 +118,7 @@ const HexagonMarquee = ({
     const reducedMotionMedia = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
+    let isInViewport = false;
 
     const measureGroup = () => {
       const previousGroupWidth = groupWidthRef.current;
@@ -173,14 +174,16 @@ const HexagonMarquee = ({
         applyTrackTransform();
       }
 
-      animationFrameRef.current = window.requestAnimationFrame(animate);
+      if (isInViewport) {
+        animationFrameRef.current = window.requestAnimationFrame(animate);
+      }
     };
 
     const updateAnimationState = () => {
       stopAnimation();
       measureGroup();
 
-      if (!reducedMotionMedia.matches) {
+      if (!reducedMotionMedia.matches && isInViewport) {
         animationFrameRef.current = window.requestAnimationFrame(animate);
       }
     };
@@ -189,12 +192,19 @@ const HexagonMarquee = ({
     resizeObserver.observe(viewport);
     resizeObserver.observe(group);
 
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      isInViewport = entry.isIntersecting;
+      updateAnimationState();
+    });
+    intersectionObserver.observe(viewport);
+
     reducedMotionMedia.addEventListener("change", updateAnimationState);
     updateAnimationState();
 
     return () => {
       stopAnimation();
       resizeObserver.disconnect();
+      intersectionObserver.disconnect();
       reducedMotionMedia.removeEventListener("change", updateAnimationState);
     };
   }, [applyTrackTransform, direction]);
@@ -296,6 +306,8 @@ const PartnerRow = ({
       alt=""
       aria-hidden="true"
       draggable="false"
+      loading="lazy"
+      decoding="async"
     />
   </section>
 );
@@ -326,6 +338,8 @@ const Partneri = () => (
             alt=""
             aria-hidden="true"
             draggable="false"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </div>

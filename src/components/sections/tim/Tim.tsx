@@ -1,4 +1,27 @@
 import { useId, useLayoutEffect, useRef, useState } from "react";
+import arrowLeftMobile from "@/assets/tim/arrow-left-mobile.svg";
+import arrowLeft from "@/assets/tim/arrow-left.svg";
+import circleStriped from "@/assets/tim/circle-striped.svg";
+import coordinatorLabel from "@/assets/tim/coordinator-label.svg";
+import lightningMobileBottom from "@/assets/tim/lightning-mobile-bottom.svg";
+import lightningMobileTop from "@/assets/tim/lightning-mobile-top.svg";
+import star01 from "@/assets/tim/star-01.svg";
+import star02 from "@/assets/tim/star-02.svg";
+import star03 from "@/assets/tim/star-03.svg";
+import coordinatorCore from "@/assets/tim/ljudi/koordinatori/core.webp";
+import coordinatorDesign from "@/assets/tim/ljudi/koordinatori/dizajn.webp";
+import coordinatorIt from "@/assets/tim/ljudi/koordinatori/IT.webp";
+import coordinatorCr from "@/assets/tim/ljudi/koordinatori/cr.webp";
+import coordinatorHr from "@/assets/tim/ljudi/koordinatori/hr.webp";
+import coordinatorPr from "@/assets/tim/ljudi/koordinatori/PR.webp";
+import coordinatorLogistics from "@/assets/tim/ljudi/koordinatori/logistika.webp";
+import teamCore from "@/assets/tim/ljudi/timovi/core.webp";
+import teamDesign from "@/assets/tim/ljudi/timovi/Dizajn-team.webp";
+import teamIt from "@/assets/tim/ljudi/timovi/IT-team.webp";
+import teamCr from "@/assets/tim/ljudi/timovi/CR-team.webp";
+import teamHr from "@/assets/tim/ljudi/timovi/HR-team.webp";
+import teamPr from "@/assets/tim/ljudi/timovi/PR-team.webp";
+import teamLogistics from "@/assets/tim/ljudi/timovi/Logistika-team.webp";
 import "./Tim.scss";
 
 type Team = {
@@ -32,11 +55,11 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim",
     titleFirstLine: "koordinatora",
     titleSecondLine: "",
-    image: "/tim/ljudi/timovi/core.webp",
+    image: teamCore,
     coordinator: {
       firstName: "Stefan",
       lastName: "Mrkela",
-      image: "/tim/ljudi/koordinatori/core.webp",
+      image: coordinatorCore,
       imagePosition: { x: -256.4, y: -214.5, width: 874.4, height: 582.9 },
     },
   },
@@ -47,11 +70,11 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim za",
     titleFirstLine: "dizajn",
     titleSecondLine: "",
-    image: "/tim/ljudi/timovi/Dizajn-team.webp",
+    image: teamDesign,
     coordinator: {
       firstName: "Stefan",
       lastName: "Petrović",
-      image: "/tim/ljudi/koordinatori/dizajn.webp",
+      image: coordinatorDesign,
       imagePosition: { x: -198.5, y: -168.6, width: 771.3, height: 514.2 },
     },
   },
@@ -62,11 +85,11 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim za",
     titleFirstLine: "informacione",
     titleSecondLine: "tehnologije",
-    image: "/tim/ljudi/timovi/IT-team.webp",
+    image: teamIt,
     coordinator: {
       firstName: "Nikola",
       lastName: "Kostić",
-      image: "/tim/ljudi/koordinatori/IT.webp",
+      image: coordinatorIt,
       imagePosition: { x: -157.5, y: -133.1, width: 658.9, height: 433.1 },
     },
   },
@@ -77,11 +100,11 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim za",
     titleFirstLine: "odnose",
     titleSecondLine: "sa kompanijama",
-    image: "/tim/ljudi/timovi/CR-team.webp",
+    image: teamCr,
     coordinator: {
       firstName: "Iva",
       lastName: "Vukoičić",
-      image: "/tim/ljudi/koordinatori/cr.webp",
+      image: coordinatorCr,
       imagePosition: { x: -295.1, y: -244.5, width: 936.8, height: 624.3 },
     },
   },
@@ -92,11 +115,11 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim za",
     titleFirstLine: "ljudske",
     titleSecondLine: "resurse",
-    image: "/tim/ljudi/timovi/HR-team.webp",
+    image: teamHr,
     coordinator: {
       firstName: "Milena",
       lastName: "Rodić",
-      image: "/tim/ljudi/koordinatori/hr.webp",
+      image: coordinatorHr,
       imagePosition: { x: -241.6, y: -174.0, width: 807.7, height: 531.0 },
     },
   },
@@ -107,11 +130,11 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim za",
     titleFirstLine: "odnose",
     titleSecondLine: "s javnošću",
-    image: "/tim/ljudi/timovi/PR-team.webp",
+    image: teamPr,
     coordinator: {
       firstName: "Damnjan",
       lastName: "Ilić",
-      image: "/tim/ljudi/koordinatori/PR.webp",
+      image: coordinatorPr,
       imagePosition: { x: -172.8, y: -132.3, width: 657.7, height: 432.3 },
     },
   },
@@ -122,11 +145,11 @@ const TEAMS: Team[] = [
     titlePrefix: "Tim za",
     titleFirstLine: "logistiku",
     titleSecondLine: "",
-    image: "/tim/ljudi/timovi/Logistika-team.webp",
+    image: teamLogistics,
     coordinator: {
       firstName: "Angelina",
       lastName: "Spasić",
-      image: "/tim/ljudi/koordinatori/logistika.webp",
+      image: coordinatorLogistics,
       imagePosition: { x: -300.4, y: -243.2, width: 951.6, height: 634.4 },
     },
   },
@@ -374,25 +397,25 @@ const Tim = () => {
       <div className="team-decorations" aria-hidden="true">
         <img
           className="team-circle-striped"
-          src="/tim/circle-striped.svg"
+          src={circleStriped}
           alt=""
         />
 
         <img
           className="team-star team-star-small"
-          src="/tim/star-01.svg"
+          src={star01}
           alt=""
         />
 
         <img
           className="team-star team-star-large"
-          src="/tim/star-02.svg"
+          src={star02}
           alt=""
         />
 
         <img
           className="team-star team-star-top"
-          src="/tim/star-03.svg"
+          src={star03}
           alt=""
         />
       </div>
@@ -477,7 +500,7 @@ const Tim = () => {
           <div className="team-coordinator">
             <img
               className="team-mobile-lightning team-mobile-lightning-top"
-              src="/tim/lightning-mobile-top.svg"
+              src={lightningMobileTop}
               alt=""
               aria-hidden="true"
             />
@@ -490,13 +513,13 @@ const Tim = () => {
             >
               <img
                 className="team-arrow-icon-desktop"
-                src="/tim/arrow-left.svg"
+                src={arrowLeft}
                 alt=""
               />
 
               <img
                 className="team-arrow-icon-mobile"
-                src="/tim/arrow-left-mobile.svg"
+                src={arrowLeftMobile}
                 alt=""
               />
             </button>
@@ -510,13 +533,13 @@ const Tim = () => {
             >
               <img
                 className="team-arrow-icon-desktop"
-                src="/tim/arrow-left.svg"
+                src={arrowLeft}
                 alt=""
               />
 
               <img
                 className="team-arrow-icon-mobile"
-                src="/tim/arrow-left-mobile.svg"
+                src={arrowLeftMobile}
                 alt=""
               />
             </button>
@@ -554,7 +577,7 @@ const Tim = () => {
             <div className="team-coordinator-caption">
               <img
                 className="team-coordinator-label"
-                src="/tim/coordinator-label.svg"
+                src={coordinatorLabel}
                 alt="Koordinator"
               />
 
@@ -572,7 +595,7 @@ const Tim = () => {
           <div className="team-group">
             <img
               className="team-mobile-lightning team-mobile-lightning-bottom"
-              src="/tim/lightning-mobile-bottom.svg"
+              src={lightningMobileBottom}
               alt=""
               aria-hidden="true"
             />

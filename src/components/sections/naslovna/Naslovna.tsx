@@ -12,7 +12,7 @@ import ctaPaper from "@/assets/naslovna/shared/cta-paper.svg";
 import dateZigzag from "@/assets/naslovna/shared/date-zigzag.svg";
 import date from "@/assets/naslovna/shared/date.svg";
 import headline from "@/assets/naslovna/shared/headline.svg";
-import s2sLogo from "@/assets/naslovna/shared/s2s-logo.svg";
+import s2sLogo from "@/assets/branding/s2s-logo.webp";
 
 const S2S_GLYPHS = Array.from({ length: 8 }, (_, index) =>
   index % 2 === 0 ? "S" : "2",

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "@fontsource/figtree/400.css";
 import "@fontsource/figtree/700.css";
+import accordionArrow from "@/assets/pitanja/accordion-arrow.svg";
+import questionMark from "@/assets/pitanja/question-mark.svg";
 import "./Pitanja.scss";
 
 interface FaqItem {
@@ -85,7 +87,7 @@ const Pitanja = () => {
 
             <img
               className="pitanja__arrow"
-              src="/pitanja/accordion-arrow.svg"
+              src={accordionArrow}
               alt=""
               aria-hidden="true"
             />
@@ -137,7 +139,9 @@ const Pitanja = () => {
 
         <img
           className="pitanja__question-mark"
-          src="/pitanja/question-mark.svg"
+          src={questionMark}
+          loading="lazy"
+          decoding="async"
           alt=""
           aria-hidden="true"
         />

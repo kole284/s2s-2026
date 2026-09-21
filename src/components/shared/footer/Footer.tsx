@@ -1,5 +1,5 @@
 import './Footer.scss';
-import logoFonisWhite from '@/assets/logo-fonis-white.svg';
+import logoFonisWhite from '@/assets/branding/fonis-logo-white.webp';
 
 type SocialLink = {
   label: string;
@@ -53,6 +53,8 @@ const Footer = () => {
               src={logoFonisWhite}
               alt="FONIS"
               className="footer-logo-image"
+              loading="lazy"
+              decoding="async"
             />
           </div>
 

@@ -7,16 +7,16 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
-import graphIcon from "@/assets/workshops/case.svg";
-import csharpIcon from "@/assets/workshops/csharp-development.svg";
-import marketingIcon from "@/assets/workshops/digital-marketing.svg";
-import gameIcon from "@/assets/workshops/game-development.svg";
-import cIcon from "@/assets/workshops/intro-to-c.svg";
-import machineLearningIcon from "@/assets/workshops/machine-learning.svg";
-import startupIcon from "@/assets/workshops/startup.svg";
-import designIcon from "@/assets/workshops/ui-ux-design.svg";
-import aiIcon from "@/assets/workshops/ai-llm.svg";
-import cyberIcon from "@/assets/workshops/cybersec.svg";
+import graphIcon from "@/assets/radionice/icons/case.webp";
+import csharpIcon from "@/assets/radionice/icons/csharp-development.webp";
+import marketingIcon from "@/assets/radionice/icons/digital-marketing.webp";
+import gameIcon from "@/assets/radionice/icons/game-development.webp";
+import cIcon from "@/assets/radionice/icons/intro-to-c.webp";
+import machineLearningIcon from "@/assets/radionice/icons/machine-learning.webp";
+import startupIcon from "@/assets/radionice/icons/startup.webp";
+import designIcon from "@/assets/radionice/icons/ui-ux-design.webp";
+import aiIcon from "@/assets/radionice/icons/ai-llm.webp";
+import cyberIcon from "@/assets/radionice/icons/cybersec.webp";
 import { WORKSHOPS, type Workshop } from "@/data/workshops";
 
 import Predavac from "../predavac/Predavac";
@@ -166,6 +166,7 @@ const RadioniceTraka = ({
 
   const pauzaRef = useRef(pauza);
   const smanjenPokretRef = useRef(false);
+  const uViewportuRef = useRef(false);
   const onOpenRef = useRef(onOpen);
 
   /* Petlja živi u efektu, pa je handleri pokreću/zaustavljaju preko ovih komandi. */
@@ -226,10 +227,11 @@ const RadioniceTraka = ({
     let prethodniFrame: number | null = null;
 
     const trebaPetlja = () =>
-      centriranjeRef.current !== null ||
-      (!pauzaRef.current &&
-        !smanjenPokretRef.current &&
-        !prevlacenjeRef.current);
+      uViewportuRef.current &&
+      (centriranjeRef.current !== null ||
+        (!pauzaRef.current &&
+          !smanjenPokretRef.current &&
+          !prevlacenjeRef.current));
 
     const zaustavi = () => {
       if (frame !== null) {
@@ -344,9 +346,19 @@ const RadioniceTraka = ({
     komandeRef.current = { pokreni, zaustavi };
 
     const resizeObserver = new ResizeObserver(izmeri);
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      uViewportuRef.current = entry.isIntersecting;
+
+      if (entry.isIntersecting) {
+        pokreni();
+      } else {
+        zaustavi();
+      }
+    });
 
     resizeObserver.observe(viewport);
     resizeObserver.observe(grupa);
+    intersectionObserver.observe(viewport);
     smanjenPokret.addEventListener("change", naPromenuPokreta);
 
     izmeri();
@@ -354,6 +366,7 @@ const RadioniceTraka = ({
 
     return () => {
       resizeObserver.disconnect();
+      intersectionObserver.disconnect();
       smanjenPokret.removeEventListener("change", naPromenuPokreta);
       zaustavi();
       komandeRef.current = null;
@@ -504,6 +517,8 @@ const RadioniceTraka = ({
                     alt=""
                     className="radionice-ikonica"
                     draggable={false}
+                    loading="lazy"
+                    decoding="async"
                   />
 
                   <span className="radionice-naziv">{radionica.shortName}</span>
