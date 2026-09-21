@@ -1,4 +1,4 @@
-import { useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import arrowLeftMobile from "@/assets/tim/arrow-left-mobile.svg";
 import arrowLeft from "@/assets/tim/arrow-left.svg";
 import circleStriped from "@/assets/tim/circle-striped.svg";
@@ -22,6 +22,7 @@ import teamCr from "@/assets/tim/ljudi/timovi/CR-team.webp";
 import teamHr from "@/assets/tim/ljudi/timovi/HR-team.webp";
 import teamPr from "@/assets/tim/ljudi/timovi/PR-team.webp";
 import teamLogistics from "@/assets/tim/ljudi/timovi/Logistika-team.webp";
+import { preloadImage } from "./preloadImage";
 import "./Tim.scss";
 
 type Team = {
@@ -278,6 +279,21 @@ const LIGHTNING_BETWEEN_PATH = `M482.3 201 L420.1 253.3 L420.1 259.5 L482.3 216.
 const LIGHTNING_RIGHT_UPPER_PATH = `M947.6 132.9 L999 136.4 L2388.9 136.4 L2388.9 147.8 L999 147.8 L972.2 147.8 L962.5 153.8 L952.8 146.8 L944.4 166.2 L932.6 154.4 L922.2 174.6 L908.3 159.3 L895.8 168.3 L880.6 155.1 L861.1 170.8 L861.1 157.6 L880.6 145.4 L895.1 157.9 L909.7 148.2 L920.8 162.8 L931.2 139.2 L942.4 151.7 Z`;
 const LIGHTNING_RIGHT_LOWER_PATH = `M971.5 315.2 L1000 344 L2388.9 552.4 L2388.9 570.4 L1000 362.1 L971.5 338.1 L960.4 344.7 L950.7 357.9 L954.9 370.4 L947.2 380.8 L952.1 389.2 L935.4 394.7 L927.1 410 L916 405.8 L905.9 413.5 L892.4 419.4 L860.8 422.5 L870.8 413.5 L893.8 405.8 L910.4 401 L904.9 389.2 L921.5 380.8 L915.3 368.3 L925.7 356.5 L918.8 345.4 L906.9 353.8 L894.4 343.3 L881.9 351.7 L868.8 339.9 L843.8 344 L851 338.1 L863.9 330.1 L876.4 337.8 L888.9 327.4 L900.7 337.1 L912.5 327.4 L920.5 321.5 L915.3 291.6 L896.2 306.2 L875.7 283.3 L860.8 277.4 L860.8 257.2 L875.7 260.3 L900.7 291.6 L915.3 270.4 L936.1 315.2 L952.8 332.9 Z`;
 
+const preloadTeam = async (index: number) => {
+  const team = TEAMS[index]!;
+
+  await Promise.all([
+    preloadImage(team.coordinator.image),
+    preloadImage(team.image),
+  ]);
+};
+
+const preloadTeamsAround = (index: number) => {
+  void preloadTeam(index);
+  void preloadTeam((index - 1 + TEAMS.length) % TEAMS.length);
+  void preloadTeam((index + 1) % TEAMS.length);
+};
+
 const Tim = () => {
   const teamPhotoClipId = useId();
   const coordinatorClipId = useId();
@@ -286,6 +302,11 @@ const Tim = () => {
   const mobileRibbonRefs = useRef<Array<HTMLDivElement | null>>([]);
   const mobileRibbonTrackRefs = useRef<Array<HTMLDivElement | null>>([]);
   const mobileRibbonGroupRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const activeTeamIndexRef = useRef(0);
+  const isSwitchingRef = useRef(false);
+  const isMountedRef = useRef(false);
 
   const [activeTeamIndex, setActiveTeamIndex] = useState(0);
 
@@ -383,16 +404,71 @@ const Tim = () => {
     };
   }, [activeTeam.ribbonLabel]);
 
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+
+        observer.disconnect();
+        preloadTeamsAround(activeTeamIndexRef.current);
+      },
+      { rootMargin: "400px 0px" },
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const switchTeam = async (direction: -1 | 1) => {
+    if (isSwitchingRef.current) return;
+
+    isSwitchingRef.current = true;
+
+    const targetIndex =
+      (activeTeamIndexRef.current + direction + TEAMS.length) % TEAMS.length;
+
+    try {
+      // Stari tim ostaje renderovan dok nove slike nisu učitane i dekodirane.
+      await preloadTeam(targetIndex);
+
+      if (!isMountedRef.current) return;
+
+      activeTeamIndexRef.current = targetIndex;
+      setActiveTeamIndex(targetIndex);
+      preloadTeamsAround(targetIndex);
+    } finally {
+      isSwitchingRef.current = false;
+    }
+  };
+
   const showPreviousTeam = () => {
-    setActiveTeamIndex((index) => (index - 1 + TEAMS.length) % TEAMS.length);
+    void switchTeam(-1);
   };
 
   const showNextTeam = () => {
-    setActiveTeamIndex((index) => (index + 1) % TEAMS.length);
+    void switchTeam(1);
   };
 
   return (
-    <section className="team-section" id="tim" aria-label="Organizacioni tim">
+    <section
+      className="team-section"
+      id="tim"
+      aria-label="Organizacioni tim"
+      ref={sectionRef}
+    >
       <h2 className="team-mobile-heading">Naš tim</h2>
       <div className="team-decorations" aria-hidden="true">
         <img
