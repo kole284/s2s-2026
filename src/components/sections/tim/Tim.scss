@@ -656,6 +656,10 @@
     display: block;
     min-height: 100svh;
     padding: team-size(24) 16px team-size(170);
+
+    /* Partneri se završava na razlomljenoj poziciji (visina u vw), pa bi se
+       dve plave ivice anti-aliasovale zasebno i pustile 1px svetlu liniju. */
+    margin-top: -1px;
   }
 
   .team-mobile-heading {

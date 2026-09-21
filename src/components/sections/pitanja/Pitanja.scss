@@ -1125,6 +1125,23 @@
 }
 
 /* =========================================================
+   MOBILE: BELI TROUGAO NA VRHU
+   ========================================================= */
+
+/* Na razlomljenoj poziciji sekcije (npr. 360px) gornja anti-aliasovana ivica
+   belog trougla ostavi 1px žute linije iz .pitanja__left-zigzag. Trougao ide
+   1px iznad sekcije (klipuje je overflow), a hipotenuza ostaje ista. */
+@media #{$mobile} and (max-width: 599px) {
+  .pitanja__left-zigzag::before {
+    top: -1px;
+
+    height: 54px;
+
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 1px);
+  }
+}
+
+/* =========================================================
    TABLET PORTRAIT
    ========================================================= */
 
