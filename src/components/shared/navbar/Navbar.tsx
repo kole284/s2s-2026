@@ -12,7 +12,7 @@ const CTA_ITEM = SECTION_ROUTES.find(({ path }) => path === '/prijava')!;
 const PRIJAVA_PATH = '/prijava';
 const GAME_SECTION_ID = 'igrica';
 const GAME_LABEL = 'Igrica';
-const GAME_URL = '/igrica/';
+const GAME_PATH = '/igrica';
 const MENU_SCROLL_LOCK_CLASS = 'navbar-menu-scroll-locked';
 const NAVBAR_SCROLL_THRESHOLD = 24;
 
@@ -137,8 +137,8 @@ const Navbar = () => {
 
   const navigateToGame = useCallback(() => {
     closeMenu();
-    window.location.assign(GAME_URL);
-  }, [closeMenu]);
+    navigate(GAME_PATH);
+  }, [closeMenu, navigate]);
 
   useEffect(() => {
     const body = document.body;

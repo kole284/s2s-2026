@@ -6,10 +6,19 @@ import Test from '@/components/Test';
 import { SECTION_ROUTES } from '@/routes/sectionRoutes';
 import './App.scss';
 
+const Igra = () => (
+  <iframe
+    title="Igrica"
+    src="/igrica/"
+    style={{ display: 'block', width: '100%', height: '100dvh', border: 0 }}
+  />
+);
+
 const App = () => {
   return (
     <HashRouter>
       <Routes>
+        <Route path="/igrica" element={<Igra />} />
         <Route element={<Layout />}>
           {SECTION_ROUTES.filter(({ path }) => path !== '/prijava').map(
             ({ path }) => (
