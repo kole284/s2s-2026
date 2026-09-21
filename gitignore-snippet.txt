@@ -1,0 +1,4 @@
+
+# Claude Code personal overrides
+CLAUDE.local.md
+.claude/settings.local.json

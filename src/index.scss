@@ -17,12 +17,14 @@ body,
 
 html {
   min-height: 100%;
+  background-color: $color-blue-dark;
 }
 
 body,
 #root {
   min-height: 100vh;
   min-height: 100dvh;
+  background-color: $color-white;
 }
 
 body {

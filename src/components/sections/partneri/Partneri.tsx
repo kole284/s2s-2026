@@ -22,7 +22,9 @@ type HexagonMarqueeProps = {
 };
 
 const DESKTOP_HEXAGON_COUNT = 3;
-const MARQUEE_HEXAGON_COUNT = 6;
+// Keep each repeated group wider than a desktop viewport so the seamless
+// loop never reveals an empty edge.
+const MARQUEE_HEXAGON_COUNT = 14;
 const MARQUEE_GROUP_COUNT = 3;
 const MARQUEE_SPEED_PX_PER_SECOND = 24;
 const AUTOPLAY_RESUME_DELAY_MS = 450;
@@ -113,7 +115,6 @@ const HexagonMarquee = ({
 
     if (!viewport || !track || !group) return;
 
-    const mobileMedia = window.matchMedia("(max-width: 768px)");
     const reducedMotionMedia = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
@@ -179,7 +180,7 @@ const HexagonMarquee = ({
       stopAnimation();
       measureGroup();
 
-      if (mobileMedia.matches && !reducedMotionMedia.matches) {
+      if (!reducedMotionMedia.matches) {
         animationFrameRef.current = window.requestAnimationFrame(animate);
       }
     };
@@ -188,14 +189,12 @@ const HexagonMarquee = ({
     resizeObserver.observe(viewport);
     resizeObserver.observe(group);
 
-    mobileMedia.addEventListener("change", updateAnimationState);
     reducedMotionMedia.addEventListener("change", updateAnimationState);
     updateAnimationState();
 
     return () => {
       stopAnimation();
       resizeObserver.disconnect();
-      mobileMedia.removeEventListener("change", updateAnimationState);
       reducedMotionMedia.removeEventListener("change", updateAnimationState);
     };
   }, [applyTrackTransform, direction]);

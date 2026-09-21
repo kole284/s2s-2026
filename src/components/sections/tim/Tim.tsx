@@ -249,6 +249,12 @@ const TEAM_FRAME_PATH = `
   Z
 `;
 
+const LIGHTNING_LEFT_PATH = `M77.4 460.3 L-1 483.3 L-1527.8 483.3 L-1527.8 520.8 L-1 520.8 L85.8 486.4 L119.1 511.4 L154.2 478.4 L168.1 454.8 L186.5 423.5 L252.8 329.8 L217.8 349.8 L181.6 405.5 L168.1 426.7 L147.2 454.8 L119.1 486.4 L96.2 456.9 L91 423.5 L112.8 413.5 L117 392.3 L138.2 375.6 L209.9 320 L148.3 354.6 L91 396.5 L60.8 423.5 Z`;
+const LIGHTNING_LEFT_INNER_PATH = `M250 386.4 L191.3 381.9 L188.5 379.1 L179.9 394 L254.2 405.5 L276.7 362.1 L310.1 345.4 L303.5 337.4 L310.1 327.4 L294.4 329.4 L287.8 343 L260.1 362.1 Z`;
+const LIGHTNING_BETWEEN_PATH = `M482.3 201 L420.1 253.3 L420.1 259.5 L482.3 216.9 L499.7 224.9 L514.9 205.5 L566.7 208.6 L604.9 169.1 L595.8 151 L566.7 198.2 L514.9 192.3 L495.1 211.7 Z`;
+const LIGHTNING_RIGHT_UPPER_PATH = `M947.6 132.9 L999 136.4 L2388.9 136.4 L2388.9 147.8 L999 147.8 L972.2 147.8 L962.5 153.8 L952.8 146.8 L944.4 166.2 L932.6 154.4 L922.2 174.6 L908.3 159.3 L895.8 168.3 L880.6 155.1 L861.1 170.8 L861.1 157.6 L880.6 145.4 L895.1 157.9 L909.7 148.2 L920.8 162.8 L931.2 139.2 L942.4 151.7 Z`;
+const LIGHTNING_RIGHT_LOWER_PATH = `M971.5 315.2 L1000 344 L2388.9 552.4 L2388.9 570.4 L1000 362.1 L971.5 338.1 L960.4 344.7 L950.7 357.9 L954.9 370.4 L947.2 380.8 L952.1 389.2 L935.4 394.7 L927.1 410 L916 405.8 L905.9 413.5 L892.4 419.4 L860.8 422.5 L870.8 413.5 L893.8 405.8 L910.4 401 L904.9 389.2 L921.5 380.8 L915.3 368.3 L925.7 356.5 L918.8 345.4 L906.9 353.8 L894.4 343.3 L881.9 351.7 L868.8 339.9 L843.8 344 L851 338.1 L863.9 330.1 L876.4 337.8 L888.9 327.4 L900.7 337.1 L912.5 327.4 L920.5 321.5 L915.3 291.6 L896.2 306.2 L875.7 283.3 L860.8 277.4 L860.8 257.2 L875.7 260.3 L900.7 291.6 L915.3 270.4 L936.1 315.2 L952.8 332.9 Z`;
+
 const Tim = () => {
   const teamPhotoClipId = useId();
   const coordinatorClipId = useId();
@@ -391,124 +397,6 @@ const Tim = () => {
         />
       </div>
 
-      <div className="team-lightnings" aria-hidden="true">
-        <svg
-          className="team-lightning team-lightning-left-large"
-          viewBox="0 0 292 232"
-          overflow="visible"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            fill="white"
-            d="M111.5 144.5L-1.5 177.5V231.5L123.5 182L171.5 218L222 170.5L242 136.5L268.5 91.5L292 28.5H256L261.5 65.5L242 96L212 136.5L171.5 182L138.5 139.5L131 91.5L162.5 77L168.5 46.5L199 22.5L201.5 0L141.5 21L131 52.5L87.5 91.5L111.5 144.5Z"
-          />
-        </svg>
-
-        {/*
-         * Donja munja ispod koordinatora.
-         * Cela grana koristi istu debljinu kao njen nastavak sa leve strane.
-         */}
-        <svg
-          className="team-lightning team-lightning-left-inner"
-          viewBox="0 0 188 113"
-          overflow="visible"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            fill="white"
-            d="M101 85L16.5 78.5L12.5 74.5L0 96L107 112.5L139.5 50L187.5 26L178 14.5L187.5 0L165 3L155.5 22.5L115.5 50L101 85Z"
-          />
-        </svg>
-
-        {/*
-         * Munja koordinator -> tim.
-         * Originalni Vector 219 u prirodnim proporcijama.
-         */}
-        <svg
-          className="team-lightning team-lightning-between"
-          viewBox="0 0 209 113"
-          overflow="visible"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            fill="white"
-            d="M44.5 59
-               L0 96.5
-               V112.5
-               L44.5 82
-               L69.5 93.5
-               L91.5 65.5
-               L166 70
-               L209 25.5
-               L200 0
-               L166 55
-               L91.5 46.5
-               L63 74.5
-               L44.5 59
-               Z"
-          />
-        </svg>
-
-        {/*
-         * Munja tim -> desna ivica, gornja grana.
-         * Originalni levi vrh se naslanja na team frame bez dodatnog
-         * podvlačenja ispod belog oblika.
-         */}
-        <svg
-          className="team-lightning team-lightning-right-upper"
-          viewBox="0 0 199 60"
-          overflow="visible"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            fill="white"
-            d="M124.5 0L198.5 5V21.5H160L146 30L132 20L120 48L103 31L88 60L68 38L50 51L28 32L0 54.5V35.5L28 18L49 36L70 22L86 43L101 9L117 27L124.5 0Z"
-          />
-        </svg>
-
-        <svg
-          className="team-lightning team-lightning-right-lower"
-          viewBox="0 0 223 238"
-          overflow="visible"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            fill="white"
-            d="M184 83.5L225 125V151L184 116.5L168 126L154 145L160 163L149 178L156 190L132 198L120 220L104 214L89.5 225L70 233.5L24.5 238L39 225L72 214L96 207L88 190L112 178L103 160L118 143L108 127L91 139L73 124L55 136L36 119L0 125L10.5 116.5L29 105L47 116L65 101L82 115L99 101L110.5 92.5L103 49.5L75.5 70.5L46 37.5L24.5 29V0L46 4.5L82 49.5L103 19L133 83.5L157 109L184 83.5Z"
-          />
-        </svg>
-
-        {/*
-         * Ovi spanovi NISU nove munje. Oni samo produžavaju krajnji beli
-         * segment originalnih Figma munja kroz "side-space" koji postoji kada
-         * je viewport širi od 1440:1024 design frame-a.
-         */}
-        <svg
-          className="team-lightning-edge team-lightning-edge--left"
-          viewBox="0 0 100 92"
-          preserveAspectRatio="none"
-          focusable="false"
-        >
-          <path
-            d="M0 60
-               L16 30
-               L33 60
-               L50 25
-               L67 58
-               L84 55
-               L100 15"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-        <span className="team-lightning-edge team-lightning-edge--right-upper" />
-        <span className="team-lightning-edge team-lightning-edge--right-lower" />
-      </div>
-
       <div className="team-band" aria-hidden="true">
         <div className="team-band-text-lane">
           <div className="team-band-track" ref={desktopBandTrackRef}>
@@ -531,6 +419,22 @@ const Tim = () => {
       </div>
 
       <div className="team-stage">
+        <svg
+          className="team-lightnings"
+          viewBox="0 0 1000 650"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path fill="white" d={LIGHTNING_LEFT_PATH} />
+          <path fill="white" d={LIGHTNING_LEFT_INNER_PATH} />
+          <path fill="white" d={LIGHTNING_BETWEEN_PATH} />
+          <path fill="white" d={LIGHTNING_RIGHT_UPPER_PATH} />
+          <path
+            fill="white"
+            d={LIGHTNING_RIGHT_LOWER_PATH}
+            transform="translate(50 -30)"
+          />
+        </svg>
         <div className="team-circle-solid" aria-hidden="true" />
 
         {["top", "bottom"].map((position, ribbonIndex) => (

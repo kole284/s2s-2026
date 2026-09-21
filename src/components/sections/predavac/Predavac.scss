@@ -140,6 +140,11 @@
 .predavac-photo-block {
   position: relative;
   margin: 0;
+
+  &--without-photo {
+    width: calc(var(--pd-mobile-design-width) * 120 / 390);
+    height: calc(var(--pd-mobile-design-width) * 150 / 390);
+  }
 }
 
 .predavac-photo {
@@ -323,6 +328,11 @@
     position: absolute;
     top: calc(var(--pd-design-width) * 150 / 1440);
     left: calc(var(--pd-design-width) * 200 / 1440);
+
+    &--without-photo {
+      width: calc(var(--pd-design-width) * 220 / 1440);
+      height: calc(var(--pd-design-width) * 300 / 1440);
+    }
   }
 
   .predavac-photo {

@@ -11,7 +11,9 @@
 
   margin-top: -1px;
 
-  overflow: hidden;
+  // Clip wide artwork without creating a nested vertical scroll container.
+  overflow-x: clip;
+  overflow-y: visible;
 
   background: $color-blue;
 }
@@ -300,7 +302,7 @@
   left: calc(910 * var(--partner-u));
 }
 
-// Hexagons remain upright. Only the mobile track is animated.
+// Hexagons remain upright while their shared track moves horizontally.
 .hexagon {
   position: relative;
 
@@ -369,7 +371,44 @@
 }
 
 .hexagon-marquee {
-  display: none;
+  position: absolute;
+  top: 40%;
+  left: 0;
+
+  display: block;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+
+  pointer-events: auto;
+}
+
+.hexagon-marquee:active {
+  cursor: grabbing;
+}
+
+.hexagon-marquee-track {
+  display: flex;
+
+  width: max-content;
+
+  transition: none;
+
+  will-change: transform;
+}
+
+.hexagon-marquee-group {
+  display: flex;
+  flex: none;
+
+  gap: calc(77 * var(--partner-u));
+
+  padding-right: calc(77 * var(--partner-u));
 }
 
 .illustration {
@@ -430,10 +469,69 @@
 }
 
 @media only screen and (min-width: 769px) {
+  .partneri-page {
+    height: calc(1675 * var(--partner-u));
+  }
+
+  .partneri-page::after {
+    top: calc(1540 * var(--partner-u));
+  }
+
   .partner-section {
     overflow: visible;
 
     isolation: auto;
+  }
+
+  // Give the content-heavy rows enough vertical room instead of
+  // compressing their titles and moving hexagons across the paper edges.
+  .annual-section {
+    height: calc(320 * var(--partner-u));
+  }
+
+  .financial-section {
+    top: calc(732 * var(--partner-u));
+
+    height: calc(340 * var(--partner-u));
+  }
+
+  .goods-section {
+    top: calc(1014 * var(--partner-u));
+
+    height: calc(315 * var(--partner-u));
+  }
+
+  .media-section {
+    top: calc(1274 * var(--partner-u));
+
+    height: calc(340 * var(--partner-u));
+  }
+
+  .hexagon-row {
+    display: none;
+  }
+
+  .section-content > h2,
+  .financial-section .section-content > h2 {
+    top: 20%;
+
+    transform: translateX(-50%);
+  }
+
+  .financial-section .section-content > h2 {
+    top: 25%;
+  }
+
+  .financial-section .hexagon-marquee {
+    top: 42%;
+  }
+
+  .media-section .hexagon-marquee {
+    top: 36%;
+  }
+
+  .media-section .section-content > h2 {
+    top: 16%;
   }
 
   .media-section .illustration-camera {

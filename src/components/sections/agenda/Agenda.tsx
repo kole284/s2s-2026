@@ -611,23 +611,39 @@ const Agenda = () => {
 
           <button
             type="button"
-            className="agenda__desktop-day agenda__desktop-day--active-slot"
+            className={`agenda__desktop-day agenda__desktop-day--active-slot agenda__desktop-day--${activeDay === 1 ? "yellow" : "blue"}`}
             onClick={() => selectDay(activeDay)}
             aria-pressed={true}
             aria-label={`Dan ${activeDay} je trenutno prikazan`}
           >
-            <img src="/agenda/shared/day-1-badge.svg" alt="" aria-hidden="true" />
+            <img
+              src={
+                activeDay === 1
+                  ? "/agenda/shared/day-1-badge.svg"
+                  : "/agenda/shared/day-2-marker.svg"
+              }
+              alt=""
+              aria-hidden="true"
+            />
             <span>DAN {activeDay}</span>
           </button>
 
           <button
             type="button"
-            className="agenda__desktop-day agenda__desktop-day--inactive-slot"
+            className={`agenda__desktop-day agenda__desktop-day--inactive-slot agenda__desktop-day--${alternateDay === 1 ? "yellow" : "blue"}`}
             onClick={() => selectDay(alternateDay)}
             aria-pressed={false}
             aria-label={`Prikaži agendu za dan ${alternateDay}`}
           >
-            <img src="/agenda/shared/day-2-marker.svg" alt="" aria-hidden="true" />
+            <img
+              src={
+                alternateDay === 1
+                  ? "/agenda/shared/day-1-badge.svg"
+                  : "/agenda/shared/day-2-marker.svg"
+              }
+              alt=""
+              aria-hidden="true"
+            />
             <span>DAN {alternateDay}</span>
           </button>
 

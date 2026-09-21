@@ -7,7 +7,8 @@
    * ne menja međusobne proporcije elemenata.
    */
   --footer-design-width: min(100vw, 140.625dvh);
-  --footer-u: calc(var(--footer-design-width) / 1440);
+  --footer-base-u: calc(var(--footer-design-width) / 1440);
+  --footer-u: calc(var(--footer-base-u) * 1.1);
 
   position: relative;
   margin-top: auto;
@@ -67,7 +68,7 @@
   display: grid;
   grid-template-columns:
     minmax(calc(var(--footer-u) * 200), 1fr)
-    calc(var(--footer-u) * 330)
+    calc(var(--footer-base-u) * 330)
     minmax(calc(var(--footer-u) * 200), 1fr);
   align-items: center;
 
@@ -147,13 +148,13 @@
   align-items: center;
   justify-content: center;
 
-  width: calc(var(--footer-u) * 330);
+  width: calc(var(--footer-base-u) * 330);
 }
 
 .footer-logo-image {
   display: block;
 
-  width: calc(var(--footer-u) * 330);
+  width: calc(var(--footer-base-u) * 330);
   height: auto;
 }
 
@@ -194,7 +195,8 @@
      * pa nema mešanja fiksnih px vrednosti sa skaliranim elementima.
      */
     --footer-mobile-design-width: 100vw;
-    --footer-u: calc(var(--footer-mobile-design-width) / 390);
+    --footer-base-u: calc(var(--footer-mobile-design-width) / 390);
+    --footer-u: calc(var(--footer-base-u) * 1.1);
 
     padding: calc(var(--footer-u) * 55) calc(var(--footer-u) * 25)
       calc(var(--footer-u) * 65);
@@ -320,7 +322,7 @@
   .footer-logo-image {
     display: block;
 
-    width: calc(var(--footer-u) * 340);
+    width: calc(var(--footer-base-u) * 340);
     max-width: 100%;
     height: auto;
   }
