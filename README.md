@@ -50,7 +50,6 @@ s2s-2026/
     ├── vite-env.d.ts
     ├── assets/
     ├── components/
-    │   ├── Test.tsx
     │   ├── -layout/
     │   │   └── Layout.tsx
     │   ├── sections/
@@ -89,6 +88,8 @@ s2s-2026/
     │           ├── Navbar.scss
     │           └── Navbar.tsx
     ├── pages/
+    │   ├── home/
+    │   │   └── Home.tsx
     │   └── main/
     │       └── Main.tsx
     ├── styles/
@@ -244,15 +245,9 @@ src/components/sections/agenda/Agenda.scss
 ```
 
 
-### Test komponenta
+### Home stranica
 
-`src/components/Test.tsx` služi samo za proveru da React/Vite setup radi.
-
-Važno:
-
-- nije deo finalnog dizajna,
-- nije stvarna sekcija sajta,
-- ne koristi se kao mesto za implementaciju tvoje sekcije.
+`src/pages/home/Home.tsx` slaže sve sekcije početne strane redom (Naslovna, O projektu, Radionice, Panel, Agenda, Pitanja, Partneri, Tim, Footer). `src/pages/main/Main.tsx` je omotava i skroluje do sekcije koja odgovara ruti.
 
 ### Example komponenta
 

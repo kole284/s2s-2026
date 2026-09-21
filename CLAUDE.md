@@ -22,9 +22,9 @@ The backend is a separate repo (`s2s-email-backend`, Supabase Edge Functions).
 - `src/components/sections/<kebab-name>/<PascalName>.tsx` + `.scss` - page sections (naslovna, o-projektu, radionice, panel, agenda, pitanja, partneri, tim, predavac, prijava)
 - `src/components/shared/` - navbar, footer
 - `src/components/-layout/Layout.tsx` - Navbar + Outlet
-- `src/components/Test.tsx` - composes all sections for the main page (despite the name)
 - `src/components/Example/` - reference for TSX + SCSS conventions; copy this pattern for new components
-- `src/pages/main/Main.tsx`, `src/data/workshops.ts` (WORKSHOPS list)
+- `src/pages/home/Home.tsx` - composes all sections for the main page; `src/pages/main/Main.tsx` - wraps Home and scrolls to the section matching the route
+- `src/data/workshops.ts` (WORKSHOPS list)
 - `src/styles/_variables.scss`, `_mediaqueries.scss` - design tokens and breakpoints
 - Config at repo root: `vite.config.ts`, `tsconfig.app.json` (src), `tsconfig.node.json` (vite.config.ts), `eslint.config.js`
 - `src/assets/` - SVG/PNG artwork

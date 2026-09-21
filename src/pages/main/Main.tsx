@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Test from '@/components/Test';
+import Home from '@/pages/home/Home';
 import { SECTION_ROUTE_BY_PATH } from '@/routes/sectionRoutes';
 
 const Main = () => {
@@ -23,7 +23,7 @@ const Main = () => {
     return () => window.cancelAnimationFrame(animationFrame);
   }, [pathname]);
 
-  return <Test />;
+  return <Home />;
 };
 
 export default Main;
