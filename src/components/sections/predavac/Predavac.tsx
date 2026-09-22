@@ -146,13 +146,15 @@ const Predavac = ({
                 <figcaption className="predavac-name">{imePredavaca}</figcaption>
               </figure>
 
-              <img
-                src={workshopIcon}
-                alt=""
-                className="predavac-shield"
-                loading="lazy"
-                decoding="async"
-              />
+              {workshopIcon && (
+                <img
+                  src={workshopIcon}
+                  alt=""
+                  className="predavac-shield"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
             </div>
 
             <div className="predavac-text">

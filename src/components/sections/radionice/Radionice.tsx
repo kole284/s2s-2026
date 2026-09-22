@@ -17,6 +17,15 @@ import startupIcon from "@/assets/radionice/icons/startup.webp";
 import designIcon from "@/assets/radionice/icons/ui-ux-design.webp";
 import aiIcon from "@/assets/radionice/icons/ai-llm.webp";
 import cyberIcon from "@/assets/radionice/icons/cybersec.webp";
+import aiDetailIcon from "@/assets/radionice/detail-icons/ai-llm.svg";
+import caseDetailIcon from "@/assets/radionice/detail-icons/case.svg";
+import csharpDetailIcon from "@/assets/radionice/detail-icons/csharp-development.svg";
+import cyberDetailIcon from "@/assets/radionice/detail-icons/cybersec.svg";
+import marketingDetailIcon from "@/assets/radionice/detail-icons/digital-marketing.svg";
+import gameDetailIcon from "@/assets/radionice/detail-icons/game-development.svg";
+import cDetailIcon from "@/assets/radionice/detail-icons/intro-to-c.svg";
+import startupDetailIcon from "@/assets/radionice/detail-icons/startup.svg";
+import designDetailIcon from "@/assets/radionice/detail-icons/ui-ux-design.svg";
 import { WORKSHOPS, type Workshop } from "@/data/workshops";
 
 import Predavac from "../predavac/Predavac";
@@ -24,6 +33,7 @@ import "./Radionice.scss";
 
 interface Radionica extends Workshop {
   icon: string;
+  detailIcon?: string;
   predavacId: number;
 }
 
@@ -39,6 +49,18 @@ const WORKSHOP_ICONS: Record<number, string> = {
   8: aiIcon,
   9: startupIcon,
   10: machineLearningIcon,
+};
+
+const WORKSHOP_DETAIL_ICONS: Partial<Record<number, string>> = {
+  1: designDetailIcon,
+  2: csharpDetailIcon,
+  3: cyberDetailIcon,
+  4: caseDetailIcon,
+  5: marketingDetailIcon,
+  6: cDetailIcon,
+  7: gameDetailIcon,
+  8: aiDetailIcon,
+  9: startupDetailIcon,
 };
 
 const PREDAVAC_IDS: Record<number, number> = {
@@ -57,6 +79,7 @@ const PREDAVAC_IDS: Record<number, number> = {
 const RADIONICE: Radionica[] = WORKSHOPS.map((workshop) => ({
   ...workshop,
   icon: WORKSHOP_ICONS[workshop.id],
+  detailIcon: WORKSHOP_DETAIL_ICONS[workshop.id],
   predavacId: PREDAVAC_IDS[workshop.id],
 }));
 
@@ -751,7 +774,7 @@ const Radionice = () => {
           <Predavac
             predavacId={aktivniPredavacId}
             workshopTitle={otvorenaRadionica.fullName}
-            workshopIcon={otvorenaRadionica.icon}
+            workshopIcon={otvorenaRadionica.detailIcon}
             lecturers={otvorenaRadionica.lecturers}
             onClose={zatvoriPredavaca}
           />

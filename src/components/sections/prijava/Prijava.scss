@@ -2246,6 +2246,24 @@
     }
   }
 
+  &-turnstile {
+    display: flex;
+    min-width: 300px;
+    min-height: 65px;
+    flex: 0 0 auto;
+    flex-direction: column;
+    justify-content: center;
+
+    &__error {
+      margin: 6px 0 0;
+      color: #b00020;
+      font-family: $font-body;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+  }
+
   &_dugme {
     min-width: 138px;
     min-height: 48px;
@@ -3045,6 +3063,14 @@
       &__box {
         margin-top: 1px;
       }
+    }
+
+    .prijava-turnstile {
+      width: 100%;
+      min-width: 0;
+      flex: 0 0 100%;
+      margin: 0 0 10px;
+      overflow-x: auto;
     }
 
     .prijava_navigacija:has(.prijava-newsletter) {

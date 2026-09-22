@@ -425,6 +425,38 @@ const jeValidanTelefon = (telefon: string) =>
   /^(?:06\d{7,8}|\+3816\d{7,8})$/.test(telefon);
 
 const PRIMER_TELEFONA = "0612345678";
+const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+let turnstileScriptPromise: Promise<void> | null = null;
+
+const ucitajTurnstileSkriptu = () => {
+  if (window.turnstile) {
+    return Promise.resolve();
+  }
+
+  if (turnstileScriptPromise) {
+    return turnstileScriptPromise;
+  }
+
+  turnstileScriptPromise = new Promise<void>((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = TURNSTILE_SCRIPT_SRC;
+    script.async = true;
+    script.defer = true;
+    script.dataset.s2sTurnstile = "true";
+    script.onload = () => {
+      if (window.turnstile) {
+        resolve();
+      } else {
+        reject(new Error("Turnstile API nije dostupan."));
+      }
+    };
+    script.onerror = () => reject(new Error("Turnstile skripta nije učitana."));
+    document.head.appendChild(script);
+  });
+
+  return turnstileScriptPromise;
+};
 
 type OsnovnoPolje = {
   id: string;
@@ -518,6 +550,7 @@ type ApplicationPayload = {
   second_knowledge_level: NivoZnanja | null;
   second_choice_reason: string | null;
   cv_drive_link: string | null;
+  turnstile_token: string;
 };
 
 const emptyToNull = (value: string) => {
@@ -537,12 +570,20 @@ type SubmitApplicationResponse = {
   success?: boolean;
   error?: string;
   field?: "email" | "phone_number" | "unknown" | string;
+  retry_after?: number;
 };
 
 class DuplicateApplicationError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "DuplicateApplicationError";
+  }
+}
+
+class RateLimitedApplicationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RateLimitedApplicationError";
   }
 }
 
@@ -578,7 +619,10 @@ const isGoogleDriveLink = (value: string) => {
   }
 };
 
-const buildPayload = (forma: PrijavaForma): ApplicationPayload => {
+const buildPayload = (
+  forma: PrijavaForma,
+  turnstileToken: string,
+): ApplicationPayload => {
   return {
     name_surname: forma.imePrezime.trim(),
     email: forma.email.trim().toLowerCase(),
@@ -609,6 +653,7 @@ const buildPayload = (forma: PrijavaForma): ApplicationPayload => {
       ? emptyToNull(forma.drugaZeljaPrimena)
       : null,
     cv_drive_link: emptyToNull(forma.cvDriveLink),
+    turnstile_token: turnstileToken,
   };
 };
 
@@ -627,6 +672,69 @@ const Prijava = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [duplicatePrompt, setDuplicatePrompt] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileError, setTurnstileError] = useState("");
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
+  useEffect(() => {
+    if (korak !== 4 || poslato) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const prikaziTurnstile = async () => {
+      if (!turnstileSiteKey) {
+        setTurnstileError("Turnstile nije konfigurisan.");
+        return;
+      }
+
+      try {
+        await ucitajTurnstileSkriptu();
+
+        if (cancelled || !turnstileContainerRef.current || !window.turnstile) {
+          return;
+        }
+
+        turnstileWidgetIdRef.current = window.turnstile.render(
+          turnstileContainerRef.current,
+          {
+            sitekey: turnstileSiteKey,
+            callback: (token) => {
+              setTurnstileToken(token);
+              setTurnstileError("");
+            },
+            "expired-callback": () => {
+              setTurnstileToken("");
+              setTurnstileError("Turnstile potvrda je istekla. Pokušaj ponovo.");
+            },
+            "error-callback": () => {
+              setTurnstileToken("");
+              setTurnstileError("Turnstile trenutno nije dostupan. Pokušaj ponovo.");
+            },
+          },
+        );
+      } catch (error) {
+        console.error("Turnstile nije učitan.", error);
+        setTurnstileToken("");
+        setTurnstileError("Turnstile trenutno nije dostupan. Pokušaj ponovo.");
+      }
+    };
+
+    void prikaziTurnstile();
+
+    return () => {
+      cancelled = true;
+
+      if (turnstileWidgetIdRef.current !== null && window.turnstile?.remove) {
+        window.turnstile.remove(turnstileWidgetIdRef.current);
+      }
+
+      turnstileWidgetIdRef.current = null;
+    };
+  }, [korak, poslato, turnstileSiteKey]);
 
   useEffect(() => {
     if (!prijaveZakljucane) {
@@ -840,8 +948,21 @@ const Prijava = () => {
   };
 
   const prethodniKorak = () => {
+    if (korak === 4) {
+      resetujTurnstile();
+    }
+
     setPrikaziValidaciju(false);
     setKorak((k) => Math.max(k - 1, 1));
+  };
+
+  const resetujTurnstile = () => {
+    setTurnstileToken("");
+    setTurnstileError("");
+
+    if (turnstileWidgetIdRef.current !== null && window.turnstile) {
+      window.turnstile.reset(turnstileWidgetIdRef.current);
+    }
   };
 
   useEffect(() => {
@@ -902,6 +1023,30 @@ const Prijava = () => {
       // Ako odgovor nije JSON, tretira se kao standardna greška ispod.
     }
 
+    if (response.status === 429) {
+      const retryAfterHeader = response.headers.get("Retry-After");
+      const retryAfterHeaderSeconds = retryAfterHeader?.trim()
+        ? Number(retryAfterHeader)
+        : Number.NaN;
+      const retryAfterSeconds =
+        Number.isFinite(retryAfterHeaderSeconds) && retryAfterHeaderSeconds >= 0
+          ? retryAfterHeaderSeconds
+          : typeof responseBody.retry_after === "number" &&
+              Number.isFinite(responseBody.retry_after) &&
+              responseBody.retry_after >= 0
+            ? responseBody.retry_after
+            : null;
+      const message =
+        retryAfterSeconds === null
+          ? "Previše pokušaja. Probaj ponovo malo kasnije."
+          : `Previše pokušaja. Probaj ponovo za ${Math.max(
+              1,
+              Math.ceil(retryAfterSeconds / 60),
+            )} minuta.`;
+
+      throw new RateLimitedApplicationError(message);
+    }
+
     if (!response.ok) {
       const duplicateMessage = getDuplicateApplicationMessage(responseBody);
 
@@ -935,14 +1080,23 @@ const Prijava = () => {
       }
     }
 
+    if (!turnstileToken) {
+      setStatus("error");
+      setErrorMessage(
+        turnstileError || "Potvrdi Turnstile pre slanja prijave.",
+      );
+      return;
+    }
+
     setStatus("submitting");
     setErrorMessage("");
     setDuplicatePrompt(null);
 
-    const payload = buildPayload(forma);
+    const payload = buildPayload(forma, turnstileToken);
 
     // CV je opcion, ali ako je unet mora biti Google Drive link.
     if (payload.cv_drive_link && !isGoogleDriveLink(payload.cv_drive_link)) {
+      resetujTurnstile();
       setStatus("error");
       setErrorMessage("Unesite validan Google Drive link.");
       return;
@@ -951,21 +1105,35 @@ const Prijava = () => {
     try {
       const { supabaseUrl, supabasePublishableKey } = getSupabaseConfig();
 
-      await createApplication(supabaseUrl, supabasePublishableKey, payload);
+      await createApplication(
+        supabaseUrl,
+        supabasePublishableKey,
+        payload,
+      );
 
+      resetujTurnstile();
       setStatus("idle");
       setPoslato(true);
       setForma(praznaForma);
       setGreske({});
       setKorak(1);
     } catch (error) {
+      if (error instanceof RateLimitedApplicationError) {
+        resetujTurnstile();
+        setStatus("error");
+        setErrorMessage(error.message);
+        return;
+      }
+
       if (error instanceof DuplicateApplicationError) {
+        resetujTurnstile();
         setStatus("idle");
         setDuplicatePrompt(error.message);
         return;
       }
 
       console.error("Slanje prijave nije uspelo.", error);
+      resetujTurnstile();
       setStatus("error");
       setErrorMessage("Prijava trenutno nije poslata. Pokušaj ponovo.");
     }
@@ -1891,6 +2059,16 @@ const Prijava = () => {
 
               <div className="prijava_navigacija">
                 {korak === 4 ? (
+                  <div className="prijava-turnstile">
+                    <div ref={turnstileContainerRef} />
+                    {turnstileError ? (
+                      <p className="prijava-turnstile__error" role="alert">
+                        {turnstileError}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+                {korak === 4 ? (
                   <label
                     className={`prijava-newsletter${
                       forma.receive_fonis_updates
@@ -1966,6 +2144,7 @@ const Prijava = () => {
                     type="button"
                     className="prijava_dugme prijava_dugme--posalji"
                     onClick={posaljiPrijavu}
+                    disabled={status === "submitting"}
                   >
                     <img
                       src={prijavaButtonShell}
