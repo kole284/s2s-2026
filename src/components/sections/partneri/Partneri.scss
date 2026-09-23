@@ -339,6 +339,24 @@
   display: none;
 }
 
+// Logo sits in the flat mid-band of the hexagon so it never crosses the
+// slanted top/bottom edges, whichever breakpoint's hexagon geometry is active.
+.hexagon-logo {
+  position: absolute;
+  z-index: 2;
+  top: 23.6%;
+  left: 6%;
+
+  width: 88%;
+  height: 52.8%;
+
+  object-fit: contain;
+  // Per-logo crop of empty image margin (set inline from partners.ts).
+  object-view-box: var(--logo-crop, none);
+  transform: scale(var(--logo-scale, 1));
+  pointer-events: none;
+}
+
 // The main sponsor hexagon uses the inline SVG as its only desktop geometry source.
 // 200 / 173.2050807569 is the exact aspect ratio of a regular flat-top hexagon.
 .hexagon--sponsor {

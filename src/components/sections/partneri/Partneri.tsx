@@ -1,17 +1,28 @@
 import { useCallback, useEffect, useRef } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import type {
+  CSSProperties,
+  PointerEvent as ReactPointerEvent,
+} from "react";
 
 import calendarIllustration from "@/assets/partneri/kalendar.svg";
 import cameraIllustration from "@/assets/partneri/kamera.svg";
 import canIllustration from "@/assets/partneri/konzerva.svg";
 import crownIllustration from "@/assets/partneri/kruna.svg";
 import handshakeIllustration from "@/assets/partneri/komunizam.svg";
+import wonderLogo from "@/assets/partneri/pokrovitelj/wonder-wordmark-gradient.webp";
+
+import { ROBNI_PARTNERS } from "./partners";
+import type { Partner } from "./partners";
 
 import "./Partneri.scss";
 
 type HexagonProps = {
   filled?: boolean;
   className?: string;
+  logoSrc?: string;
+  logoAlt?: string;
+  logoCrop?: string;
+  logoScale?: number;
 };
 
 type MarqueeDirection = "left" | "right";
@@ -19,6 +30,7 @@ type MarqueeDirection = "left" | "right";
 type HexagonMarqueeProps = {
   filled?: boolean;
   direction: MarqueeDirection;
+  logos?: Partner[];
 };
 
 const DESKTOP_HEXAGON_COUNT = 3;
@@ -30,8 +42,16 @@ const MARQUEE_SPEED_PX_PER_SECOND = 24;
 const AUTOPLAY_RESUME_DELAY_MS = 450;
 const MAX_FRAME_DELTA_SECONDS = 0.1;
 
-const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
+const Hexagon = ({
+  filled = true,
+  className = "",
+  logoSrc,
+  logoAlt,
+  logoCrop,
+  logoScale,
+}: HexagonProps) => {
   const isSponsor = className.includes("hexagon--sponsor");
+  const isLogoSlot = Boolean(logoSrc);
   const classes = [
     "hexagon",
     filled ? "hexagon-filled" : "hexagon-outline",
@@ -41,7 +61,7 @@ const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
     .join(" ");
 
   return (
-    <span className={classes} aria-hidden="true">
+    <span className={classes} aria-hidden={isLogoSlot ? undefined : "true"}>
       <svg
         className="hexagon-svg"
         viewBox={isSponsor ? "0 0 200 173.2050807569" : "0 0 100 115.47"}
@@ -60,6 +80,24 @@ const Hexagon = ({ filled = true, className = "" }: HexagonProps) => {
       </svg>
 
       {!filled && <span className="hexagon-inner" />}
+
+      {logoSrc && (
+        <img
+          src={logoSrc}
+          alt={logoAlt ?? ""}
+          className="hexagon-logo"
+          style={
+            logoCrop || logoScale
+              ? ({
+                  "--logo-crop": logoCrop,
+                  "--logo-scale": logoScale,
+                } as CSSProperties)
+              : undefined
+          }
+          loading="lazy"
+          decoding="async"
+        />
+      )}
     </span>
   );
 };
@@ -78,6 +116,7 @@ const HexagonRow = ({
 const HexagonMarquee = ({
   filled = true,
   direction,
+  logos,
 }: HexagonMarqueeProps) => {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -265,9 +304,19 @@ const HexagonMarquee = ({
             className="hexagon-marquee-group"
             key={groupIndex}
           >
-            {Array.from({ length: MARQUEE_HEXAGON_COUNT }, (_, index) => (
-              <Hexagon filled={filled} key={`${groupIndex}-${index}`} />
-            ))}
+            {logos
+              ? logos.map((partner) => (
+                  <Hexagon
+                    key={`${groupIndex}-${partner.name}`}
+                    logoSrc={partner.src}
+                    logoAlt={partner.name}
+                    logoCrop={partner.crop}
+                    logoScale={partner.scale}
+                  />
+                ))
+              : Array.from({ length: MARQUEE_HEXAGON_COUNT }, (_, index) => (
+                  <Hexagon filled={filled} key={`${groupIndex}-${index}`} />
+                ))}
           </div>
         ))}
       </div>
@@ -282,6 +331,7 @@ type PartnerRowProps = {
   direction: MarqueeDirection;
   illustration: string;
   illustrationClassName: string;
+  logos?: Partner[];
 };
 
 const PartnerRow = ({
@@ -291,13 +341,14 @@ const PartnerRow = ({
   direction,
   illustration,
   illustrationClassName,
+  logos,
 }: PartnerRowProps) => (
   <section className={`partner-section ${className}`}>
     <div className="section-content">
       <HexagonRow filled={filled} side="left" />
       <h2>{title}</h2>
       <HexagonRow filled={filled} side="right" />
-      <HexagonMarquee filled={filled} direction={direction} />
+      <HexagonMarquee filled={filled} direction={direction} logos={logos} />
     </div>
 
     <img
@@ -330,7 +381,12 @@ const Partneri = () => (
         </div>
 
         <div className="sponsor-visual">
-          <Hexagon className="hexagon--sponsor" />
+          <Hexagon
+            className="hexagon--sponsor"
+            logoSrc={wonderLogo}
+            logoAlt="Wonder"
+            logoScale={0.92}
+          />
 
           <img
             src={crownIllustration}
@@ -368,6 +424,7 @@ const Partneri = () => (
       direction="left"
       illustration={canIllustration}
       illustrationClassName="illustration-can"
+      logos={ROBNI_PARTNERS}
     />
 
     <PartnerRow
