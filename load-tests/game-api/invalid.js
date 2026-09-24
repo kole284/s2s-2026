@@ -57,9 +57,14 @@ export default function () {
     bad({ action: "user", sessionToken: "abc.def" }, 401),
     "loš sessionToken", 401, "Sesija je istekla. Prijavite se ponovo.",
   );
+  // Sirov access code se prima samo na `login`; bez sesije je uvek 401.
   expectError(
-    bad({ action: "user" }),
-    "bez koda i sesije", 400, "Nevažeći format pristupnog koda.",
+    bad({ action: "user" }, 401),
+    "bez sesije", 401, "Sesija je istekla. Prijavite se ponovo.",
+  );
+  expectError(
+    bad({ action: "user", userCode: codeA }, 401),
+    "sirov kod bez sesije", 401, "Sesija je istekla. Prijavite se ponovo.",
   );
 
   // --- run token ---
