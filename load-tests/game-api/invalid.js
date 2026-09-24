@@ -79,22 +79,19 @@ export default function () {
 
   // --- vrednosti (validacija je pre limitera i ne troši token) ---
   expectError(score(tokenA, -1, 0, 0), "score -1", 400, "Nevažeći rezultat.");
-  expectError(score(tokenA, 250001, 0, 0), "score 250001", 400, "Nevažeći rezultat.");
+  expectError(score(tokenA, 10_000_001, 0, 0), "score 10000001", 400, "Nevažeći rezultat.");
   expectError(score(tokenA, "abc", 0, 0), "score string", 400, "Nevažeći rezultat.");
   expectError(score(tokenA, 1.5, 0, 0), "score 1.5", 400, "Nevažeći rezultat.");
   expectError(score(tokenA, 0, 601, 0), "floor 601", 400, "Nevažeći sprat.");
   expectError(score(tokenA, 0, 2.5, 0), "floor 2.5", 400, "Nevažeći sprat.");
   expectError(score(tokenA, 0, 0, 301), "combo 301", 400, "Nevažeći combo.");
 
-  // Envelope: score=1000 uz floor=0/combo=0 prolazi edge validaciju i
-  // anti-cheat, ali krši result_score_envelope u bazi. Očekivano ponašanje je
-  // 400; ako stigne 500, to je nalaz (edge ne proverava envelope sam).
-  const envelope = score(tokenA, 1000, 0, 0, 400);
-  check(envelope, {
-    "envelope prekršen: 400 (500 = nalaz)": (r) => r.status === 400,
-    "envelope prekršen: \"Nevažeći rezultat.\"": () =>
-      jsonOf(envelope).error === "Nevažeći rezultat.",
-  });
+  // Donja granica (needs_combo): combo 5 sam donosi 60·5·6 = 1800 poena.
+  expectError(score(tokenA, 100, 0, 5), "score ispod combo minimuma", 400, "Nevažeći rezultat.");
+
+  // Gornja granica po vremenu partije: nekoliko sekundi od start-run
+  // dozvoljava najviše par hiljada poena bez combo-a i raketa.
+  expectError(score(tokenA, 200000, 0, 0), "score iznad granice partije", 400, "Nevažeći rezultat.");
 
   // --- dvostruko slanje istog tokena ---
   const first = score(tokenA, 0, 0, 0, 200);
