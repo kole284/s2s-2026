@@ -12,3 +12,6 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+# k6 load test podaci (seedovani access kodovi)
+load-tests/data/
