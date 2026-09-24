@@ -51,11 +51,27 @@ export const CODES = new SharedArray("codes", () => {
 });
 
 // Svaki scenario dobija svoje kodove, da se rate-limit bucket-i ne mešaju.
+// Rate-limit scenariji imaju po 4 koda: svako ponovno pokretanje uzima sledeći
+// (-e RUN_ID=0..3), jer je bucket prethodnog pokretanja možda još pun.
 export const CODE_SLOTS = {
   smoke: [0, 1],
   legit: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  "rl-user": [12, 13, 14, 15],
+  "rl-profile": [16, 17, 18, 19],
+  "rl-run-score": [20, 21, 22, 23],
 };
+
+export const RUN_ID = Number(__ENV.RUN_ID ?? 0);
+
+if (!Number.isInteger(RUN_ID) || RUN_ID < 0 || RUN_ID > 3) {
+  throw new Error(`RUN_ID mora biti 0..3 (dobijeno: ${__ENV.RUN_ID})`);
+}
 
 export function codesFor(slot) {
   return CODE_SLOTS[slot].map((i) => CODES[i]);
+}
+
+// Jedan kod po pokretanju za rate-limit scenarije.
+export function codeForRun(slot) {
+  return CODES[CODE_SLOTS[slot][RUN_ID]];
 }
