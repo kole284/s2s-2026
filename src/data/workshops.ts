@@ -22,7 +22,7 @@ export const WORKSHOPS: Workshop[] = [
     id: 3,
     shortName: "Cybersecurity",
     fullName: "Cybersecurity",
-    lecturers: ["Petar Nikolić", "Petar Lukić"],
+    lecturers: ["Petar Nikolić"],
   },
   {
     id: 4,

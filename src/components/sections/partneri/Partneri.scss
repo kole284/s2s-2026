@@ -6,7 +6,7 @@
   position: relative;
 
   width: 100%;
-  height: calc(1454 * var(--partner-u));
+  height: calc(1200 * var(--partner-u));
   min-height: 100vh;
 
   margin-top: -1px;
@@ -16,32 +16,6 @@
   overflow-y: visible;
 
   background: $color-blue;
-}
-
-.partneri-page::after {
-  position: absolute;
-  z-index: 4;
-  top: calc(1319 * var(--partner-u));
-  left: 0;
-
-  width: 100%;
-  height: calc(135 * var(--partner-u));
-
-  background: $color-blue;
-
-  clip-path: polygon(
-    0 27.41%,
-    22.85% 0,
-    47.22% 54.81%,
-    66.81% 0,
-    95% 54.07%,
-    100% 8.15%,
-    100% 100%,
-    0 100%
-  );
-
-  content: "";
-  pointer-events: none;
 }
 
 .partneri-header,
@@ -190,13 +164,13 @@
   );
 }
 
-.financial-section {
+.media-section {
   top: calc(701 * var(--partner-u));
 
   height: calc(258 * var(--partner-u));
 }
 
-.financial-section::before {
+.media-section::before {
   background: $color-white;
 
   clip-path: polygon(
@@ -216,13 +190,8 @@
   );
 }
 
-.financial-section .section-content > h2,
 .media-section .section-content > h2 {
   color: $color-blue;
-}
-
-.financial-section .section-content > h2 {
-  top: calc(144 * var(--partner-u));
 }
 
 .goods-section {
@@ -247,31 +216,6 @@
     39.1% 79.25%,
     21.04% 100%,
     0 84.15%
-  );
-}
-
-.media-section {
-  top: calc(1111 * var(--partner-u));
-
-  height: calc(282 * var(--partner-u));
-}
-
-.media-section::before {
-  background: $color-white;
-
-  clip-path: polygon(
-    0 4.61%,
-    21.04% 19.5%,
-    39.1% 0,
-    59.03% 15.96%,
-    73.75% 2.48%,
-    100% 8.51%,
-    100% 77.66%,
-    95% 100%,
-    66.81% 73.76%,
-    47.22% 100%,
-    22.85% 73.76%,
-    0 86.88%
   );
 }
 
@@ -455,13 +399,6 @@
   width: calc(300 * var(--partner-u));
 }
 
-.illustration-handshake {
-  top: calc(100 * var(--partner-u));
-  right: calc(-10 * var(--partner-u));
-
-  width: calc(410 * var(--partner-u));
-}
-
 .illustration-can {
   top: calc(7 * var(--partner-u));
   left: calc(295 * var(--partner-u));
@@ -488,16 +425,11 @@
 
 @media only screen and (min-width: 769px) {
   .partneri-page {
-    height: calc(1675 * var(--partner-u));
+    height: calc(1360 * var(--partner-u));
 
-    // Visina dizajna (1675u ≈ 116vw) je viša od viewporta samo na desktopu.
-    // Na tabletu u portretu je 100vh viši od sadržaja, pa je min-height
-    // dodavao stotine px praznog plavog prostora ispod poslednjeg reda.
+    // Na tabletu u portretu min-height: 100vh dodaje prazan plavi prostor
+    // ispod poslednjeg reda.
     min-height: 0;
-  }
-
-  .partneri-page::after {
-    top: calc(1540 * var(--partner-u));
   }
 
   .partner-section {
@@ -512,7 +444,7 @@
     height: calc(320 * var(--partner-u));
   }
 
-  .financial-section {
+  .media-section {
     top: calc(732 * var(--partner-u));
 
     height: calc(340 * var(--partner-u));
@@ -524,29 +456,15 @@
     height: calc(315 * var(--partner-u));
   }
 
-  .media-section {
-    top: calc(1274 * var(--partner-u));
-
-    height: calc(340 * var(--partner-u));
-  }
-
   .hexagon-row {
     display: none;
   }
 
   .section-content > h2,
-  .financial-section .section-content > h2 {
+  .media-section .section-content > h2 {
     top: 20%;
 
     transform: translateX(-50%);
-  }
-
-  .financial-section .section-content > h2 {
-    top: 25%;
-  }
-
-  .financial-section .hexagon-marquee {
-    top: 42%;
   }
 
   .media-section .hexagon-marquee {
@@ -640,10 +558,6 @@
     animation: none;
   }
 
-  .financial-section .hexagon-svg {
-    animation: none;
-  }
-
   .goods-section .hexagon-svg {
     animation: none;
   }
@@ -670,7 +584,7 @@
     --partner-u: 0.2564102564vw;
     --partner-stroke: 0.2728205128vw;
 
-    height: calc(1118 * var(--partner-u));
+    height: calc(910 * var(--partner-u));
     min-height: 0;
   }
 
@@ -687,24 +601,6 @@
       28.88% 76.62%,
       11.84% 100%,
       0 76.62%
-    );
-  }
-
-  .partneri-page::after {
-    top: calc(1029 * var(--partner-u));
-
-    height: calc(89 * var(--partner-u));
-
-    clip-path: polygon(
-      0 34.43%,
-      17.92% 6.39%,
-      34.79% 34.43%,
-      53.08% 0,
-      68.33% 38.42%,
-      88.24% 0.87%,
-      100% 28.48%,
-      100% 100%,
-      0 100%
     );
   }
 
@@ -765,13 +661,13 @@
     );
   }
 
-  .financial-section {
+  .media-section {
     top: calc(486 * var(--partner-u));
 
     height: calc(212 * var(--partner-u));
   }
 
-  .financial-section::before {
+  .media-section::before {
     clip-path: polygon(
       0 0.36%,
       11.6% 11.32%,
@@ -813,31 +709,6 @@
     );
   }
 
-  .media-section {
-    top: calc(855 * var(--partner-u));
-
-    height: calc(209 * var(--partner-u));
-  }
-
-  .media-section::before {
-    clip-path: polygon(
-      0 0.19%,
-      15.89% 11%,
-      32.03% 0.48%,
-      51.96% 8.38%,
-      65.48% 2.33%,
-      85.25% 11%,
-      100% 4.92%,
-      100% 95.34%,
-      88.24% 83.64%,
-      68.33% 99.62%,
-      53.08% 83.25%,
-      34.79% 98.85%,
-      17.92% 85.02%,
-      0 97.91%
-    );
-  }
-
   .section-content > h2 {
     top: calc(48 * var(--partner-u));
 
@@ -848,10 +719,6 @@
 
   .annual-section .section-content > h2 {
     top: calc(50 * var(--partner-u));
-  }
-
-  .financial-section .section-content > h2 {
-    top: calc(48 * var(--partner-u));
   }
 
   .media-section .section-content > h2 {
@@ -966,10 +833,6 @@
     top: calc(92 * var(--partner-u));
   }
 
-  .financial-section .hexagon-marquee {
-    top: calc(79 * var(--partner-u));
-  }
-
   .goods-section .hexagon-marquee {
     top: calc(83 * var(--partner-u));
   }
@@ -1025,14 +888,6 @@
     width: calc(166 * var(--partner-u));
   }
 
-  .illustration-handshake {
-    top: calc(80 * var(--partner-u));
-    right: auto;
-    left: calc(39 * var(--partner-u));
-
-    width: calc(352 * var(--partner-u));
-  }
-
   .illustration-can {
     top: calc(-3 * var(--partner-u));
     left: calc(-20 * var(--partner-u));
@@ -1050,7 +905,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .annual-section .hexagon-svg,
-  .financial-section .hexagon-svg,
   .goods-section .hexagon-svg,
   .media-section .hexagon-svg,
   .hexagon-marquee-track {

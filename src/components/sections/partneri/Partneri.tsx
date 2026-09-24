@@ -8,7 +8,6 @@ import calendarIllustration from "@/assets/partneri/kalendar.svg";
 import cameraIllustration from "@/assets/partneri/kamera.svg";
 import canIllustration from "@/assets/partneri/konzerva.svg";
 import crownIllustration from "@/assets/partneri/kruna.svg";
-import handshakeIllustration from "@/assets/partneri/komunizam.svg";
 import wonderLogo from "@/assets/partneri/pokrovitelj/wonder-wordmark-gradient.webp";
 
 import { ROBNI_PARTNERS } from "./partners";
@@ -410,12 +409,12 @@ const Partneri = () => (
     />
 
     <PartnerRow
-      className="financial-section"
-      title="FINANSIJSKI"
+      className="media-section"
+      title="MEDIJSKI"
       filled={false}
       direction="right"
-      illustration={handshakeIllustration}
-      illustrationClassName="illustration-handshake"
+      illustration={cameraIllustration}
+      illustrationClassName="illustration-camera"
     />
 
     <PartnerRow
@@ -425,15 +424,6 @@ const Partneri = () => (
       illustration={canIllustration}
       illustrationClassName="illustration-can"
       logos={ROBNI_PARTNERS}
-    />
-
-    <PartnerRow
-      className="media-section"
-      title="MEDIJSKI"
-      filled={false}
-      direction="right"
-      illustration={cameraIllustration}
-      illustrationClassName="illustration-camera"
     />
   </section>
 );

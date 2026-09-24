@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import arrowDefault from "@/assets/Vector.svg";
 import closeIcon from "@/assets/Layer_1.svg";
+import aleksaKrstic from "@/assets/predavaci/aleksa-krstic.jpeg";
 import aleksandarIlankovic from "@/assets/predavaci/aleksandar-ilankovic.webp";
 import anaMilivojevic from "@/assets/predavaci/ana-milivojevic.webp";
 import damirVelovic from "@/assets/predavaci/damir-velovic.webp";
@@ -47,6 +48,12 @@ const OPISI = {
     "Radionica je namenjena svima koji žele da se bolje upoznaju sa tehnikama i analizama koje se primenjuju pri rešavanju poslovnih studija slučaja. Kroz konkretne primere, učesnici će proći kroz proces rešavanja:od analize i definisanja strategije, do implementacije i sagledavanja efekata. Fokus će biti na razumevanju logike svakog koraka i praktičnim smernicama koje olakšavaju rešavanje složenih poslovnih izazova",
   cybersecurity:
     "Radionica je namenjena svim studentima koje interesuje sajber bezbednost, bez obzira na predznanje. Krećemo od nule: od osnovnih koncepata, preko slučajeva hakovanja u pravom životu, i na kraju simulacije hakerskih napada koje će učesnici sprovoditi uz pomoć predavača. Učesnici će takođe dobiti pregled karijernih puteva u okviru sajber bezbednosti, uz biblioteku materijala za dalji rad.",
+  digitalniMarketing: [
+    "Vidiš da je nešto lepo, ali ne znaš zašto?",
+    "Pitaš se zašto neki video privuče pažnju za nekoliko sekundi, dok drugi ljudi samo preskoče?",
+    "Ako si na početku puta u marketingu ili već imaš iskustva, ali ti nedostaju struktura i dublje razumevanje, ova radionica je za tebe.",
+    "Tokom dva dana naučićeš da prepoznaš šta čini sadržaj vizuelno privlačnim, kako da privučeš i zadržiš pažnju i, najvažnije, kako da sve to pretvoriš u sistem koji donosi prodaje.",
+  ],
   startup:
     "Neki ljudi samo posmatraju kako se svijet mijenja i klimaju glavom, dok drugi uzmu stvari u svoje ruke jer ih nervira status quo. Ako si od ovih drugih, ovo su dva dana u kojima prestaješ da pričaš šta bi moglo biti i počinješ da praviš ono što mora postojati. Kroz intenzivan rad na sopstvenoj ideji, validaciju i testiranje na terenu, proći ćeš cijeli put od nule do gotovog koncepta. Cilj nije da naučiš šta je startup — cilj je da izađeš sa svojim",
 } as const;
@@ -63,7 +70,7 @@ const PREDAVACI: PredavacPodaci[] = [
   { ime: "Ana Milivojević", slika: anaMilivojevic, opis: [OPISI.caseMethod] },
   { ime: "Mina Popović", slika: minaPopovic, opis: [OPISI.caseMethod] },
   { ime: "Petar Nikolić", slika: petarNikolic, opis: [OPISI.cybersecurity] },
-  { ime: "Petar Lukić", opis: [OPISI.cybersecurity] },
+  { ime: "Aleksa Krstić", slika: aleksaKrstic, opis: [...OPISI.digitalniMarketing] },
   { ime: "Damir Velović", slika: damirVelovic, opis: [OPISI.startup] },
 ];
 

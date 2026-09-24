@@ -24,6 +24,7 @@ import cyberDetailIcon from "@/assets/radionice/detail-icons/cybersec.svg";
 import marketingDetailIcon from "@/assets/radionice/detail-icons/digital-marketing.svg";
 import gameDetailIcon from "@/assets/radionice/detail-icons/game-development.svg";
 import cDetailIcon from "@/assets/radionice/detail-icons/intro-to-c.svg";
+import dataScienceDetailIcon from "@/assets/radionice/detail-icons/data-science.svg";
 import startupDetailIcon from "@/assets/radionice/detail-icons/startup.svg";
 import designDetailIcon from "@/assets/radionice/detail-icons/ui-ux-design.svg";
 import { WORKSHOPS, type Workshop } from "@/data/workshops";
@@ -61,6 +62,7 @@ const WORKSHOP_DETAIL_ICONS: Partial<Record<number, string>> = {
   7: gameDetailIcon,
   8: aiDetailIcon,
   9: startupDetailIcon,
+  10: dataScienceDetailIcon,
 };
 
 const PREDAVAC_IDS: Record<number, number> = {
