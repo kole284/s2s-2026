@@ -59,6 +59,8 @@ export const CODE_SLOTS = {
   "rl-user": [12, 13, 14, 15],
   "rl-profile": [16, 17, 18, 19],
   "rl-run-score": [20, 21, 22, 23],
+  invalid: [24, 25],
+  anticheat: [26],
 };
 
 export const RUN_ID = Number(__ENV.RUN_ID ?? 0);
