@@ -28,6 +28,12 @@ export const options = {
     http_req_failed: ["rate==0"],
     // Smoke hvata i cold start, zato je prag labaviji od full testa (800ms).
     http_req_duration: ["p(95)<2000"],
+    // Pragovi po akciji su tu da bi k6 prikazao latenciju po akciji u summary-ju.
+    "http_req_duration{action:leaderboard}": ["p(95)<5000"],
+    "http_req_duration{action:login}": ["p(95)<5000"],
+    "http_req_duration{action:user}": ["p(95)<5000"],
+    "http_req_duration{action:start-run}": ["p(95)<5000"],
+    "http_req_duration{action:submit-score}": ["p(95)<5000"],
   },
 };
 
