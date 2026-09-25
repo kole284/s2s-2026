@@ -12,7 +12,8 @@ const CTA_ITEM = SECTION_ROUTES.find(({ path }) => path === '/prijava')!;
 const PRIJAVA_PATH = '/prijava';
 const GAME_SECTION_ID = 'igrica';
 const GAME_LABEL = 'Igrica';
-const GAME_PATH = '/igrica';
+// Samostalna stranica igrice (public/igrica), otvara se u novom tabu.
+const GAME_URL = '/igrica/';
 const MENU_SCROLL_LOCK_CLASS = 'navbar-menu-scroll-locked';
 const NAVBAR_SCROLL_THRESHOLD = 24;
 
@@ -147,8 +148,8 @@ const Navbar = () => {
 
   const navigateToGame = useCallback(() => {
     closeMenu();
-    navigate(GAME_PATH);
-  }, [closeMenu, navigate]);
+    window.open(GAME_URL, '_blank', 'noopener');
+  }, [closeMenu]);
 
   useEffect(() => {
     const body = document.body;
