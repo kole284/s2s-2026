@@ -1,8 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   CSSProperties,
+  MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
+
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 import calendarIllustration from "@/assets/partneri/kalendar.svg";
 import cameraIllustration from "@/assets/partneri/kamera.svg";
@@ -10,6 +13,8 @@ import canIllustration from "@/assets/partneri/konzerva.svg";
 import crownIllustration from "@/assets/partneri/kruna.svg";
 import wonderLogo from "@/assets/partneri/pokrovitelj/wonder-wordmark-gradient.webp";
 
+import PartnerPreview from "./PartnerPreview";
+import { isLeavingTowardPreview } from "./partnerPreviewLayout";
 import { ROBNI_PARTNERS } from "./partners";
 import type { Partner } from "./partners";
 
@@ -40,6 +45,13 @@ const MARQUEE_GROUP_COUNT = 3;
 const MARQUEE_SPEED_PX_PER_SECOND = 24;
 const AUTOPLAY_RESUME_DELAY_MS = 450;
 const MAX_FRAME_DELTA_SECONDS = 0.1;
+// Pomeranje manje od ovoga je klik/tap na logo, veće je prevlačenje trake.
+const DRAG_THRESHOLD_PX = 6;
+const HOVER_MEDIA_QUERY = "(hover: hover) and (pointer: fine)";
+// Koliko kartica čeka kad miš sa loga krene ka njoj, da stigne do linka.
+const PREVIEW_HIDE_DELAY_MS = 2000;
+
+type PreviewState = { partner: Partner; anchor: DOMRect };
 
 const Hexagon = ({
   filled = true,
@@ -127,8 +139,13 @@ const HexagonMarquee = ({
   const draggingRef = useRef(false);
   const activePointerIdRef = useRef<number | null>(null);
   const dragStartXRef = useRef(0);
+  const dragStartYRef = useRef(0);
   const dragStartOffsetRef = useRef(0);
   const resumeAutoplayAtRef = useRef(0);
+  const suppressClickRef = useRef(false);
+  const [preview, setPreview] = useState<PreviewState | null>(null);
+  const canHover = useMediaQuery(HOVER_MEDIA_QUERY);
+  const hidePreviewTimerRef = useRef<number | null>(null);
 
   const getNormalizedOffset = useCallback(() => {
     const groupWidth = groupWidthRef.current;
@@ -247,26 +264,118 @@ const HexagonMarquee = ({
     };
   }, [applyTrackTransform, direction]);
 
+  const cancelHidePreview = useCallback(() => {
+    if (hidePreviewTimerRef.current !== null) {
+      window.clearTimeout(hidePreviewTimerRef.current);
+      hidePreviewTimerRef.current = null;
+    }
+  }, []);
+
+  // Zatvara karticu odmah i pušta traku da nastavi.
+  const hidePreview = useCallback(() => {
+    cancelHidePreview();
+
+    if (!draggingRef.current) {
+      resumeAutoplayAtRef.current =
+        performance.now() + AUTOPLAY_RESUME_DELAY_MS;
+      previousFrameTimeRef.current = null;
+    }
+
+    setPreview(null);
+  }, [cancelHidePreview]);
+
+  useEffect(() => cancelHidePreview, [cancelHidePreview]);
+
+  // Kartica se zatvara na scroll (logo se pomera, a kartica je fixed) i kad
+  // prozor izgubi fokus (npr. link se otvorio u novom tabu).
+  useEffect(() => {
+    if (!preview) return;
+
+    const close = () => hidePreview();
+
+    window.addEventListener("scroll", close, { passive: true });
+    window.addEventListener("blur", close);
+
+    return () => {
+      window.removeEventListener("scroll", close);
+      window.removeEventListener("blur", close);
+    };
+  }, [preview, hidePreview]);
+
+  // Pointer se ne hvata odmah, nego tek kad pomeranje pređe prag. Tako obican
+  // klik/tap stigne do linka na logou, a prevlačenje i dalje pomera traku.
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
 
-    event.currentTarget.setPointerCapture(event.pointerId);
-    draggingRef.current = true;
+    suppressClickRef.current = false;
     activePointerIdRef.current = event.pointerId;
     dragStartXRef.current = event.clientX;
+    dragStartYRef.current = event.clientY;
     dragStartOffsetRef.current = offsetRef.current;
-    resumeAutoplayAtRef.current = Number.POSITIVE_INFINITY;
   };
 
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+  // Prekida započeti gest (i prevlačenje, ako je počelo) i pušta traku da
+  // nastavi. Poziva se i kad pointerup nikad ne stigne, npr. kad klik na logo
+  // otvori novi tab pa se dugme pusti u tom tabu.
+  const resetPointerGesture = useCallback(() => {
+    const pointerId = activePointerIdRef.current;
+    const viewport = viewportRef.current;
+
+    activePointerIdRef.current = null;
+
+    if (!draggingRef.current) return;
+
+    draggingRef.current = false;
+    resumeAutoplayAtRef.current =
+      performance.now() + AUTOPLAY_RESUME_DELAY_MS;
+    previousFrameTimeRef.current = null;
+
     if (
-      !draggingRef.current ||
-      activePointerIdRef.current !== event.pointerId
+      pointerId !== null &&
+      viewport?.hasPointerCapture(pointerId)
     ) {
+      viewport.releasePointerCapture(pointerId);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("blur", resetPointerGesture);
+
+    return () => window.removeEventListener("blur", resetPointerGesture);
+  }, [resetPointerGesture]);
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== event.pointerId) return;
+
+    // Miš bez pritisnutog levog dugmeta ne prevlači traku, čak i ako
+    // pointerup nije stigao do ove stranice.
+    if (event.pointerType === "mouse" && (event.buttons & 1) === 0) {
+      resetPointerGesture();
       return;
     }
 
     const dragDistance = event.clientX - dragStartXRef.current;
+    const verticalDistance = event.clientY - dragStartYRef.current;
+
+    // Pokret u bilo kom smeru (i vertikalni skrol stranice prstom) nije tap,
+    // pa click koji eventualno usledi ne sme da otvori link.
+    if (
+      Math.abs(dragDistance) >= DRAG_THRESHOLD_PX ||
+      Math.abs(verticalDistance) >= DRAG_THRESHOLD_PX
+    ) {
+      suppressClickRef.current = true;
+    }
+
+    if (!draggingRef.current) {
+      if (Math.abs(dragDistance) < DRAG_THRESHOLD_PX) return;
+
+      event.currentTarget.setPointerCapture(event.pointerId);
+      draggingRef.current = true;
+      suppressClickRef.current = true;
+      resumeAutoplayAtRef.current = Number.POSITIVE_INFINITY;
+      cancelHidePreview();
+      setPreview(null);
+    }
 
     offsetRef.current = dragStartOffsetRef.current - dragDistance;
     applyTrackTransform();
@@ -275,15 +384,48 @@ const HexagonMarquee = ({
   const finishPointerDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (activePointerIdRef.current !== event.pointerId) return;
 
-    draggingRef.current = false;
-    activePointerIdRef.current = null;
-    resumeAutoplayAtRef.current =
-      performance.now() + AUTOPLAY_RESUME_DELAY_MS;
-    previousFrameTimeRef.current = null;
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
+    // pointercancel znači da je browser preuzeo pokret (skrol stranice).
+    if (event.type === "pointercancel") {
+      suppressClickRef.current = true;
     }
+
+    resetPointerGesture();
+  };
+
+  // Posle prevlačenja, klik koji browser pošalje ne sme da otvori link.
+  const handleClickCapture = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (!suppressClickRef.current) return;
+
+    suppressClickRef.current = false;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  // Dok je miš/fokus na logou ili kartici, traka stoji da kartica ostane uz logo.
+  const openPreview = (partner: Partner, element: HTMLElement) => {
+    if (draggingRef.current) return;
+
+    cancelHidePreview();
+    resumeAutoplayAtRef.current = Number.POSITIVE_INFINITY;
+
+    if (canHover) {
+      setPreview({ partner, anchor: element.getBoundingClientRect() });
+    }
+  };
+
+  // Kartica ostaje samo ako miš sa loga krene ka njoj; inače nestaje odmah.
+  const leaveLogo = (clientY: number) => {
+    cancelHidePreview();
+
+    if (!preview || !isLeavingTowardPreview(preview.anchor, clientY)) {
+      hidePreview();
+      return;
+    }
+
+    hidePreviewTimerRef.current = window.setTimeout(
+      hidePreview,
+      PREVIEW_HIDE_DELAY_MS,
+    );
   };
 
   return (
@@ -294,7 +436,18 @@ const HexagonMarquee = ({
       onPointerMove={handlePointerMove}
       onPointerUp={finishPointerDrag}
       onPointerCancel={finishPointerDrag}
-      aria-hidden="true"
+      // Samo kad traka izgubi svoje hvatanje. Na dodir browser implicitno hvata
+      // prst za dodirnuti link, a taj lostpointercapture ne sme da prekine drag.
+      onLostPointerCapture={(event) => {
+        if (event.target === event.currentTarget) finishPointerDrag(event);
+      }}
+      onClickCapture={handleClickCapture}
+      // Fokus tastaturom može da skroluje overflow:hidden traku; položaj
+      // trake određuje samo transform, pa scroll vraćamo na 0.
+      onScroll={(event) => {
+        event.currentTarget.scrollLeft = 0;
+      }}
+      aria-hidden={logos ? undefined : "true"}
     >
       <div ref={trackRef} className="hexagon-marquee-track">
         {Array.from({ length: MARQUEE_GROUP_COUNT }, (_, groupIndex) => (
@@ -302,23 +455,66 @@ const HexagonMarquee = ({
             ref={groupIndex === 0 ? groupRef : undefined}
             className="hexagon-marquee-group"
             key={groupIndex}
+            // Samo prva grupa je za čitače ekrana i Tab; ostale su kopije za petlju.
+            aria-hidden={logos && groupIndex > 0 ? "true" : undefined}
           >
             {logos
-              ? logos.map((partner) => (
-                  <Hexagon
-                    key={`${groupIndex}-${partner.name}`}
-                    logoSrc={partner.src}
-                    logoAlt={partner.name}
-                    logoCrop={partner.crop}
-                    logoScale={partner.scale}
-                  />
-                ))
+              ? logos.map((partner) => {
+                  return (
+                    <a
+                      key={`${groupIndex}-${partner.name}`}
+                      className="hexagon-link"
+                      href={partner.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      draggable={false}
+                      tabIndex={groupIndex > 0 ? -1 : undefined}
+                      aria-label={`${partner.name} (otvara se u novom tabu)`}
+                      onPointerEnter={(event) => {
+                        if (event.pointerType === "mouse") {
+                          openPreview(partner, event.currentTarget);
+                        }
+                      }}
+                      onPointerLeave={(event) => {
+                        if (event.pointerType === "mouse") {
+                          leaveLogo(event.clientY);
+                        }
+                      }}
+                      // Samo fokus sa tastature otvara karticu. Fokus posle klika
+                      // mišem (i povratak na tab) ne sme da je vrati.
+                      onFocus={(event) => {
+                        if (event.currentTarget.matches(":focus-visible")) {
+                          openPreview(partner, event.currentTarget);
+                        }
+                      }}
+                      onBlur={hidePreview}
+                      onClick={hidePreview}
+                    >
+                      <Hexagon
+                        logoSrc={partner.src}
+                        logoAlt=""
+                        logoCrop={partner.crop}
+                        logoScale={partner.scale}
+                      />
+                    </a>
+                  );
+                })
               : Array.from({ length: MARQUEE_HEXAGON_COUNT }, (_, index) => (
                   <Hexagon filled={filled} key={`${groupIndex}-${index}`} />
                 ))}
           </div>
         ))}
       </div>
+
+      {preview ? (
+        <PartnerPreview
+          partner={preview.partner}
+          anchor={preview.anchor}
+          onPointerEnter={cancelHidePreview}
+          onPointerLeave={hidePreview}
+          onOpen={hidePreview}
+        />
+      ) : null}
     </div>
   );
 };

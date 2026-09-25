@@ -24,7 +24,7 @@ import radionicaRequired from "@/assets/prijava/fields/radionica-required.svg";
 import munjicaImg from "@/assets/prijava/icons/munjica.svg";
 import prijavaCornerStars from "@/assets/prijava/decor/zvezde.svg";
 import { WORKSHOPS } from "@/data/workshops";
-import { useMediaQuery } from "./useMediaQuery";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const NASLOVI_KORAKA = ["PRIJAVI SE", "RADIONICE", "PANEL", "ISKUSTVA"];
 // Isto kao $desktop u _mediaqueries.scss.

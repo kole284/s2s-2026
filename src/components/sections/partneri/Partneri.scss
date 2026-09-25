@@ -340,6 +340,10 @@
   display: block;
 
   width: 100%;
+  // Mesto za podizanje šestougla na hover (overflow: hidden bi mu odsekao
+  // vrh); negativna margina vraća šestouglove tačno na staro mesto.
+  margin-top: calc(-8 * var(--partner-u));
+  padding-block: calc(8 * var(--partner-u));
 
   overflow: hidden;
 
@@ -352,6 +356,35 @@
 
 .hexagon-marquee:active {
   cursor: grabbing;
+}
+
+// Logo partnera je link; prevlačenje trake i dalje radi (vidi Partneri.tsx).
+.hexagon-link {
+  display: block;
+  flex: none;
+  cursor: pointer;
+  -webkit-user-drag: none;
+
+  .hexagon {
+    transition: transform 160ms ease;
+  }
+
+  &:focus-visible {
+    outline: calc(3 * var(--partner-u)) solid $color-yellow;
+    outline-offset: calc(4 * var(--partner-u));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hexagon-link:hover .hexagon {
+    transform: translateY(calc(-4 * var(--partner-u)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hexagon-link .hexagon {
+    transition: none;
+  }
 }
 
 .hexagon-marquee-track {
