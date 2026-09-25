@@ -14,21 +14,21 @@
     12.5% 100%,
     0 calc(100% - var(--o-projektu-bottom-teeth))
   );
-  --o-projektu-flat-shape: polygon(
-    0 0, 100% 0, 100% 100%, 87.5% 100%, 75% 100%,
-    62.5% 100%, 50% 100%, 37.5% 100%, 25% 100%,
-    12.5% 100%, 0 100%
-  );
 
   position: relative;
-  z-index: 1;
+  // Ispod naslovne (z-index 3, njeni zupci se spuštaju preko ove sekcije),
+  // a iznad Radionica (1), čija se pozadina podvlači ispod ovih zubaca.
+  z-index: 2;
   width: 100%;
   height: auto;
   overflow-x: clip;
   overflow-y: visible;
   color: $color-black;
   font-family: $font-body;
-  background: $color-white;
+  // Belo samo iznad zubaca; prorezi između zubaca su providni, pa ih
+  // popunjava pozadina Radionica (belo ili plavo uz predavača).
+  background: linear-gradient($color-white, $color-white) top / 100%
+    calc(100% - var(--o-projektu-bottom-teeth)) no-repeat;
   margin-top: -2px;
   padding-top: 2px;
 }
@@ -44,15 +44,10 @@
   pointer-events: none;
 }
 
-/* Uz plavu podlogu prikaza predavača, beli prorezi između zubaca ne pripadaju prelazu. */
-.o-projektu:has(+ .radionice-page--predavac-open)::after {
-  clip-path: var(--o-projektu-flat-shape);
-}
-
-.o-projektu:has(+ .radionice-page--view-to-workshop-unfolding)::after {
-  clip-path: var(--o-projektu-teeth-shape);
-  transition: clip-path 420ms linear;
-}
+/*
+ * Zupci su uvek isti; prorezi su providni i popunjava ih pozadina Radionica,
+ * pa se uz plavog predavača stapaju bez šava.
+ */
 
 .o-projektu-white-stage,
 .o-projektu-blue-stage {
@@ -356,10 +351,6 @@
       50% calc(100% - var(--o-projektu-bottom-teeth)),
       25% 100%,
       0 calc(100% - var(--o-projektu-bottom-teeth))
-    );
-    --o-projektu-flat-shape: polygon(
-      0 0, 100% 0, 100% 100%, 75% 100%, 50% 100%,
-      25% 100%, 0 100%
     );
   }
 

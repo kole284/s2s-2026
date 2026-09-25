@@ -1,10 +1,13 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type AnimationEvent,
+  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
+  type TransitionEvent,
 } from "react";
 
 import graphIcon from "@/assets/radionice/icons/case.webp";
@@ -63,6 +66,20 @@ const WORKSHOP_DETAIL_ICONS: Partial<Record<number, string>> = {
   8: aiDetailIcon,
   9: startupDetailIcon,
   10: dataScienceDetailIcon,
+};
+
+/*
+ * Crtež u nekim ikonicama nije centriran u slici (npr. drška četke, mehurići
+ * epruvete), pa naziv ispod izgleda pomereno. Ovo je pomeraj vizuelnog centra
+ * crteža (težište mastila) u procentima širine stavke; naziv se pomera za toliko.
+ */
+const NAZIV_POMERAJ_PROCENATA: Partial<Record<number, number>> = {
+  1: -5.1,
+  4: -7.6,
+  5: 1.6,
+  7: 5.9,
+  9: -1.2,
+  10: 4,
 };
 
 const PREDAVAC_IDS: Record<number, number> = {
@@ -137,16 +154,37 @@ type TranzicijaPrikaza = {
 
 /*
  * Jedna lopta kroz četiri beata:
- * 1) papir se skupča u sredinu i stara pozadina se uvuče u njega,
- * 2) lopta ode udesno iz kadra,
- * 3) nova lopta uđe sa leve strane u sredinu,
- * 4) iz nje izlazi nova pozadina i širi se dok se papir odgužva.
- * Trajanja moraju da prate iste vrednosti u Radionice.scss.
+ * 1) papir se skupča u loptu u sredini vidljivog dela sekcije, a stara
+ *    pozadina se skupi u disk oko nje,
+ * 2) lopta izleti udesno i odnese disk stare pozadine sa sobom,
+ * 3) nova lopta uleti sleva na novu pozadinu,
+ * 4) papir se odgužva u novi prikaz.
+ * Trajanja moraju da prate iste vrednosti u Radionice.scss. Faze se pomeraju
+ * na transitionend; tajmer je samo rezerva ako događaj izostane.
  */
-const TRAJANJE_GUZVANJA_PRIKAZA_MS = 270;
-const TRAJANJE_IZLASKA_PRIKAZA_MS = 225;
-const TRAJANJE_ULASKA_PRIKAZA_MS = 255;
+const TRAJANJE_GUZVANJA_PRIKAZA_MS = 380;
+const TRAJANJE_IZLASKA_PRIKAZA_MS = 200;
+const TRAJANJE_ULASKA_PRIKAZA_MS = 230;
 const TRAJANJE_OTVARANJA_PRIKAZA_MS = 338;
+const REZERVA_TAJMERA_FAZE_MS = 120;
+
+/* Koliko lopta izleti iza ivice ekrana pre nego što uleti nova. */
+const MARGINA_VAN_KADRA_PX = 24;
+
+/* Pozicija elementa u koordinatama sekcije; transform ne utiče na offset*. */
+const pozicijaUSekciji = (element: HTMLElement, sekcija: HTMLElement) => {
+  let x = 0;
+  let y = 0;
+  let cvor: HTMLElement | null = element;
+
+  while (cvor && cvor !== sekcija) {
+    x += cvor.offsetLeft;
+    y += cvor.offsetTop;
+    cvor = cvor.offsetParent as HTMLElement | null;
+  }
+
+  return { x, y };
+};
 
 type RadioniceTrakaProps = {
   pauza: boolean;
@@ -546,7 +584,16 @@ const RadioniceTraka = ({
                     decoding="async"
                   />
 
-                  <span className="radionice-naziv">{radionica.shortName}</span>
+                  <span
+                    className="radionice-naziv"
+                    style={
+                      {
+                        "--rd-naziv-pomeraj": `${NAZIV_POMERAJ_PROCENATA[radionica.id] ?? 0}%`,
+                      } as CSSProperties
+                    }
+                  >
+                    {radionica.shortName}
+                  </span>
                 </button>
               );
             })}
@@ -667,6 +714,104 @@ const Radionice = () => {
     setTranzicijaPrikaza({ faza: "crumpling", smer: "to-workshop" });
   };
 
+  /*
+   * Putanja lopte se meri jednom, na početku prelaza (pre prvog paint-a):
+   * lopta nastaje u sredini dela sekcije koji se vidi na ekranu, a ne u
+   * sredini cele sekcije, pa ne može da završi ispod ivice ekrana. Svaki
+   * papir se skuplja oko svog centra i pomera u tu tačku.
+   */
+  const izmeriPutanjuLopte = useCallback(() => {
+    const sekcija = sekcijaRef.current;
+
+    if (!sekcija) return;
+
+    const sekcijaRect = sekcija.getBoundingClientRect();
+    const vidljivoGore = Math.max(sekcijaRect.top, 0);
+    const vidljivoDole = Math.min(sekcijaRect.bottom, window.innerHeight);
+    const vidljivoLevo = Math.max(sekcijaRect.left, 0);
+    const vidljivoDesno = Math.min(sekcijaRect.right, window.innerWidth);
+    const centarX = (vidljivoLevo + vidljivoDesno) / 2 - sekcijaRect.left;
+    const centarY =
+      (vidljivoDole > vidljivoGore
+        ? (vidljivoGore + vidljivoDole) / 2
+        : sekcijaRect.top + sekcijaRect.height / 2) - sekcijaRect.top;
+
+    const faktorX = Number.parseFloat(
+      getComputedStyle(sekcija).getPropertyValue("--rd-view-ball-scale-x"),
+    );
+    const sirinaLopte =
+      sekcijaRect.width *
+      (Number.isFinite(faktorX) ? faktorX : 0.15) *
+      UDEO_OBLIKA_X;
+    const poluprecnik = sirinaLopte / 2;
+
+    const postaviPapir = (
+      omotacSelektor: string,
+      papirSelektor: string,
+      prefiks: string,
+    ) => {
+      const omotac = sekcija.querySelector<HTMLElement>(omotacSelektor);
+      const papir = omotac?.querySelector<HTMLElement>(papirSelektor);
+
+      if (!omotac || !papir) return;
+
+      const omotacPoz = pozicijaUSekciji(omotac, sekcija);
+      const papirPoz = pozicijaUSekciji(papir, sekcija);
+      const papirCentarX = papirPoz.x + papir.offsetWidth / 2;
+      const papirCentarY = papirPoz.y + papir.offsetHeight / 2;
+
+      sekcija.style.setProperty(
+        `--rd-${prefiks}-origin`,
+        `${papirCentarX - omotacPoz.x}px ${papirCentarY - omotacPoz.y}px`,
+      );
+      sekcija.style.setProperty(`--rd-${prefiks}-dx`, `${centarX - papirCentarX}px`);
+      sekcija.style.setProperty(`--rd-${prefiks}-dy`, `${centarY - papirCentarY}px`);
+    };
+
+    postaviPapir(".radionice-default-view", ".radionice-band", "default");
+    postaviPapir(".radionice-predavac-view", ".predavac-band", "predavac");
+
+    const vidljivoDesnoOdCentra = vidljivoDesno - sekcijaRect.left - centarX;
+    const vidljivoLevoOdCentra = centarX - (vidljivoLevo - sekcijaRect.left);
+
+    sekcija.style.setProperty("--rd-ball-x", `${centarX}px`);
+    sekcija.style.setProperty("--rd-ball-y", `${centarY}px`);
+    sekcija.style.setProperty("--rd-ball-r", `${poluprecnik}px`);
+    sekcija.style.setProperty(
+      "--rd-ball-exit",
+      `${vidljivoDesnoOdCentra + poluprecnik * 1.4 + MARGINA_VAN_KADRA_PX}px`,
+    );
+    sekcija.style.setProperty(
+      "--rd-ball-enter",
+      `${-(vidljivoLevoOdCentra + poluprecnik * 1.4 + MARGINA_VAN_KADRA_PX)}px`,
+    );
+  }, []);
+
+  const fazaPrelaza = tranzicijaPrikaza?.faza;
+
+  useLayoutEffect(() => {
+    if (fazaPrelaza === "crumpling") izmeriPutanjuLopte();
+  }, [fazaPrelaza, izmeriPutanjuLopte]);
+
+  const predjiNaSledecuFazu = useCallback(
+    (trenutna: TranzicijaPrikaza) => {
+      if (trenutna.faza === "crumpling") {
+        // 1) Papir se skupčao u loptu, a stara pozadina u disk oko nje.
+        setTranzicijaPrikaza({ ...trenutna, faza: "exiting" });
+      } else if (trenutna.faza === "exiting") {
+        // 2) Lopta je izletela udesno i odnela disk stare pozadine.
+        setTranzicijaPrikaza({ ...trenutna, faza: "entering" });
+      } else if (trenutna.faza === "entering") {
+        // 3) Nova lopta je uletela sleva u centar.
+        setTranzicijaPrikaza({ ...trenutna, faza: "unfolding" });
+      } else {
+        setTranzicijaPrikaza(null);
+        tranzicijaPrikazaUToku.current = false;
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
     if (!tranzicijaPrikaza) return;
     if (
@@ -684,24 +829,42 @@ const Radionice = () => {
             ? TRAJANJE_ULASKA_PRIKAZA_MS
             : TRAJANJE_OTVARANJA_PRIKAZA_MS;
 
-    const tajmer = window.setTimeout(() => {
-      if (tranzicijaPrikaza.faza === "crumpling") {
-        // 1) Papir se skupčao u loptu i povukao staru pozadinu u sebe.
-        setTranzicijaPrikaza({ ...tranzicijaPrikaza, faza: "exiting" });
-      } else if (tranzicijaPrikaza.faza === "exiting") {
-        // 2) Lopta je otišla udesno iz kadra.
-        setTranzicijaPrikaza({ ...tranzicijaPrikaza, faza: "entering" });
-      } else if (tranzicijaPrikaza.faza === "entering") {
-        // 3) Nova lopta je stigla sa leve strane u centar.
-        setTranzicijaPrikaza({ ...tranzicijaPrikaza, faza: "unfolding" });
-      } else {
-        setTranzicijaPrikaza(null);
-        tranzicijaPrikazaUToku.current = false;
-      }
-    }, trajanje);
+    // Rezerva: faza se inače pomera na transitionend (zavrsiFazuPrelaza).
+    const tajmer = window.setTimeout(
+      () => predjiNaSledecuFazu(tranzicijaPrikaza),
+      trajanje + REZERVA_TAJMERA_FAZE_MS,
+    );
 
     return () => window.clearTimeout(tajmer);
-  }, [tranzicijaPrikaza]);
+  }, [tranzicijaPrikaza, predjiNaSledecuFazu]);
+
+  /*
+   * Faza se završava kad se završi transform omotača koji se u njoj pomera:
+   * odlazeći prikaz u gužvanju i izletu, dolazeći u uletu i odgužvanju.
+   */
+  const zavrsiFazuPrelaza = (event: TransitionEvent<HTMLElement>) => {
+    if (!tranzicijaPrikaza || event.propertyName !== "transform") return;
+
+    const { faza, smer } = tranzicijaPrikaza;
+
+    if (smer === "to-workshop" && faza === "unfolding") return;
+
+    const odlazeci =
+      smer === "to-speaker"
+        ? "radionice-default-view"
+        : "radionice-predavac-view";
+    const dolazeci =
+      smer === "to-speaker"
+        ? "radionice-predavac-view"
+        : "radionice-default-view";
+    const ocekivani =
+      faza === "crumpling" || faza === "exiting" ? odlazeci : dolazeci;
+    const cilj = event.target as HTMLElement;
+
+    if (cilj.classList.contains(ocekivani)) {
+      predjiNaSledecuFazu(tranzicijaPrikaza);
+    }
+  };
 
   const zavrsiOtvaranjePapira = (event: AnimationEvent<HTMLDivElement>) => {
     if (event.target !== event.currentTarget) return;
@@ -729,6 +892,7 @@ const Radionice = () => {
           ? ` radionice-page--view-transition radionice-page--view-${tranzicijaPrikaza.smer}-${tranzicijaPrikaza.faza}`
           : ""
       }`}
+      onTransitionEnd={zavrsiFazuPrelaza}
     >
       <div
         className={`radionice-background-base${plavaPozadina ? " radionice-background-base--blue" : ""}`}

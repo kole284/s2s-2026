@@ -35,17 +35,53 @@
    * lopta delovala spljošteno i nije pokrivala krug koji se u nju skuplja.
    * Sada je telo oblika 9-92% visine.
    */
+  --rd-paper-crumple-mid: polygon(
+      5% 19%,
+      25% 8%,
+      50% 18%,
+      75% 6%,
+      95% 21%,
+      94% 79%,
+      75% 93%,
+      50% 82%,
+      25% 95%,
+      5% 78%
+    );
+  --rd-paper-unfold-a: polygon(
+      6% 22%,
+      26% 9%,
+      50% 18%,
+      74% 7%,
+      94% 23%,
+      94% 78%,
+      75% 92%,
+      50% 82%,
+      25% 94%,
+      6% 77%
+    );
+  --rd-paper-unfold-b: polygon(
+      0 9%,
+      25% 2%,
+      50% 9%,
+      75% 2%,
+      100% 9%,
+      100% 91%,
+      75% 98%,
+      50% 91%,
+      25% 98%,
+      0 91%
+    );
   --rd-paper-crumpled-next: polygon(
-    4% 22%,
-    27% 5%,
-    50% 9%,
-    73% 3%,
-    96% 21%,
-    98% 78%,
-    74% 97%,
-    50% 92%,
-    26% 95%,
-    2% 79%
+    3% 26%,
+    24% 6%,
+    46% 13%,
+    72% 2%,
+    95% 17%,
+    99% 69%,
+    80% 95%,
+    55% 88%,
+    27% 98%,
+    1% 77%
   );
 
   /*
@@ -58,9 +94,17 @@
   --rd-view-ball-scale-y: 0.4;
 
   position: relative;
-  z-index: 2;
+  // Ispod "O projektu" (2), da njegovi zupci ostanu vidljivi iznad ove pozadine.
+  z-index: 1;
   background-color: $color-white;
-  padding-top: clamp(76px, 10vw, 90px);
+  /*
+   * Sekcija počinje ispod zubaca "O projektu" (koji su iznad nje po z-index-u
+   * i imaju providne proreze), pa pozadina Radionica popunjava te proreze:
+   * belo u osnovnom stanju, plavo uz predavača, a menja ih isti disk prelaza.
+   * Visina zubaca O projektu jednaka je --rd-zigzag-depth.
+   */
+  margin-top: calc(-1 * var(--rd-zigzag-depth));
+  padding-top: calc(clamp(76px, 10vw, 90px) + var(--rd-zigzag-depth));
   padding-bottom: calc(var(--rd-mobile-design-width) * 64 / 390);
 }
 
@@ -109,18 +153,27 @@
 /*
  * Sloj pozadine koja odlazi. Namerno NEMA teksturu papira, nabore ni senku:
  * jedini papir na sekciji je onaj zasečen u zupcastom obliku. Ovo je samo
- * ravna boja koja se skuplja u krug ka lopti i time otkriva novu pozadinu
- * (baza ispod nje već ima novu boju).
+ * ravna boja koja se skupi u disk oko lopte (gužvanje), pa odleti zajedno sa
+ * njom (izlet). Baza ispod već ima novu boju, pa odlazeća lopta uvek leti na
+ * svojoj staroj pozadini, a dolazeća na novoj — obe sa punim kontrastom.
+ * Centar i poluprečnik lopte (--rd-ball-*) meri Radionice.tsx.
  */
 .radionice-background-transition {
+  --rd-disk-r: calc(var(--rd-ball-r, 60px) * 1.35);
+
   z-index: 1;
-  clip-path: circle(0% at 50% 55%);
+  clip-path: circle(0 at var(--rd-ball-x, 50%) var(--rd-ball-y, 55%));
   will-change: clip-path;
 }
 
 .radionice-page--view-to-speaker-crumpling .radionice-background-transition,
 .radionice-page--view-to-workshop-crumpling .radionice-background-transition {
-  animation: rd-background-circle-close 270ms var(--rd-view-crumple) both;
+  animation: rd-background-disk-close 380ms cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+
+.radionice-page--view-to-speaker-exiting .radionice-background-transition,
+.radionice-page--view-to-workshop-exiting .radionice-background-transition {
+  animation: rd-background-disk-exit 200ms var(--rd-view-throw) both;
 }
 
 /* Sloj je uvek boja pozadine koja odlazi. */
@@ -132,16 +185,26 @@
   background-color: $color-blue;
 }
 
-@keyframes rd-background-circle-close {
+@keyframes rd-background-disk-close {
   0% {
-    clip-path: circle(142% at 50% 55%);
+    clip-path: circle(142% at var(--rd-ball-x) var(--rd-ball-y));
   }
-  /* Zatvori se pre kraja gužvanja, dok je papir još krupan i pokriva ga. */
-  72% {
-    clip-path: circle(0% at 50% 55%);
+  /* Disk se skuplja celom dužinom gužvanja, da se promena pozadine vidi. */
+  100% {
+    clip-path: circle(var(--rd-disk-r) at var(--rd-ball-x) var(--rd-ball-y));
+  }
+}
+
+/* Disk putuje istom putanjom i krivom kao lopta, pa ostaje oko nje. */
+@keyframes rd-background-disk-exit {
+  0% {
+    clip-path: circle(var(--rd-disk-r) at var(--rd-ball-x) var(--rd-ball-y));
   }
   100% {
-    clip-path: circle(0% at 50% 55%);
+    clip-path: circle(
+      var(--rd-disk-r) at calc(var(--rd-ball-x) + var(--rd-ball-exit))
+        var(--rd-ball-y)
+    );
   }
 }
 
@@ -238,7 +301,9 @@
   z-index: 6;
   inset: 4%;
   visibility: hidden;
+  opacity: 0;
   pointer-events: none;
+  transition: opacity 160ms ease-out;
 }
 
 .radionice-paper-sheet::before {
@@ -261,18 +326,31 @@
       rgb(255 255 255 / 0.16) 55% 58%,
       transparent 59% 100%
     );
-  mix-blend-mode: overlay;
 }
 
+/* Nabori kao tanke linije (senka/odsjaj), bez svetlih ovala. */
 .radionice-paper-sheet::after {
   background:
-    radial-gradient(
-      ellipse at 28% 30%,
-      rgb(255 255 255 / 0.2) 0 7%,
-      transparent 8%
+    linear-gradient(
+      118deg,
+      transparent 0 29%,
+      rgb(0 0 0 / 0.12) 29.5% 30.5%,
+      rgb(255 255 255 / 0.22) 31% 32%,
+      transparent 32.5% 100%
     ),
-    radial-gradient(ellipse at 69% 38%, rgb(0 0 0 / 0.1) 0 9%, transparent 10%),
-    radial-gradient(ellipse at 43% 72%, rgb(0 0 0 / 0.08) 0 8%, transparent 9%);
+    linear-gradient(
+      58deg,
+      transparent 0 61%,
+      rgb(0 0 0 / 0.1) 61.5% 62.5%,
+      rgb(255 255 255 / 0.18) 63% 64%,
+      transparent 64.5% 100%
+    ),
+    linear-gradient(
+      172deg,
+      transparent 0 48%,
+      rgb(255 255 255 / 0.14) 48.5% 49.3%,
+      transparent 50% 100%
+    );
 }
 
 .radionice-paper-content {
@@ -294,7 +372,7 @@
  * (Radionice.tsx), CSS drži samo raspored i korak između stavki.
  */
 .radionice-traka {
-  --rd-razmak-stavki: calc(var(--rd-mobile-design-width) * 10 / 390);
+  --rd-razmak-stavki: calc(var(--rd-mobile-design-width) * 24 / 390);
 
   position: absolute;
   inset: 0;
@@ -360,49 +438,145 @@
 }
 
 /*
- * Naziv je širi od stavke i namešteno preči preko suseda — vidi se samo onaj
- * u centru. Fiksna visina od dve linije drži sve ikonice na istoj visini bez
- * obzira na to da li se naziv prelama.
+ * Svi nazivi su stalno vidljivi. Naziv je širok tačno koliko stavka (a
+ * razmak između stavki drži ih odvojenim), pa se susedi nikad ne preklapaju.
+ * Fiksna visina od dve linije drži sve ikonice na istoj visini bez obzira na
+ * to da li se naziv prelama.
  */
 .radionice-naziv {
   display: block;
   margin: 0;
-  width: calc(var(--rd-mobile-design-width) * 200 / 390);
-  height: 2em;
+  width: 100%;
+  height: 2.5em;
   font-family: $font-display;
   font-weight: $font-black;
-  font-size: calc(var(--rd-mobile-design-width) * 24 / 390);
-  letter-spacing: 0.04em;
+  font-size: calc(var(--rd-mobile-design-width) * 15.5 / 390);
+  letter-spacing: 0.01em;
   line-height: 1.2;
   text-transform: uppercase;
   text-align: center;
+  text-wrap: balance;
+  overflow-wrap: normal;
   color: $color-yellow;
-  opacity: 0;
   pointer-events: none;
-
-  /*
-   * Naziv je širi od koraka trake, pa se sa susednim fizički preklapa. Zbog
-   * toga smena NIJE unakrsna: stari prvo ode do nule, a novi kreće tek posle
-   * toga. U svakom trenutku je vidljiv tačno jedan naziv.
-   */
-  transition: opacity 80ms linear;
-
-  .radionice-stavka--centar & {
-    opacity: 1;
-    transition: opacity 120ms linear 80ms;
-  }
+  // Poravnanje sa vizuelnim centrom ikonice (Radionice.tsx).
+  transform: translateX(var(--rd-naziv-pomeraj, 0%));
 }
 
 @media #{$tablet}, #{$desktop} {
   .radionice-page {
     --rd-zigzag-depth: calc(var(--rd-design-width) * 64 / 1440);
+    /* Desktop papir: 8 zubaca, 18 tačaka u svim oblicima. */
+    --rd-paper-shape: polygon(
+      0% calc(0% + 1 * var(--rd-zigzag-depth)),
+      12.5% 0,
+      25% calc(0% + 1 * var(--rd-zigzag-depth)),
+      37.5% 0,
+      50% calc(0% + 1 * var(--rd-zigzag-depth)),
+      62.5% 0,
+      75% calc(0% + 1 * var(--rd-zigzag-depth)),
+      87.5% 0,
+      100% calc(0% + 1 * var(--rd-zigzag-depth)),
+      100% calc(100% - 1 * var(--rd-zigzag-depth)),
+      87.5% 100%,
+      75% calc(100% - 1 * var(--rd-zigzag-depth)),
+      62.5% 100%,
+      50% calc(100% - 1 * var(--rd-zigzag-depth)),
+      37.5% 100%,
+      25% calc(100% - 1 * var(--rd-zigzag-depth)),
+      12.5% 100%,
+      0% calc(100% - 1 * var(--rd-zigzag-depth))
+    );
+    --rd-paper-crumple-mid: polygon(
+      1.8% calc(15.6% + 0.4 * var(--rd-zigzag-depth)),
+      13.4% 5.4%,
+      25% calc(9% + 0.4 * var(--rd-zigzag-depth)),
+      37.2% 1.8%,
+      49.4% calc(7.2% + 0.4 * var(--rd-zigzag-depth)),
+      61.6% 3%,
+      73.2% calc(8.4% + 0.4 * var(--rd-zigzag-depth)),
+      86% 1.2%,
+      97.6% calc(10.8% + 0.4 * var(--rd-zigzag-depth)),
+      99.4% calc(82% - 0.4 * var(--rd-zigzag-depth)),
+      86.6% 96.4%,
+      74.4% calc(91.6% - 0.4 * var(--rd-zigzag-depth)),
+      61.6% 98.2%,
+      49.4% calc(93.4% - 0.4 * var(--rd-zigzag-depth)),
+      37.2% 97%,
+      25% calc(90.4% - 0.4 * var(--rd-zigzag-depth)),
+      12.8% 98.2%,
+      0.6% calc(86.2% - 0.4 * var(--rd-zigzag-depth))
+    );
+    --rd-paper-unfold-a: polygon(
+      1.95% calc(16.9% + 0.35 * var(--rd-zigzag-depth)),
+      13.47% 5.85%,
+      25% calc(9.75% + 0.35 * var(--rd-zigzag-depth)),
+      37.17% 1.95%,
+      49.35% calc(7.8% + 0.35 * var(--rd-zigzag-depth)),
+      61.52% 3.25%,
+      73.05% calc(9.1% + 0.35 * var(--rd-zigzag-depth)),
+      85.88% 1.3%,
+      97.4% calc(11.7% + 0.35 * var(--rd-zigzag-depth)),
+      99.35% calc(80.5% - 0.35 * var(--rd-zigzag-depth)),
+      86.52% 96.1%,
+      74.35% calc(90.9% - 0.35 * var(--rd-zigzag-depth)),
+      61.52% 98.05%,
+      49.35% calc(92.85% - 0.35 * var(--rd-zigzag-depth)),
+      37.17% 96.75%,
+      25% calc(89.6% - 0.35 * var(--rd-zigzag-depth)),
+      12.83% 98.05%,
+      0.65% calc(85.05% - 0.35 * var(--rd-zigzag-depth))
+    );
+    --rd-paper-unfold-b: polygon(
+      0.6% calc(5.2% + 0.8 * var(--rd-zigzag-depth)),
+      12.8% 1.8%,
+      25% calc(3% + 0.8 * var(--rd-zigzag-depth)),
+      37.4% 0.6%,
+      49.8% calc(2.4% + 0.8 * var(--rd-zigzag-depth)),
+      62.2% 1%,
+      74.4% calc(2.8% + 0.8 * var(--rd-zigzag-depth)),
+      87% 0.4%,
+      99.2% calc(3.6% + 0.8 * var(--rd-zigzag-depth)),
+      99.8% calc(94% - 0.8 * var(--rd-zigzag-depth)),
+      87.2% 98.8%,
+      74.8% calc(97.2% - 0.8 * var(--rd-zigzag-depth)),
+      62.2% 99.4%,
+      49.8% calc(97.8% - 0.8 * var(--rd-zigzag-depth)),
+      37.4% 99%,
+      25% calc(96.8% - 0.8 * var(--rd-zigzag-depth)),
+      12.6% 99.4%,
+      0.2% calc(95.4% - 0.8 * var(--rd-zigzag-depth))
+    );
+    --rd-paper-crumpled-next: polygon(
+      3% 26%,
+      14% 9%,
+      25% 15%,
+      37% 3%,
+      49% 12%,
+      61% 5%,
+      72% 14%,
+      85% 2%,
+      96% 18%,
+      99% 70%,
+      86% 94%,
+      74% 86%,
+      61% 97%,
+      49% 89%,
+      37% 95%,
+      25% 84%,
+      13% 97%,
+      1% 77%
+    );
+
     --rd-stage-height: calc(var(--rd-design-width) * 620 / 1440);
 
     /*
      * Fixed navbar leži iznad sadržaja. Ovaj top padding drži naslov
      * Radionice ispod njega, umesto da naslov završi sakriven iza navbar-a.
      */
-    padding-top: calc(var(--rd-design-width) * 110 / 1440);
+    padding-top: calc(
+      var(--rd-design-width) * 110 / 1440 + var(--rd-zigzag-depth)
+    );
     padding-bottom: calc(var(--rd-design-width) * 64 / 1440);
   }
 
@@ -459,7 +633,7 @@
   }
 
   .radionice-traka {
-    --rd-razmak-stavki: calc(var(--rd-design-width) * 10 / 1440);
+    --rd-razmak-stavki: calc(var(--rd-design-width) * 40 / 1440);
   }
 
   .radionice-stavka {
@@ -477,8 +651,7 @@
   }
 
   .radionice-naziv {
-    width: calc(var(--rd-design-width) * 260 / 1440);
-    font-size: calc(var(--rd-design-width) * 30 / 1440);
+    font-size: calc(var(--rd-design-width) * 24 / 1440);
   }
 }
 
@@ -519,8 +692,11 @@
  */
 .radionice-page--view-transition {
   --rd-view-crumple: cubic-bezier(0.76, 0.04, 0.24, 1);
-  --rd-view-swap: cubic-bezier(0.62, 0, 0.3, 1);
-  --rd-view-unfold: cubic-bezier(0.22, 0.78, 0.2, 1);
+  /* Izlet ubrzava (bačen papir), ulet se smiruje u centru. */
+  --rd-view-throw: cubic-bezier(0.55, 0, 0.9, 0.45);
+  --rd-view-land: cubic-bezier(0.15, 0.55, 0.35, 1);
+  /* Blag prebačaj na kraju: papir "legne". */
+  --rd-view-unfold: cubic-bezier(0.22, 0.9, 0.3, 1.06);
 
   overflow: hidden;
   isolation: isolate;
@@ -552,7 +728,7 @@
   overflow: hidden;
   transform-origin: center center;
   backface-visibility: hidden;
-  will-change: transform, border-radius, filter;
+  will-change: transform, filter;
 }
 
 /* Plavi papir ostaje na sheet-u; band je samo transformacioni viewport. */
@@ -576,7 +752,7 @@
   border-radius: inherit;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 90ms ease-out;
+  transition: opacity 160ms ease-out;
 }
 
 .radionice-page--view-transition .radionice-band::before,
@@ -600,30 +776,36 @@
       rgb(255 255 255 / 0.15) 53% 56%,
       transparent 57% 100%
     );
-  mix-blend-mode: overlay;
 }
 
+/*
+ * Nabori su tanke linije (par senka/odsjaj), a ne mrlje: tamni krugovi su na
+ * belom papiru izgledali kao rupe i fleke.
+ */
 .radionice-page--view-transition .radionice-band::after,
 .radionice-page--view-transition .predavac-content::after {
-  inset: 8%;
+  inset: 6%;
   background:
-    radial-gradient(
-      circle at 32% 28%,
-      rgb(255 255 255 / 0.26) 0 8%,
-      transparent 9%
+    linear-gradient(
+      112deg,
+      transparent 0 31%,
+      rgb(0 0 0 / 0.07) 31.5% 32.5%,
+      rgb(255 255 255 / 0.35) 33% 34%,
+      transparent 34.5% 100%
     ),
-    radial-gradient(
-      circle at 70% 38%,
-      rgb(0 0 0 / 0.12) 0 10%,
-      transparent 11%
+    linear-gradient(
+      61deg,
+      transparent 0 57%,
+      rgb(0 0 0 / 0.06) 57.5% 58.5%,
+      rgb(255 255 255 / 0.3) 59% 60%,
+      transparent 60.5% 100%
     ),
-    radial-gradient(circle at 42% 72%, rgb(0 0 0 / 0.1) 0 9%, transparent 10%),
-    radial-gradient(
-      circle at 74% 72%,
-      rgb(255 255 255 / 0.18) 0 7%,
-      transparent 8%
+    linear-gradient(
+      168deg,
+      transparent 0 64%,
+      rgb(0 0 0 / 0.05) 64.5% 65.3%,
+      transparent 66% 100%
     );
-  filter: blur(0.7px);
 }
 
 .radionice-page--view-to-speaker-crumpling .radionice-band::before,
@@ -632,16 +814,12 @@
 .radionice-page--view-to-speaker-exiting .radionice-band::after,
 .radionice-page--view-to-speaker-entering .predavac-content::before,
 .radionice-page--view-to-speaker-entering .predavac-content::after,
-.radionice-page--view-to-speaker-unfolding .predavac-content::before,
-.radionice-page--view-to-speaker-unfolding .predavac-content::after,
 .radionice-page--view-to-workshop-crumpling .predavac-content::before,
 .radionice-page--view-to-workshop-crumpling .predavac-content::after,
 .radionice-page--view-to-workshop-exiting .predavac-content::before,
 .radionice-page--view-to-workshop-exiting .predavac-content::after,
 .radionice-page--view-to-workshop-entering .radionice-band::before,
-.radionice-page--view-to-workshop-entering .radionice-band::after,
-.radionice-page--view-to-workshop-unfolding .radionice-band::before,
-.radionice-page--view-to-workshop-unfolding .radionice-band::after {
+.radionice-page--view-to-workshop-entering .radionice-band::after {
   opacity: 1;
 }
 
@@ -700,9 +878,17 @@
  */
 .radionice-page--view-transition .radionice-default-view,
 .radionice-page--view-transition .radionice-predavac-view {
-  transform-origin: center center;
   backface-visibility: hidden;
   will-change: transform;
+}
+
+/* Svaki prikaz se skuplja oko centra svog papira (meri Radionice.tsx). */
+.radionice-page--view-transition .radionice-default-view {
+  transform-origin: var(--rd-default-origin, center);
+}
+
+.radionice-page--view-transition .radionice-predavac-view {
+  transform-origin: var(--rd-predavac-origin, center);
 }
 
 .radionice-page--view-transition .radionice-band,
@@ -711,10 +897,10 @@
 }
 
 /*
- * Putanja lopte. Squash je isti za oba prikaza; menja se samo gde lopta stoji:
- * centar (gužvanje), desno van kadra (izlazak), levo van kadra (čekanje) i
- * ponovo centar (ulazak). Translate ide PRE skaliranja, pa je procenat merenje
- * pune širine sekcije, a ne skupljene lopte.
+ * Putanja lopte. Papir se prvo pomeri tako da mu centar dođe u sredinu
+ * vidljivog dela sekcije (--rd-*-dx/dy), pa se tu skupi. Izlet i ulet idu
+ * tačno do iza ivice ekrana (--rd-ball-exit/enter), bez praznog hoda van
+ * kadra. Translate ide PRE skaliranja, pa su vrednosti u pravim pikselima.
  */
 .radionice-page--view-transition .radionice-default-view,
 .radionice-page--view-transition .radionice-predavac-view {
@@ -722,68 +908,91 @@
     scaleY(var(--rd-view-ball-scale-y));
 }
 
-/* Lopta u centru: kraj gužvanja i kraj ulaska. */
+/* Lopta u centru: kraj gužvanja i kraj uleta. */
 .radionice-page--view-to-speaker-crumpling .radionice-default-view,
-.radionice-page--view-to-speaker-entering .radionice-predavac-view,
-.radionice-page--view-to-workshop-crumpling .radionice-predavac-view,
 .radionice-page--view-to-workshop-entering .radionice-default-view {
-  transform: translate3d(0, 0, 0) var(--rd-view-ball) rotate(-2.4deg)
-    skewX(-2deg);
+  transform: translate3d(var(--rd-default-dx, 0px), var(--rd-default-dy, 0px), 0)
+    var(--rd-view-ball) rotate(-2.4deg) skewX(-2deg);
 }
 
-/* Lopta otišla udesno iz kadra. */
+.radionice-page--view-to-speaker-entering .radionice-predavac-view,
+.radionice-page--view-to-workshop-crumpling .radionice-predavac-view {
+  transform: translate3d(
+      var(--rd-predavac-dx, 0px),
+      var(--rd-predavac-dy, 0px),
+      0
+    )
+    var(--rd-view-ball) rotate(-2.4deg) skewX(-2deg);
+}
+
+/* Lopta izletela udesno, tik iza ivice ekrana. */
 .radionice-page--view-to-speaker-exiting .radionice-default-view,
 .radionice-page--view-to-speaker-entering .radionice-default-view,
-.radionice-page--view-to-speaker-unfolding .radionice-default-view,
+.radionice-page--view-to-speaker-unfolding .radionice-default-view {
+  transform: translate3d(
+      calc(var(--rd-default-dx, 0px) + var(--rd-ball-exit, 85vw)),
+      var(--rd-default-dy, 0px),
+      0
+    )
+    var(--rd-view-ball) rotate(6deg) skewX(-1deg);
+}
+
 .radionice-page--view-to-workshop-exiting .radionice-predavac-view,
 .radionice-page--view-to-workshop-entering .radionice-predavac-view,
 .radionice-page--view-to-workshop-unfolding .radionice-predavac-view {
-  transform: translate3d(85%, 0, 0) var(--rd-view-ball) rotate(4deg)
-    skewX(-1deg);
+  transform: translate3d(
+      calc(var(--rd-predavac-dx, 0px) + var(--rd-ball-exit, 85vw)),
+      var(--rd-predavac-dy, 0px),
+      0
+    )
+    var(--rd-view-ball) rotate(6deg) skewX(-1deg);
 }
 
-/* Nova lopta čeka levo van kadra dok stara ne ode. */
+/* Nova lopta čeka tik iza leve ivice dok stara ne izleti. */
 .radionice-page--view-to-speaker-crumpling .radionice-predavac-view,
-.radionice-page--view-to-speaker-exiting .radionice-predavac-view,
+.radionice-page--view-to-speaker-exiting .radionice-predavac-view {
+  transform: translate3d(
+      calc(var(--rd-predavac-dx, 0px) + var(--rd-ball-enter, -85vw)),
+      var(--rd-predavac-dy, 0px),
+      0
+    )
+    var(--rd-view-ball) rotate(-8deg) skewX(1deg);
+}
+
 .radionice-page--view-to-workshop-crumpling .radionice-default-view,
 .radionice-page--view-to-workshop-exiting .radionice-default-view {
-  transform: translate3d(-85%, 0, 0) var(--rd-view-ball) rotate(-4deg)
-    skewX(1deg);
-}
-
-/* Papir u lopti: nepravilna kontura i senka. */
-.radionice-page--view-to-speaker-crumpling .predavac-content,
-.radionice-page--view-to-speaker-exiting .predavac-content,
-.radionice-page--view-to-speaker-entering .predavac-content,
-.radionice-page--view-to-workshop-crumpling .predavac-content,
-.radionice-page--view-to-workshop-exiting .predavac-content,
-.radionice-page--view-to-workshop-entering .predavac-content,
-.radionice-page--view-to-workshop-unfolding .predavac-content {
-  border-radius: 53% 47% 56% 44% / 45% 55% 47% 53%;
-  filter: drop-shadow(0 14px 14px rgb(0 0 0 / 0.18));
-}
-
-.radionice-page--view-to-speaker-crumpling .radionice-band,
-.radionice-page--view-to-speaker-exiting .radionice-band,
-.radionice-page--view-to-speaker-entering .radionice-band,
-.radionice-page--view-to-speaker-unfolding .radionice-band,
-.radionice-page--view-to-workshop-crumpling .radionice-band,
-.radionice-page--view-to-workshop-exiting .radionice-band,
-.radionice-page--view-to-workshop-entering .radionice-band {
-  filter: drop-shadow(0 14px 14px rgb(0 0 0 / 0.18));
+  transform: translate3d(
+      calc(var(--rd-default-dx, 0px) + var(--rd-ball-enter, -85vw)),
+      var(--rd-default-dy, 0px),
+      0
+    )
+    var(--rd-view-ball) rotate(-8deg) skewX(1deg);
 }
 
 /*
- * Senka se skalira zajedno sa loptom, pa bi na 0.1 ostala od nje jedva piksel.
- * Dok lopta putuje preko pozadine iste boje to je jedino što joj daje ivicu,
- * zato su vrednosti podignute — menjaju se dok je lopta mala, pa se skok senke
- * ne vidi.
+ * Lopta nema senku: uvek leti na pozadini suprotne boje (disk stare pozadine
+ * ili nova pozadina), a drop-shadow na elementu širine ekrana sa animiranim
+ * clip-path-om je skup za crtanje i usporavao je prelaz.
  */
-.radionice-page--view-to-speaker-exiting .radionice-band,
-.radionice-page--view-to-speaker-entering .predavac-content,
-.radionice-page--view-to-workshop-exiting .predavac-content,
-.radionice-page--view-to-workshop-entering .radionice-band {
-  filter: drop-shadow(0 40px 46px rgb(0 0 0 / 0.38));
+.radionice-page--view-transition .radionice-band,
+.radionice-page--view-transition .radionice-predavac-view > .predavac-page {
+  filter: none;
+}
+
+/*
+ * Beli papir predavača se gužva istim oblikom i istim keyframe-ovima kao
+ * plavi papir radionica, pa je to vizuelno ista lopta koja menja boju.
+ */
+.radionice-page--view-transition .predavac-band {
+  clip-path: var(--rd-paper-crumpled-next);
+}
+
+.radionice-page--view-to-workshop-crumpling .predavac-band {
+  animation: rd-view-workshop-shape-crumple 380ms var(--rd-view-crumple) both;
+}
+
+.radionice-page--view-to-speaker-unfolding .predavac-band {
+  animation: rd-view-workshop-shape-unfold 338ms linear both;
 }
 
 /*
@@ -803,19 +1012,19 @@
 
 /* -------------------- workshop -> speaker -------------------- */
 
-/* 1) Papir se skupča u loptu u centru. */
+/* 1) Papir se skupča u loptu u sredini vidljivog dela. */
 .radionice-page--view-to-speaker-crumpling .radionice-default-view {
-  transition: transform 270ms var(--rd-view-crumple);
+  transition: transform 380ms var(--rd-view-crumple);
 }
 
-/* 2) Lopta ode udesno iz kadra. */
+/* 2) Lopta izleti udesno (ubrzava) i odnese disk stare pozadine. */
 .radionice-page--view-to-speaker-exiting .radionice-default-view {
-  transition: transform 225ms var(--rd-view-swap);
+  transition: transform 200ms var(--rd-view-throw);
 }
 
-/* 3) Nova lopta ulazi sa leve strane u centar. */
+/* 3) Nova lopta uleti sleva i smiri se u centru. */
 .radionice-page--view-to-speaker-entering .radionice-predavac-view {
-  transition: transform 255ms var(--rd-view-swap);
+  transition: transform 230ms var(--rd-view-land);
 }
 
 /* 4) Iz lopte se odgužva prikaz predavača. */
@@ -824,36 +1033,23 @@
   transition: transform 338ms var(--rd-view-unfold);
 }
 
-.radionice-page--view-to-speaker-unfolding .predavac-content {
-  border-radius: 0;
-  filter: none;
-  transition:
-    border-radius 270ms ease 30ms,
-    filter 195ms ease 60ms;
-}
-
 /* -------------------- speaker -> workshop -------------------- */
 
 .radionice-page--view-to-workshop-crumpling .radionice-predavac-view {
-  transition: transform 270ms var(--rd-view-crumple);
+  transition: transform 380ms var(--rd-view-crumple);
 }
 
 .radionice-page--view-to-workshop-exiting .radionice-predavac-view {
-  transition: transform 225ms var(--rd-view-swap);
+  transition: transform 200ms var(--rd-view-throw);
 }
 
 .radionice-page--view-to-workshop-entering .radionice-default-view {
-  transition: transform 255ms var(--rd-view-swap);
+  transition: transform 230ms var(--rd-view-land);
 }
 
 .radionice-page--view-to-workshop-unfolding .radionice-default-view {
   transform: none;
   transition: transform 338ms var(--rd-view-unfold);
-}
-
-.radionice-page--view-to-workshop-unfolding .radionice-band {
-  filter: none;
-  transition: filter 195ms ease 60ms;
 }
 
 .radionice-page--view-transition .radionice-band::before,
@@ -864,25 +1060,27 @@
 .radionice-page--view-transition .radionice-paper-sheet::before,
 .radionice-page--view-transition .radionice-paper-sheet::after {
   visibility: visible;
+  opacity: 1;
 }
 
+/* Na otvorenom papiru nabora nema: gase se u prvom delu odgužvanja. */
+.radionice-page--view-to-workshop-unfolding .radionice-paper-sheet::before,
+.radionice-page--view-to-workshop-unfolding .radionice-paper-sheet::after {
+  opacity: 0;
+}
+
+/*
+ * Svi oblici papira (ravan, međukoraci, zgužvan) moraju imati ISTI broj
+ * tačaka, inače browser ne može da ih pretopi i zupci na kraju skoče.
+ * Mobilni oblik ima 10 tačaka (4 zupca), desktop 18 (8 zubaca); vrednosti
+ * su u .radionice-page i u desktop media query-ju.
+ */
 @keyframes rd-view-workshop-shape-crumple {
   0% {
     clip-path: var(--rd-paper-shape);
   }
   55% {
-    clip-path: polygon(
-      5% 19%,
-      25% 8%,
-      50% 18%,
-      75% 6%,
-      95% 21%,
-      94% 79%,
-      75% 93%,
-      50% 82%,
-      25% 95%,
-      5% 78%
-    );
+    clip-path: var(--rd-paper-crumple-mid);
   }
   100% {
     clip-path: var(--rd-paper-crumpled-next);
@@ -894,32 +1092,10 @@
     clip-path: var(--rd-paper-crumpled-next);
   }
   35% {
-    clip-path: polygon(
-      6% 22%,
-      26% 9%,
-      50% 18%,
-      74% 7%,
-      94% 23%,
-      94% 78%,
-      75% 92%,
-      50% 82%,
-      25% 94%,
-      6% 77%
-    );
+    clip-path: var(--rd-paper-unfold-a);
   }
   70% {
-    clip-path: polygon(
-      0 9%,
-      25% 2%,
-      50% 9%,
-      75% 2%,
-      100% 9%,
-      100% 91%,
-      75% 98%,
-      50% 91%,
-      25% 98%,
-      0 91%
-    );
+    clip-path: var(--rd-paper-unfold-b);
   }
   100% {
     clip-path: var(--rd-paper-shape);
@@ -927,7 +1103,7 @@
 }
 
 .radionice-page--view-to-speaker-crumpling .radionice-paper-sheet {
-  animation: rd-view-workshop-shape-crumple 270ms var(--rd-view-crumple) both;
+  animation: rd-view-workshop-shape-crumple 380ms var(--rd-view-crumple) both;
 }
 
 .radionice-page--view-to-speaker-exiting .radionice-paper-sheet,
