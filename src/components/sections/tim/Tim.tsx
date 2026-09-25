@@ -537,7 +537,7 @@ const Tim = () => {
         </svg>
         <div className="team-circle-solid" aria-hidden="true" />
 
-        {["top", "bottom"].map((position, ribbonIndex) => (
+        {["top"].map((position, ribbonIndex) => (
           <div
             className={`team-mobile-ribbon team-mobile-ribbon-${position}`}
             aria-hidden="true"

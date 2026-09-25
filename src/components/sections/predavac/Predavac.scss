@@ -151,7 +151,7 @@
   display: block;
   width: calc(var(--pd-mobile-design-width) * 120 / 390);
   height: calc(var(--pd-mobile-design-width) * 150 / 390);
-  object-fit: cover;
+  overflow: hidden;
 
   &--placeholder {
     background-color: rgba($color-blue-dark, 0.15);
@@ -263,7 +263,8 @@
 
   .predavac-title {
     font-size: calc(var(--pd-design-width) * 72 / 1440);
-    line-height: 1;
+    /* Kvačice (Č, Š) u drugom redu ne smeju da dodirnu prvi red. */
+    line-height: 1.2;
     letter-spacing: 0.04em;
     overflow-wrap: normal;
   }
@@ -310,14 +311,25 @@
     );
   }
 
-  /* Unutrašnji design-space iste širine kao .radionice-stage. */
+  /*
+   * Unutrašnji design-space iste širine kao .radionice-stage. Slika, tekst i
+   * ikonica su tri grid kolone centrirane po visini banda, pa ostaju
+   * poravnate bez obzira na dužinu opisa.
+   */
   .predavac-card {
     position: relative;
-    display: block;
+    display: grid;
+    grid-template-columns:
+      calc(var(--pd-design-width) * 242 / 1440)
+      calc(var(--pd-design-width) * 600 / 1440)
+      calc(var(--pd-design-width) * 253 / 1440);
+    column-gap: calc(var(--pd-design-width) * 64 / 1440);
+    justify-content: center;
+    align-items: center;
     width: var(--pd-design-width);
     height: 100%;
     max-height: none;
-    padding: 0;
+    padding: calc(var(--pd-zigzag-depth) + var(--pd-design-width) * 24 / 1440) 0;
   }
 
   .predavac-visual {
@@ -325,58 +337,57 @@
   }
 
   .predavac-photo-block {
-    position: absolute;
-    top: calc(var(--pd-design-width) * 150 / 1440);
-    left: calc(var(--pd-design-width) * 200 / 1440);
+    grid-row: 1;
+    grid-column: 1;
 
     &--without-photo {
-      width: calc(var(--pd-design-width) * 220 / 1440);
-      height: calc(var(--pd-design-width) * 300 / 1440);
+      width: calc(var(--pd-design-width) * 242 / 1440);
+      height: calc(var(--pd-design-width) * 330 / 1440);
     }
   }
 
   .predavac-photo {
-    width: calc(var(--pd-design-width) * 220 / 1440);
-    height: calc(var(--pd-design-width) * 300 / 1440);
+    width: calc(var(--pd-design-width) * 242 / 1440);
+    height: calc(var(--pd-design-width) * 330 / 1440);
   }
 
   .predavac-name {
-    bottom: calc(var(--pd-design-width) * -18 / 1440);
-    font-size: calc(var(--pd-design-width) * 40 / 1440);
+    bottom: calc(var(--pd-design-width) * -20 / 1440);
+    font-size: calc(var(--pd-design-width) * 44 / 1440);
     line-height: 0.9;
     letter-spacing: -0.03em;
-    -webkit-text-stroke: calc(var(--pd-design-width) * 5 / 1440) $color-blue;
+    -webkit-text-stroke: calc(var(--pd-design-width) * 5.5 / 1440) $color-blue;
   }
 
   .predavac-text {
-    position: absolute;
-    top: calc(var(--pd-design-width) * 150 / 1440);
-    left: calc(var(--pd-design-width) * 490 / 1440);
-    width: calc(var(--pd-design-width) * 500 / 1440);
-    max-height: calc(var(--pd-design-width) * 360 / 1440);
-    font-size: calc(var(--pd-design-width) * 20 / 1440);
-    line-height: 1.25;
+    grid-row: 1;
+    grid-column: 2;
+    max-height: 100%;
+    font-size: calc(var(--pd-design-width) * 22 / 1440);
+    line-height: 1.3;
+    text-wrap: pretty;
+
+    &--dugacak {
+      font-size: calc(var(--pd-design-width) * 19 / 1440);
+    }
   }
 
   .predavac-text p + p {
-    margin-top: calc(var(--pd-design-width) * 26 / 1440);
+    margin-top: calc(var(--pd-design-width) * 28 / 1440);
   }
 
   .predavac-tezina {
-    position: absolute;
-    top: calc(var(--pd-design-width) * 150 / 1440);
-    left: calc(var(--pd-design-width) * 1040 / 1440);
     font-size: calc(var(--pd-design-width) * 34 / 1440);
     line-height: 1;
     white-space: nowrap;
   }
 
   .predavac-shield {
-    position: absolute;
-    top: calc(var(--pd-design-width) * 215 / 1440);
-    left: calc(var(--pd-design-width) * 1050 / 1440);
-    width: calc(var(--pd-design-width) * 230 / 1440);
-    height: calc(var(--pd-design-width) * 250 / 1440);
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: center;
+    width: calc(var(--pd-design-width) * 253 / 1440);
+    height: calc(var(--pd-design-width) * 275 / 1440);
   }
 
   /* Na desktopu su strelice plave, na papiru, centrirane po visini banda. */

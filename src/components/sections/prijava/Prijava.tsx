@@ -24,8 +24,11 @@ import radionicaRequired from "@/assets/prijava/fields/radionica-required.svg";
 import munjicaImg from "@/assets/prijava/icons/munjica.svg";
 import prijavaCornerStars from "@/assets/prijava/decor/zvezde.svg";
 import { WORKSHOPS } from "@/data/workshops";
+import { useMediaQuery } from "./useMediaQuery";
 
 const NASLOVI_KORAKA = ["PRIJAVI SE", "RADIONICE", "PANEL", "ISKUSTVA"];
+// Isto kao $desktop u _mediaqueries.scss.
+const DESKTOP_MEDIA_QUERY = "only screen and (min-width: 1025px)";
 const BROJEVI_GODINA = [
   { id: "1", label: "1." },
   { id: "2", label: "2." },
@@ -315,15 +318,19 @@ const WorkshopSelectVisual = ({
       onKeyDown={handleKeyDown}
     >
       <div className="prijava-workshop-select__closed" aria-hidden={otvoreno}>
+        {/* Senka je isti oblik kao okvir, samo pomerena, pa je odmak
+            svuda jednako vidljiv (kao kod dugmadi za nivo znanja). */}
         <svg
           className="prijava-workshop-select__shadow"
-          viewBox="0 0 287 58"
+          viewBox="0 0 291 57"
           preserveAspectRatio="none"
           aria-hidden="true"
         >
           <path
-            d="M5.53015 4.97252L277.122 0L286.339 10.5666L280.809 52.2114L10.4458 57.8055L0 46.6173L5.53015 4.97252Z"
+            d="M11.0852 1H279.888L289.114 12.131L279.888 56H14.7587L1.11426 45.2504L11.0852 1Z"
             fill="#FFD720"
+            stroke="#FFD720"
+            strokeWidth="2"
           />
         </svg>
 
@@ -674,6 +681,9 @@ const Prijava = () => {
   const [duplicatePrompt, setDuplicatePrompt] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileError, setTurnstileError] = useState("");
+  // Na desktopu je Turnstile gore desno iznad plave linije, a na manjim
+  // ekranima u footeru; menjanjem mesta widget se renderuje ponovo.
+  const jeDesktop = useMediaQuery(DESKTOP_MEDIA_QUERY);
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
@@ -734,7 +744,7 @@ const Prijava = () => {
 
       turnstileWidgetIdRef.current = null;
     };
-  }, [korak, poslato, turnstileSiteKey]);
+  }, [korak, poslato, turnstileSiteKey, jeDesktop]);
 
   useEffect(() => {
     if (!prijaveZakljucane) {
@@ -1216,6 +1226,17 @@ const Prijava = () => {
               <h1 className="prijava__title">{NASLOVI_KORAKA[korak - 1]}</h1>
 
               <span className="prijava__header-line" aria-hidden="true" />
+
+              {korak === 4 && jeDesktop ? (
+                <div className="prijava-turnstile prijava-turnstile--header">
+                  <div ref={turnstileContainerRef} />
+                  {turnstileError ? (
+                    <p className="prijava-turnstile__error" role="alert">
+                      {turnstileError}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
             </header>
 
             <div className="prijava__form-area">
@@ -2058,7 +2079,7 @@ const Prijava = () => {
               </div>
 
               <div className="prijava_navigacija">
-                {korak === 4 ? (
+                {korak === 4 && !jeDesktop ? (
                   <div className="prijava-turnstile">
                     <div ref={turnstileContainerRef} />
                     {turnstileError ? (

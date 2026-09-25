@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import arrowDefault from "@/assets/Vector.svg";
 import closeIcon from "@/assets/Layer_1.svg";
-import aleksaKrstic from "@/assets/predavaci/aleksa-krstic.jpeg";
+import aleksaKrstic from "@/assets/predavaci/aleksa-krstic.webp";
 import aleksandarIlankovic from "@/assets/predavaci/aleksandar-ilankovic.webp";
 import anaMilivojevic from "@/assets/predavaci/ana-milivojevic.webp";
 import damirVelovic from "@/assets/predavaci/damir-velovic.webp";
@@ -22,6 +22,12 @@ interface PredavacPodaci {
   ime: string;
   opis: string[];
   slika?: string;
+  pozicijaSlike?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 type PredavacProps = {
@@ -58,20 +64,87 @@ const OPISI = {
     "Neki ljudi samo posmatraju kako se svijet mijenja i klimaju glavom, dok drugi uzmu stvari u svoje ruke jer ih nervira status quo. Ako si od ovih drugih, ovo su dva dana u kojima prestaješ da pričaš šta bi moglo biti i počinješ da praviš ono što mora postojati. Kroz intenzivan rad na sopstvenoj ideji, validaciju i testiranje na terenu, proći ćeš cijeli put od nule do gotovog koncepta. Cilj nije da naučiš šta je startup — cilj je da izađeš sa svojim",
 } as const;
 
+// Kadar je podešen po fotografiji (isto kao koordinatori u Tim sekciji): oči su
+// na istoj visini, lice u centru i iste veličine, pa se vide glava i ramena.
 const PREDAVACI: PredavacPodaci[] = [
-  { ime: "Lazar Jocić", slika: lazarJocic, opis: [OPISI.figmaWonder] },
-  { ime: "Aleksandar Ilanković", slika: aleksandarIlankovic, opis: [OPISI.gameDevelopment] },
-  { ime: "Tara Milojković", slika: taraMilojkovic, opis: [OPISI.aiAgenti] },
-  { ime: "Magdalena Bojanić", slika: magdalenaBojanic, opis: [OPISI.analitika] },
-  { ime: "Doris Šmulja", slika: dorisSmulja, opis: [OPISI.analitika] },
-  { ime: "Matija Vujić", slika: matijaVujic, opis: [OPISI.csharp] },
-  { ime: "Kristina Jovanović", slika: kristinaJovanovic, opis: [OPISI.uvodUC] },
-  { ime: "Tamara Kukić", slika: tamaraKukic, opis: [OPISI.caseMethod] },
-  { ime: "Ana Milivojević", slika: anaMilivojevic, opis: [OPISI.caseMethod] },
-  { ime: "Mina Popović", slika: minaPopovic, opis: [OPISI.caseMethod] },
-  { ime: "Petar Nikolić", slika: petarNikolic, opis: [OPISI.cybersecurity] },
-  { ime: "Aleksa Krstić", slika: aleksaKrstic, opis: [...OPISI.digitalniMarketing] },
-  { ime: "Damir Velović", slika: damirVelovic, opis: [OPISI.startup] },
+  {
+    ime: "Lazar Jocić",
+    slika: lazarJocic,
+    pozicijaSlike: { x: -119.7, y: -37.6, width: 477.1, height: 596.3 },
+    opis: [OPISI.figmaWonder],
+  },
+  {
+    ime: "Aleksandar Ilanković",
+    slika: aleksandarIlankovic,
+    pozicijaSlike: { x: -54.8, y: -57.6, width: 330.9, height: 413.6 },
+    opis: [OPISI.gameDevelopment],
+  },
+  {
+    ime: "Tara Milojković",
+    slika: taraMilojkovic,
+    pozicijaSlike: { x: -50.8, y: -84.0, width: 307.4, height: 384.2 },
+    opis: [OPISI.aiAgenti],
+  },
+  {
+    ime: "Magdalena Bojanić",
+    slika: magdalenaBojanic,
+    pozicijaSlike: { x: -252.0, y: -212.1, width: 713.4, height: 891.7 },
+    opis: [OPISI.analitika],
+  },
+  {
+    ime: "Doris Šmulja",
+    slika: dorisSmulja,
+    pozicijaSlike: { x: -86.9, y: -152.9, width: 480.0, height: 600.0 },
+    opis: [OPISI.analitika],
+  },
+  {
+    ime: "Matija Vujić",
+    slika: matijaVujic,
+    pozicijaSlike: { x: -108.6, y: 32.9, width: 462.9, height: 578.6 },
+    opis: [OPISI.csharp],
+  },
+  {
+    ime: "Kristina Jovanović",
+    slika: kristinaJovanovic,
+    pozicijaSlike: { x: -154.6, y: -5.7, width: 602.8, height: 753.5 },
+    opis: [OPISI.uvodUC],
+  },
+  {
+    ime: "Tamara Kukić",
+    slika: tamaraKukic,
+    pozicijaSlike: { x: -299.8, y: -194.7, width: 827.2, height: 1034.0 },
+    opis: [OPISI.caseMethod],
+  },
+  {
+    ime: "Ana Milivojević",
+    slika: anaMilivojevic,
+    pozicijaSlike: { x: -223.6, y: -72.0, width: 713.4, height: 891.7 },
+    opis: [OPISI.caseMethod],
+  },
+  {
+    ime: "Mina Popović",
+    slika: minaPopovic,
+    pozicijaSlike: { x: -162.8, y: -88.9, width: 607.5, height: 759.4 },
+    opis: [OPISI.caseMethod],
+  },
+  {
+    ime: "Petar Nikolić",
+    slika: petarNikolic,
+    pozicijaSlike: { x: -170.7, y: -146.9, width: 602.8, height: 753.5 },
+    opis: [OPISI.cybersecurity],
+  },
+  {
+    ime: "Aleksa Krstić",
+    slika: aleksaKrstic,
+    pozicijaSlike: { x: -155.1, y: 11.6, width: 525.4, height: 656.8 },
+    opis: [...OPISI.digitalniMarketing],
+  },
+  {
+    ime: "Damir Velović",
+    slika: damirVelovic,
+    pozicijaSlike: { x: -81.5, y: -14.8, width: 353.5, height: 441.8 },
+    opis: [OPISI.startup],
+  },
 ];
 
 const PROFILI_PO_IMENU = new Map(
@@ -141,13 +214,22 @@ const Predavac = ({
                 }`}
               >
                 {predavac.slika && (
-                  <img
-                    src={predavac.slika}
-                    alt={imePredavaca}
+                  <svg
                     className="predavac-photo"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                    viewBox="0 0 220 300"
+                    preserveAspectRatio="xMidYMin slice"
+                    role="img"
+                    aria-label={imePredavaca}
+                  >
+                    <image
+                      href={predavac.slika}
+                      x={predavac.pozicijaSlike?.x ?? 0}
+                      y={predavac.pozicijaSlike?.y ?? 0}
+                      width={predavac.pozicijaSlike?.width ?? 220}
+                      height={predavac.pozicijaSlike?.height ?? 300}
+                      preserveAspectRatio="xMidYMid meet"
+                    />
+                  </svg>
                 )}
 
                 <figcaption className="predavac-name">{imePredavaca}</figcaption>
@@ -164,7 +246,13 @@ const Predavac = ({
               )}
             </div>
 
-            <div className="predavac-text">
+            <div
+              className={`predavac-text${
+                predavac.opis.join("").length > 700
+                  ? " predavac-text--dugacak"
+                  : ""
+              }`}
+            >
               {predavac.opis.map((pasus, indeks) => (
                 <p key={indeks}>{pasus}</p>
               ))}

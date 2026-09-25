@@ -920,10 +920,6 @@
   .team-mobile-ribbon-top {
     top: team-size(22);
   }
-
-  .team-mobile-ribbon-bottom {
-    top: calc(100% + #{team-size(30)});
-  }
 }
 
 @media #{$tablet} {

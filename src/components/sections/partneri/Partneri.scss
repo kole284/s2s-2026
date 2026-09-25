@@ -584,7 +584,8 @@
     --partner-u: 0.2564102564vw;
     --partner-stroke: 0.2728205128vw;
 
-    height: calc(910 * var(--partner-u));
+    // +24 da konzerva (robni partneri) ne pređe u Tim sekciju.
+    height: calc(934 * var(--partner-u));
     min-height: 0;
   }
 

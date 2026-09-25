@@ -302,7 +302,7 @@
     &:focus-within,
     &--filled {
       .prijava-field__label {
-        color: $color-blue-dark;
+        color: $color-black;
         background: $color-yellow;
       }
     }
@@ -711,22 +711,27 @@
     gap: 20px;
   }
 
+  // Kao na koracima 3 i 4: kontrole imaju offset suprotan kartici, a
+  // izabrano dugme je ispunjeno bojom suprotnom od svog offseta.
   &-workshop-card {
     --workshop-level-shadow-color: #{$color-yellow};
+    --workshop-level-active-fill: #{$color-blue};
+    --workshop-level-active-text: #{$color-white};
 
     position: relative;
     display: flex;
     min-width: 0;
     padding: 14px 16px 18px;
-    border: 2px solid $color-blue-dark;
+    border: 2px solid $color-black;
     flex-direction: column;
     background: $color-white;
     box-shadow: 7px 7px 0 $color-blue;
 
     &--secondary {
       --workshop-level-shadow-color: #{$color-blue};
+      --workshop-level-active-fill: #{$color-yellow};
+      --workshop-level-active-text: #{$color-black};
 
-      border-color: $color-black;
       box-shadow: 7px 7px 0 $color-yellow;
     }
 
@@ -757,7 +762,7 @@
       width: fit-content;
       max-width: 100%;
       margin: 0;
-      padding: 5px 12px 6px;
+      padding: 7px 17px 8px;
       color: $color-white;
       font-family: $font-display;
       font-size: 15px;
@@ -799,17 +804,15 @@
     --workshop-menu-border: 3px;
     --workshop-menu-row-height: 54px;
 
-    // Yellow open panel follows the closed select.
-    --workshop-open-left: 2.5%;
-    --workshop-open-right: calc(
-      2.157143% - var(--workshop-select-shadow-x)
-    );
-
-    // Figma target: smaller top gap, more yellow on the left than the right.
-    --workshop-menu-yellow-gutter-left: 5.8%;
-    --workshop-menu-yellow-gutter-right: 2.9%;
-    --workshop-menu-yellow-gutter-top: 16px;
-    --workshop-menu-yellow-gutter-bottom: 22px;
+    // Otvoren meni prati donju ivicu okvira (path u viewBox-u 0 0 291 57:
+    // donja ivica ide od x=14.76 do x=279.89), a senka mu je ista kao
+    // senka zatvorenog polja.
+    --workshop-open-left: 5.072%;
+    --workshop-open-right: 3.814%;
+    --workshop-select-shadow-color: #{$color-yellow};
+    --workshop-menu-gutter-top: 10px;
+    --workshop-menu-gutter-side: 10px;
+    --workshop-menu-gutter-bottom: 14px;
 
     position: relative;
     z-index: 1;
@@ -903,28 +906,22 @@
       height: var(--workshop-select-chevron-height);
       pointer-events: none;
       transform: translateY(-55%);
-      transition: transform 150ms ease;
+      transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
 
-      &::before,
-      &::after {
-        position: absolute;
-        top: 42%;
-        width: 58%;
-        height: 4px;
-        content: "";
-        background: $color-black;
-      }
-
+      // Jedan kvadrat sa donjom i desnom ivicom, rotiran za 45deg: čist "V"
+      // bez preklapanja krakova u sredini.
       &::before {
-        left: 0;
-        transform: rotate(42deg);
-        transform-origin: right center;
-      }
-
-      &::after {
-        right: 0;
-        transform: rotate(-42deg);
-        transform-origin: left center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        box-sizing: border-box;
+        width: 52%;
+        aspect-ratio: 1;
+        content: "";
+        border: solid $color-black;
+        border-width: 0 var(--workshop-select-chevron-stroke, 4px)
+          var(--workshop-select-chevron-stroke, 4px) 0;
+        transform: translate(-50%, -72%) rotate(45deg);
       }
     }
 
@@ -942,23 +939,26 @@
       z-index: 8;
 
       /*
-       * The original polygon remains visible.
-       * This yellow panel starts directly beneath it and extends straight
-       * down, matching the target instead of hugging the menu tightly.
+       * Obojeni panel je tačno širine donje ivice senke zatvorenog polja,
+       * pa izgleda kao da se offset otvara. Beli meni sedi unutar njega sa
+       * razmakom, pa nikad nije širi od offseta.
        */
       top: calc(var(--workshop-select-height) - var(--workshop-menu-border));
-      right: var(--workshop-open-right);
-      left: var(--workshop-open-left);
+      right: calc(
+        var(--workshop-open-right) - var(--workshop-select-shadow-x)
+      );
+      left: calc(
+        var(--workshop-open-left) + var(--workshop-select-shadow-x)
+      );
 
       padding:
-        var(--workshop-menu-yellow-gutter-top)
-        var(--workshop-menu-yellow-gutter-right)
-        var(--workshop-menu-yellow-gutter-bottom)
-        var(--workshop-menu-yellow-gutter-left);
+        var(--workshop-menu-gutter-top)
+        var(--workshop-menu-gutter-side)
+        var(--workshop-menu-gutter-bottom);
 
       overflow: visible;
+      background: var(--workshop-select-shadow-color);
       box-sizing: border-box;
-      background: $color-yellow;
       isolation: isolate;
     }
 
@@ -967,7 +967,7 @@
       z-index: 1;
       width: 100%;
       overflow: hidden;
-      border-top: 0;
+      border-top: var(--workshop-menu-border) solid $color-black;
       border-right: var(--workshop-menu-border) solid $color-black;
       border-bottom: var(--workshop-menu-border) solid $color-black;
       border-left: var(--workshop-menu-border) solid $color-black;
@@ -1092,7 +1092,6 @@
     align-items: center;
     justify-content: center;
     margin: 0;
-    color: $color-white;
     font-family: $font-display;
     font-size: 14px;
     font-weight: 800;
@@ -1120,12 +1119,15 @@
       bottom: 0;
       left: 0;
       content: "";
-      background: $color-blue;
       pointer-events: none;
     }
 
+    // Oblik počinje iznad box-a (shape-top-overhang), pa tekst podižemo
+    // za pola tog pomeraja da bude u sredini plavog oblika.
     &--level {
-      --workshop-label-text-nudge: 0px;
+      --workshop-label-text-nudge: calc(
+        var(--workshop-label-shape-top-overhang) / -2
+      );
 
       padding: 6px 24px 7px;
 
@@ -1146,22 +1148,26 @@
       }
     }
 
+    // Dvoredno pitanje: ivice su skoro ravne tamo gde je tekst, a gornji
+    // desni ugao je pun da zvezdica za obavezno legne na njega.
     &--question {
-      padding: 6px 30px 7px;
+      padding: 9px 30px 10px;
 
       &::before {
         clip-path: polygon(
-          0 30%,
-          4% 4%,
-          10% 0,
-          30% 0,
-          51% 0,
-          91% 13%,
-          100% 50%,
-          94% 100%,
-          66% 88%,
+          0 20%,
+          3% 3%,
+          12% 0,
+          50% 3%,
+          97% 9%,
+          100% 18%,
+          99% 55%,
+          100% 88%,
+          95% 100%,
+          66% 96%,
           35% 100%,
-          8% 86%
+          6% 96%,
+          0 80%
         );
       }
     }
@@ -1224,7 +1230,8 @@
     }
 
     &:hover {
-      --workshop-level-fill: #{$color-yellow};
+      --workshop-level-fill: var(--workshop-level-active-fill);
+      color: var(--workshop-level-active-text);
       transform: translateY(-2px);
     }
 
@@ -1234,8 +1241,8 @@
     }
 
     &.prijava_opcija-aktivna {
-      --workshop-level-fill: #{$color-yellow};
-      filter: drop-shadow(4px 4px 0 $color-blue-dark);
+      --workshop-level-fill: var(--workshop-level-active-fill);
+      color: var(--workshop-level-active-text);
       transform: rotate(-1deg) translateY(-1px);
     }
   }
@@ -1546,7 +1553,9 @@
         min-height: 44px;
         padding: 9px 34px 11px;
         align-items: center;
+        justify-content: center;
         box-sizing: border-box;
+        text-align: center;
         isolation: isolate;
 
         &::before {
@@ -1561,7 +1570,8 @@
             12% 0,
             34% 2%,
             56% 0,
-            92% 13%,
+            96% 2%,
+            99% 11%,
             100% 50%,
             94% 100%,
             66% 88%,
@@ -1775,14 +1785,14 @@
         margin: 0 0 14px;
         padding: 9px 34px 12px;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         box-sizing: border-box;
         color: $color-black;
         font-family: $font-display;
         font-size: 15px;
         font-weight: $font-black;
         line-height: 1.18;
-        text-align: left;
+        text-align: center;
         text-wrap: pretty;
         isolation: isolate;
         cursor: text;
@@ -1802,7 +1812,8 @@
             12% 0,
             34% 2%,
             56% 0,
-            92% 13%,
+            96% 2%,
+            99% 11%,
             100% 50%,
             94% 100%,
             66% 88%,
@@ -2075,6 +2086,7 @@
     margin: 0 0 12px;
     padding: 7px 30px 8px 22px;
     align-items: center;
+    justify-content: center;
     box-sizing: border-box;
     color: $color-black;
     font-family: $font-display;
@@ -2082,7 +2094,7 @@
     font-weight: $font-black;
     line-height: 1.14;
     overflow-wrap: anywhere;
-    text-align: left;
+    text-align: center;
     isolation: isolate;
 
     &::before {
@@ -2097,7 +2109,8 @@
         16% 0,
         38% 3%,
         58% 0,
-        88% 8%,
+        96% 2%,
+        99% 11%,
         100% 50%,
         91% 100%,
         64% 90%,
@@ -3019,7 +3032,7 @@
       padding: 8px 28px 11px;
       font-size: 13px;
       line-height: 1.2;
-      text-align: left;
+      text-align: center;
     }
 
 
@@ -3637,6 +3650,32 @@
       height: calc(var(--prijava-design-width) * 8 / 1440);
     }
 
+    // Turnstile na koraku 4: gore desno, leži 3px iznad plave linije papira
+    // (linija ide do x=1241, gornja ivica joj je na y≈97.3).
+    &-turnstile--header {
+      position: absolute;
+      z-index: 3;
+      right: calc(100% - var(--prijava-design-width) * 1241 / 1440);
+      bottom: calc(100% - var(--prijava-design-width) * 97.3 / 1440 + 3px);
+      min-width: 300px;
+      min-height: 65px;
+      line-height: 0;
+      pointer-events: auto;
+
+      // Bez inline razmaka ispod iframe-a, da je kontejner tačno visok kao widget.
+      > div {
+        display: block;
+      }
+
+      .prijava-turnstile__error {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        line-height: 1.25;
+        white-space: nowrap;
+      }
+    }
+
     &__form-area {
       position: absolute;
       top: calc(var(--prijava-design-width) * 128 / 1440);
@@ -3672,9 +3711,9 @@
         flex-direction: column;
         grid-column: 2;
         align-self: center;
-        // Levi stub uključuje i "Sa FON-a sam" (38px + 6px gap), a centriranje
+        // Levi stub uključuje i "Sa FON-a sam" (44px + 6px gap), a centriranje
         // treba da bude prema četiri polja.
-        margin-bottom: calc(var(--prijava-design-width) * 44 / 1440);
+        margin-bottom: calc(var(--prijava-design-width) * 50 / 1440);
         gap: calc(var(--prijava-design-width) * 18 / 1440);
       }
     }
@@ -3686,24 +3725,24 @@
     // Kompaktnija varijanta "godina" kutije, da kolona sa poljima
     // ostane unutar papira.
     &-fon-cek.prijava_godina-polje-horizontalno {
-      min-height: calc(var(--prijava-design-width) * 38 / 1440);
+      min-height: calc(var(--prijava-design-width) * 44 / 1440);
       margin: 0 0 0 calc(var(--prijava-design-width) * 8 / 1440);
       padding:
-        calc(var(--prijava-design-width) * 4 / 1440)
-        calc(var(--prijava-design-width) * 9 / 1440);
+        calc(var(--prijava-design-width) * 5 / 1440)
+        calc(var(--prijava-design-width) * 12 / 1440);
 
       .prijava_godina-box-wrapper {
-        width: calc(var(--prijava-design-width) * 32 / 1440);
-        height: calc(var(--prijava-design-width) * 23 / 1440);
+        width: calc(var(--prijava-design-width) * 38 / 1440);
+        height: calc(var(--prijava-design-width) * 27 / 1440);
       }
 
       .prijava_godina-bolt {
-        width: calc(var(--prijava-design-width) * 18 / 1440);
-        height: calc(var(--prijava-design-width) * 28 / 1440);
+        width: calc(var(--prijava-design-width) * 21 / 1440);
+        height: calc(var(--prijava-design-width) * 33 / 1440);
       }
 
       .prijava_godina-tekst {
-        font-size: calc(var(--prijava-design-width) * 14 / 1440);
+        font-size: calc(var(--prijava-design-width) * 17 / 1440);
       }
     }
 
@@ -3761,30 +3800,28 @@
       width: calc(var(--prijava-design-width) * 420 / 1440);
     }
 
+    /* Zvezdica za obavezno sedi na gornjem desnom uglu plavog oblika. */
     &_godina-heading {
-      display: flex;
+      display: block;
       width: max-content;
       min-height: calc(var(--prijava-design-width) * 35 / 1440);
-      gap: calc(var(--prijava-design-width) * 8 / 1440);
-      align-items: flex-start;
 
       .prijava_labela {
         margin: 0;
       }
 
       .prijava_required-marker {
-        position: relative;
-        top: calc(var(--prijava-design-width) * -2 / 1440);
-        right: auto;
-        flex: none;
+        position: absolute;
+        top: calc(var(--prijava-design-width) * -12 / 1440);
+        right: calc(var(--prijava-design-width) * -16 / 1440);
       }
     }
 
     &_labela {
-      padding: calc(var(--prijava-design-width) * 5 / 1440)
-        calc(var(--prijava-design-width) * 14 / 1440)
-        calc(var(--prijava-design-width) * 6 / 1440);
-      font-size: calc(var(--prijava-design-width) * 16 / 1440);
+      padding: calc(var(--prijava-design-width) * 6 / 1440)
+        calc(var(--prijava-design-width) * 17 / 1440)
+        calc(var(--prijava-design-width) * 7 / 1440);
+      font-size: calc(var(--prijava-design-width) * 19 / 1440);
     }
 
     &_required-marker {
@@ -3985,9 +4022,9 @@
       &__title {
         max-width: calc(100% - calc(var(--prijava-design-width) * 150 / 1440));
         padding:
-          calc(var(--prijava-design-width) * 5.75 / 1440)
-          calc(var(--prijava-design-width) * 13.5 / 1440)
-          calc(var(--prijava-design-width) * 6.75 / 1440);
+          calc(var(--prijava-design-width) * 8 / 1440)
+          calc(var(--prijava-design-width) * 20 / 1440)
+          calc(var(--prijava-design-width) * 9 / 1440);
         font-size: calc(var(--prijava-design-width) * 19.5 / 1440);
         white-space: nowrap;
       }
@@ -4019,11 +4056,12 @@
         calc(var(--prijava-design-width) * 3 / 1440);
       --workshop-menu-row-height:
         calc(var(--prijava-design-width) * 54 / 1440);
-
-      --workshop-menu-yellow-gutter-top:
-        calc(var(--prijava-design-width) * 16 / 1440);
-      --workshop-menu-yellow-gutter-bottom:
-        calc(var(--prijava-design-width) * 22 / 1440);
+      --workshop-menu-gutter-top:
+        calc(var(--prijava-design-width) * 12 / 1440);
+      --workshop-menu-gutter-side:
+        calc(var(--prijava-design-width) * 12 / 1440);
+      --workshop-menu-gutter-bottom:
+        calc(var(--prijava-design-width) * 18 / 1440);
 
       width: 100%;
       max-width: none;
@@ -4044,10 +4082,8 @@
       }
 
       &__chevron {
-        &::before,
-        &::after {
-          height: calc(var(--prijava-design-width) * 4 / 1440);
-        }
+        --workshop-select-chevron-stroke:
+          calc(var(--prijava-design-width) * 4 / 1440);
       }
 
       &__menu {
@@ -4107,7 +4143,7 @@
 
       &--level {
         --workshop-label-text-nudge:
-          calc(var(--prijava-design-width) * 0.5 / 1440);
+          calc(var(--prijava-design-width) * -3 / 1440);
 
         padding:
           calc(var(--prijava-design-width) * 6.75 / 1440)
@@ -4117,9 +4153,9 @@
 
       &--question {
         padding:
-          calc(var(--prijava-design-width) * 6.75 / 1440)
+          calc(var(--prijava-design-width) * 10 / 1440)
           calc(var(--prijava-design-width) * 38 / 1440)
-          calc(var(--prijava-design-width) * 8 / 1440);
+          calc(var(--prijava-design-width) * 11 / 1440);
       }
     }
 
@@ -4144,15 +4180,6 @@
         0
         var(--workshop-level-shadow-color)
       );
-
-      &.prijava_opcija-aktivna {
-        filter: drop-shadow(
-          calc(var(--prijava-design-width) * 4 / 1440)
-          calc(var(--prijava-design-width) * 4 / 1440)
-          0
-          $color-blue-dark
-        );
-      }
     }
 
     .prijava-workshop-textarea-shell {
@@ -4723,7 +4750,7 @@
           calc(var(--prijava-design-width) * 12 / 1440);
         font-size: calc(var(--prijava-design-width) * 15 / 1440);
         line-height: 1.2;
-        text-align: left;
+        text-align: center;
       }
 
 
@@ -5149,6 +5176,42 @@
 
 .prijava .prijava-workshop-card--secondary .prijava-workshop-select__shadow path {
   fill: $color-blue;
+  stroke: $color-blue;
+}
+
+.prijava .prijava-workshop-card--secondary .prijava-workshop-select {
+  --workshop-select-shadow-color: #{$color-blue};
+}
+
+/* Natpisi pitanja su, kao na koracima 3 i 4, žuti sa crnim tekstom.
+   Druga želja ima obrnute boje, da se žuta šrafura (zaključano) vidi preko njih. */
+.prijava .prijava-workshop-label {
+  color: $color-black;
+
+  &::before {
+    background: $color-yellow;
+  }
+}
+
+.prijava .prijava-workshop-card--secondary .prijava-workshop-label {
+  color: $color-white;
+
+  &::before {
+    background: $color-blue;
+  }
+}
+
+/* Na plavoj pozadini izabrana opcija je žuta, da se razlikuje od panela. */
+.prijava .prijava-workshop-card--secondary .prijava-workshop-select__option {
+  &:hover,
+  &--selected {
+    color: $color-black;
+    background: $color-yellow;
+  }
+
+  &:focus-visible {
+    outline-color: $color-yellow;
+  }
 }
 
 .prijava .prijava-panel-block--panel-question .prijava-panel-textarea-shell {
@@ -5192,6 +5255,13 @@
   height: 31px;
   margin: 0;
   transform: translate(42%, -42%) rotate(-3deg);
+}
+
+/* Zvezdica pitanja sedi na gornjem desnom uglu plavog oblika, ali ne sme da
+   pređe u razmak iznad (preklapala bi dugmad za nivo znanja). */
+.prijava .prijava-workshop-label--question .prijava-required-star--edge {
+  top: 0;
+  transform: translate(42%, -20%) rotate(-3deg);
 }
 
 .prijava .prijava-workshop-label,
@@ -5684,5 +5754,22 @@
       margin: 0 auto;
       text-align: center;
     }
+  }
+}
+
+/* Sve zvezdice za obavezno su iste veličine kroz celu formu (veličina sa
+   izbora radionice na koraku 2). Stoji na kraju fajla da pregazi ranija
+   pravila koja su je računala preko em ili --workshop-select-required-size. */
+.prijava .prijava-required-star.prijava-required-star {
+  width: 34px;
+  height: auto;
+}
+
+@media #{$desktop} {
+  /* Skala koraka 2 (min(100vw, 141dvh)), a ne --prijava-design-width koje
+     se razlikuje po koracima, da zvezdica bude ista na svakom koraku. */
+  .prijava .prijava-required-star.prijava-required-star {
+    width: calc(min(100vw, 141dvh) * 34 / 1440);
+    height: auto;
   }
 }
