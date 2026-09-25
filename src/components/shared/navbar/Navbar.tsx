@@ -100,6 +100,16 @@ const Navbar = () => {
 
   const isPrijavaPage = pathname === PRIJAVA_PATH;
 
+  // Dolazak na Prijavu bilo kojim putem (i "nazad") zatvara mobilni meni.
+  // Radi se tokom rendera, pri promeni rute, umesto u efektu.
+  const [menuPathname, setMenuPathname] = useState(pathname);
+  if (menuPathname !== pathname) {
+    setMenuPathname(pathname);
+    if (isPrijavaPage) {
+      setIsMenuOpen(false);
+    }
+  }
+
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
   const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), []);
 
@@ -167,12 +177,6 @@ const Navbar = () => {
       html.classList.remove(MENU_SCROLL_LOCK_CLASS);
     };
   }, [closeMenu, isMenuOpen]);
-
-  useEffect(() => {
-    if (isPrijavaPage) {
-      closeMenu();
-    }
-  }, [closeMenu, isPrijavaPage]);
 
   useEffect(() => {
     const desktopQuery = window.matchMedia('(min-width: 1025px)');
