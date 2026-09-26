@@ -109,7 +109,13 @@ const Predavac = ({
                   </svg>
                 )}
 
-                <figcaption className="predavac-name">{imePredavaca}</figcaption>
+                <figcaption
+                  className={`predavac-name${
+                    imePredavaca.length > 16 ? " predavac-name--dugacko" : ""
+                  }`}
+                >
+                  {imePredavaca}
+                </figcaption>
               </figure>
 
               {workshopIcon && (

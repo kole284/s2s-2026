@@ -277,9 +277,15 @@
   font-size: calc(var(--pd-mobile-design-width) * 20 / 390);
   line-height: 0.92;
   letter-spacing: -0.025em;
+  word-spacing: 0.18em;
   color: $color-white;
   -webkit-text-stroke: calc(var(--pd-mobile-design-width) * 3 / 390) $color-blue;
   paint-order: stroke fill;
+
+  /* Duga imena bi izašla van kolone slike i prešla preko teksta. */
+  &--dugacko {
+    font-size: calc(var(--pd-mobile-design-width) * 15 / 390);
+  }
 }
 
 .predavac-shield {
@@ -478,6 +484,10 @@
     line-height: 0.9;
     letter-spacing: -0.03em;
     -webkit-text-stroke: calc(var(--pd-design-width) * 5.5 / 1440) $color-blue;
+
+    &--dugacko {
+      font-size: calc(var(--pd-design-width) * 34 / 1440);
+    }
   }
 
   .predavac-info {
