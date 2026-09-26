@@ -1775,8 +1775,7 @@ const Prijava = () => {
                           className="prijava-panel-block__description prijava-panel-block__description--reasons-question"
                           htmlFor="prijava-razlozi-s2s"
                         >
-                          Navedi tri razloga zbog kojih želiš da budeš deo S2S-a
-                          ove godine.
+                          Šta te je motivisalo da se prijaviš na S2S ove godine?
                           <RequiredStar className="prijava-field__required prijava-required-star--edge" />
                         </label>
 
