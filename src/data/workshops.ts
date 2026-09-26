@@ -45,7 +45,7 @@ export const WORKSHOPS: Workshop[] = [
   {
     id: 7,
     shortName: "Game Dev",
-    fullName: "Game development",
+    fullName: "2D game development",
     lecturers: ["Aleksandar Ilanković"],
   },
   {

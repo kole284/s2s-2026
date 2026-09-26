@@ -939,6 +939,7 @@ const Radionice = () => {
         <div className="radionice-predavac-view">
           <Predavac
             predavacId={aktivniPredavacId}
+            workshopId={otvorenaRadionica.id}
             workshopTitle={otvorenaRadionica.fullName}
             workshopIcon={otvorenaRadionica.detailIcon}
             lecturers={otvorenaRadionica.lecturers}
