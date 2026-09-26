@@ -64,7 +64,7 @@ export const PREDAVACI: PredavacPodaci[] = [
     slika: dorisSmulja,
     pozicijaSlike: { x: -86.9, y: -152.9, width: 480.0, height: 600.0 },
     bio: [
-      "Student završne godine FON-a, smera Informaciono inženjerstvo, sa iskustvom u Pythonu, SQL-u, Javi, bazama podataka i analizi podataka. Posebno ga interesuju veštačka inteligencija, mašinsko učenje i rad sa podacima, uz praktično iskustvo stečeno kroz akademske projekte i IT praksu.",
+      "Student završne godine FON-a, smera Informaciono inženjerstvo, sa iskustvom u Pythonu, SQL-u, Javi, bazama podataka i analizi podataka. Posebno je interesuju veštačka inteligencija, mašinsko učenje i rad sa podacima, uz praktično iskustvo stečeno kroz akademske projekte i IT praksu.",
     ],
   },
   {
