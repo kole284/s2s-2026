@@ -744,7 +744,7 @@
   }
 
   .section-content > h2 {
-    top: calc(48 * var(--partner-u));
+    top: calc(33 * var(--partner-u));
 
     font-size: calc(27 * var(--partner-u));
 
@@ -752,11 +752,11 @@
   }
 
   .annual-section .section-content > h2 {
-    top: calc(50 * var(--partner-u));
+    top: calc(42 * var(--partner-u));
   }
 
   .media-section .section-content > h2 {
-    top: calc(31 * var(--partner-u));
+    top: calc(26 * var(--partner-u));
   }
 
   .sponsor-content {
@@ -863,16 +863,17 @@
     pointer-events: auto;
   }
 
+  // Top je pomeren za pola rasta hexagona (12.16) da centar reda ostane isti.
   .annual-section .hexagon-marquee {
-    top: calc(92 * var(--partner-u));
+    top: calc(79.84 * var(--partner-u));
   }
 
   .goods-section .hexagon-marquee {
-    top: calc(83 * var(--partner-u));
+    top: calc(70.84 * var(--partner-u));
   }
 
   .media-section .hexagon-marquee {
-    top: calc(83 * var(--partner-u));
+    top: calc(70.84 * var(--partner-u));
   }
 
   .hexagon-marquee-track {
@@ -894,9 +895,10 @@
     padding-right: calc(65 * var(--partner-u));
   }
 
+  // +32% u odnosu na 65 × 76 (+20%, pa još +10%).
   .hexagon {
-    width: calc(65 * var(--partner-u));
-    height: calc(76 * var(--partner-u));
+    width: calc(85.8 * var(--partner-u));
+    height: calc(100.32 * var(--partner-u));
   }
 
   .hexagon-inner {
