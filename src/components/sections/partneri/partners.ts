@@ -10,6 +10,12 @@ const naturalniModules = import.meta.glob("@/assets/partneri/naturalni/*", {
   query: "?url",
 }) as Record<string, string>;
 
+const godisnjiModules = import.meta.glob("@/assets/partneri/godisnji/*", {
+  eager: true,
+  import: "default",
+  query: "?url",
+}) as Record<string, string>;
+
 const resolveAsset = (modules: Record<string, string>, filename: string): string => {
   const entry = Object.entries(modules).find(([path]) => path.endsWith(`/${filename}`));
 
@@ -20,7 +26,7 @@ const resolveAsset = (modules: Record<string, string>, filename: string): string
   return entry[1];
 };
 
-export type PartnerKind = "robni" | "naturalni";
+export type PartnerKind = "godisnji" | "robni" | "naturalni";
 
 export type Partner = {
   name: string;
@@ -40,6 +46,15 @@ type PartnerFile = readonly [
   url: string,
   crop?: string,
   scale?: number,
+];
+
+// Logoi su originalni fajlovi partnera (samo drugi format ili manja rezolucija);
+// crop samo seče prazan prostor oko logoa pri prikazu, fajl ostaje netaknut.
+const GODISNJI_FILES: readonly PartnerFile[] = [
+  ["Wargaming", "wargaming.webp", "https://wargaming.com", "inset(30% 5% 30% 5%)"],
+  ["Knjaz Miloš", "knjaz-milos.png", "https://knjaz.rs"],
+  ["Fakultet organizacionih nauka", "fon.png", "https://fon.bg.ac.rs", "inset(17% 4% 21% 5%)"],
+  ["Rapsody Travel & Events", "rapsody.svg", "https://www.rapsodytravel.rs", "inset(20% 12% 32% 13%)"],
 ];
 
 // Linkovi iz tabele "Logoi za sajt" (bez utm/igsh/stkn parametara).
@@ -62,6 +77,7 @@ const ROBNI_FILES: readonly PartnerFile[] = [
   ["Pab kviz 8x8", "pab-kviz-8x8-trim.png", "https://www.instagram.com/pabkviz8x8", undefined, 1.25],
   ["Slatka poruka", "slatka-poruka-trim.png", "https://www.instagram.com/slatkaporuka", undefined, 1.4],
   ["Pinecone Bar & Theater", "pinecone-bar-and-theater-trim.svg", "https://pinecone.theater/en"],
+  ["BeoGraf štamparija", "beograf.jpeg", "https://stamparijabeograf.rs"],
 ];
 
 const NATURALNI_FILES: readonly PartnerFile[] = [
@@ -70,6 +86,8 @@ const NATURALNI_FILES: readonly PartnerFile[] = [
   ["Mamikino", "mamkino.svg", "https://www.facebook.com/kolacikaokodbake/"],
   ["Milford", "milford.jpg", "https://balkanzone.rs/"],
   ["Jelena popsi", "jelena-popsi.png", "https://www.instagram.com/j.cake_pops"],
+  ["Boombox", "boombox.svg", "https://boombox.eu/sr/", undefined, 1.35],
+  ["Choc Shock", "choc-shock.webp", "https://www.instagram.com/choc_shock/", "inset(15% 17% 12% 16%)", 1.4],
 ];
 
 const toPartner = (
@@ -84,6 +102,10 @@ const toPartner = (
   crop,
   scale,
 });
+
+export const GODISNJI_PARTNERS: Partner[] = GODISNJI_FILES.map((file) =>
+  toPartner(godisnjiModules, "godisnji", file),
+);
 
 // Robni and naturalni partners are shown together under the single "ROBNI" heading.
 export const ROBNI_PARTNERS: Partner[] = [

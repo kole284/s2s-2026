@@ -15,7 +15,7 @@ import wonderLogo from "@/assets/partneri/pokrovitelj/wonder-wordmark-gradient.w
 
 import PartnerPreview from "./PartnerPreview";
 import { isLeavingTowardPreview } from "./partnerPreviewLayout";
-import { ROBNI_PARTNERS } from "./partners";
+import { GODISNJI_PARTNERS, ROBNI_PARTNERS } from "./partners";
 import type { Partner } from "./partners";
 
 import "./Partneri.scss";
@@ -428,6 +428,17 @@ const HexagonMarquee = ({
     );
   };
 
+  /*
+   * Grupa mora da bude bar široka kao prazna traka (MARQUEE_HEXAGON_COUNT),
+   * inače bi pri malo logoa (npr. 4 godišnja partnera) u traci ostala rupa.
+   */
+  const groupLogos = logos
+    ? Array.from(
+        { length: Math.ceil(MARQUEE_HEXAGON_COUNT / logos.length) },
+        () => logos,
+      ).flat()
+    : undefined;
+
   return (
     <div
       ref={viewportRef}
@@ -458,17 +469,21 @@ const HexagonMarquee = ({
             // Samo prva grupa je za čitače ekrana i Tab; ostale su kopije za petlju.
             aria-hidden={logos && groupIndex > 0 ? "true" : undefined}
           >
-            {logos
-              ? logos.map((partner) => {
+            {groupLogos
+              ? groupLogos.map((partner, index) => {
+                  // Ponovljeni logoi su samo popuna trake, kao i kopije grupa.
+                  const kopija = groupIndex > 0 || index >= (logos?.length ?? 0);
+
                   return (
                     <a
-                      key={`${groupIndex}-${partner.name}`}
+                      key={`${groupIndex}-${index}`}
                       className="hexagon-link"
                       href={partner.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       draggable={false}
-                      tabIndex={groupIndex > 0 ? -1 : undefined}
+                      tabIndex={kopija ? -1 : undefined}
+                      aria-hidden={groupIndex === 0 && kopija ? "true" : undefined}
                       aria-label={`${partner.name} (otvara se u novom tabu)`}
                       onPointerEnter={(event) => {
                         if (event.pointerType === "mouse") {
@@ -602,6 +617,7 @@ const Partneri = () => (
       direction="left"
       illustration={calendarIllustration}
       illustrationClassName="illustration-calendar"
+      logos={GODISNJI_PARTNERS}
     />
 
     <PartnerRow

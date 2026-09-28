@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 
 import { isPreviewBelow } from "./partnerPreviewLayout";
 import { formatPartnerLink } from "./partners";
-import type { Partner } from "./partners";
+import type { Partner, PartnerKind } from "./partners";
 
 import "./PartnerPreview.scss";
 
@@ -13,6 +13,12 @@ type PartnerPreviewProps = {
   onPointerEnter: () => void;
   onPointerLeave: () => void;
   onOpen: () => void;
+};
+
+const PARTNER_KIND_LABEL: Record<PartnerKind, string> = {
+  godisnji: "GODIŠNJI",
+  robni: "ROBNI",
+  naturalni: "NATURALNI",
 };
 
 const CARD_WIDTH = 248;
@@ -64,7 +70,7 @@ const PartnerPreview = ({
 
       <div className="partner-preview-body">
         <span className="partner-preview-kind">
-          {partner.kind === "robni" ? "ROBNI" : "NATURALNI"}
+          {PARTNER_KIND_LABEL[partner.kind]}
         </span>
         <strong className="partner-preview-name">{partner.name}</strong>
         <a
