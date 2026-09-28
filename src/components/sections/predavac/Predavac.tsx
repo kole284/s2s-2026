@@ -15,6 +15,8 @@ type PredavacProps = {
   workshopIcon?: string;
   lecturers?: string[];
   onClose?: () => void;
+  onPrethodnaRadionica?: () => void;
+  onSledecaRadionica?: () => void;
 };
 
 const PROFILI_PO_IMENU = new Map(
@@ -32,6 +34,8 @@ const Predavac = ({
   workshopIcon,
   lecturers,
   onClose,
+  onPrethodnaRadionica,
+  onSledecaRadionica,
 }: PredavacProps) => {
   const lecturerNames = lecturers?.length
     ? lecturers
@@ -114,7 +118,29 @@ const Predavac = ({
                     imePredavaca.length > 16 ? " predavac-name--dugacko" : ""
                   }`}
                 >
-                  {imePredavaca}
+                  {imaVisePredavaca && (
+                    <button
+                      type="button"
+                      className="predavac-photo-arrow predavac-photo-arrow--prev"
+                      onClick={prikaziPrethodnog}
+                      aria-label="Prethodni predavač"
+                    >
+                      <img src={arrowDefault} alt="" />
+                    </button>
+                  )}
+
+                  <span>{imePredavaca}</span>
+
+                  {imaVisePredavaca && (
+                    <button
+                      type="button"
+                      className="predavac-photo-arrow predavac-photo-arrow--next"
+                      onClick={prikaziSledeceg}
+                      aria-label="Sledeći predavač"
+                    >
+                      <img src={arrowDefault} alt="" />
+                    </button>
+                  )}
                 </figcaption>
               </figure>
 
@@ -140,13 +166,14 @@ const Predavac = ({
           </div>
         </div>
 
-        {imaVisePredavaca && (
+        {/* Bočne strelice menjaju radionicu, a strelice uz sliku predavača. */}
+        {onPrethodnaRadionica && onSledecaRadionica && (
           <>
             <button
               type="button"
               className="predavac-arrow predavac-arrow--prev"
-              onClick={prikaziPrethodnog}
-              aria-label="Prethodni predavač"
+              onClick={onPrethodnaRadionica}
+              aria-label="Prethodna radionica"
             >
               <img src={arrowDefault} alt="" />
             </button>
@@ -154,8 +181,8 @@ const Predavac = ({
             <button
               type="button"
               className="predavac-arrow predavac-arrow--next"
-              onClick={prikaziSledeceg}
-              aria-label="Sledeći predavač"
+              onClick={onSledecaRadionica}
+              aria-label="Sledeća radionica"
             >
               <img src={arrowDefault} alt="" />
             </button>

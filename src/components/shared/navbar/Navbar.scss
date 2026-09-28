@@ -693,3 +693,36 @@ body.navbar-menu-scroll-locked {
     left: auto;
   }
 }
+
+/*
+ * Dok je otvoren popup predavača (Radionice.tsx stavlja klasu na <html>),
+ * navbar klizi nagore i nestaje, a po zatvaranju se vraća istim putem.
+ * Visibility se gasi tek kad se prelaz završi, a pri povratku odmah.
+ * Stoji na kraju fajla da bi pregazio `transition: top` iz desktop pravila.
+ */
+.navbar {
+  transition:
+    top 220ms ease,
+    opacity 280ms ease,
+    transform 320ms cubic-bezier(0.22, 0.8, 0.22, 1),
+    visibility 0s;
+}
+
+html.radionice-predavac-otvoren .navbar {
+  opacity: 0;
+  transform: translateY(calc(-100% - 24px));
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    top 220ms ease,
+    opacity 280ms ease,
+    transform 280ms cubic-bezier(0.55, 0, 0.8, 0.4),
+    visibility 0s linear 280ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  html.radionice-predavac-otvoren .navbar {
+    transition: none;
+  }
+}

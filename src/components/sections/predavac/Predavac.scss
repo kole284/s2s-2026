@@ -22,7 +22,8 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  padding-top: clamp(76px, 10vw, 90px);
+  /* Navbar je sklonjen dok je predavač otvoren, pa naslov ide skroz gore. */
+  padding-top: calc(var(--pd-mobile-design-width) * 28 / 390);
   padding-bottom: calc(var(--pd-mobile-design-width) * 64 / 390);
   background-color: $color-blue;
 }
@@ -35,9 +36,9 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: 12px
-    calc(var(--pd-mobile-design-width) * 56 / 390)
-    clamp(24px, 5vw, 38px);
+  /* Fiksna visina: dug naslov u više redova ne sme da pomeri papir. */
+  height: calc(var(--pd-mobile-design-width) * 104 / 390);
+  padding: 0 calc(var(--pd-mobile-design-width) * 56 / 390);
 }
 
 .predavac-title {
@@ -112,7 +113,8 @@
   gap: calc(var(--pd-mobile-design-width) * 14 / 390);
   box-sizing: border-box;
   width: 100%;
-  max-height: 100%;
+  /* Kartica uvek zauzima ceo papir, pa se slika ne pomera sa dužinom teksta. */
+  height: 100%;
   margin: 0 auto;
   padding: calc(var(--pd-zigzag-depth) + var(--pd-mobile-design-width) * 4 / 390)
     calc(var(--pd-mobile-design-width) * 28 / 390)
@@ -135,19 +137,28 @@
 }
 
 .predavac-meta {
+  /*
+   * Meta red je uvek iste visine (mesta za dugo predznanje u više redova),
+   * pa tabovi i tekst ne skaču kad se promeni radionica.
+   */
   display: flex;
-  flex-wrap: wrap;
-  gap: calc(var(--pd-u) * 6) calc(var(--pd-u) * 16);
+  flex: none;
+  flex-direction: column;
+  gap: calc(var(--pd-u) * 4);
+  min-height: calc(var(--pd-u) * (13 * 1.25 * 3 + 4));
   margin: 0;
 }
 
 .predavac-meta-item {
   display: flex;
+  flex: none;
   align-items: baseline;
   gap: calc(var(--pd-u) * 6);
   min-width: 0;
 
   dt {
+    flex: none;
+    white-space: nowrap;
     font-family: $font-display;
     font-weight: $font-black;
     font-size: calc(var(--pd-u) * 11);
@@ -164,6 +175,7 @@
     display: flex;
     align-items: center;
     gap: calc(var(--pd-u) * 5);
+    min-width: 0;
     margin: 0;
     font-family: $font-body;
     font-weight: 700;
@@ -239,7 +251,8 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  gap: calc(var(--pd-mobile-design-width) * 18 / 390);
+  /* Dovoljno mesta da strelice uz dugo ime predavača ne seku ikonicu. */
+  gap: calc(var(--pd-mobile-design-width) * 40 / 390);
   padding-bottom: calc(var(--pd-mobile-design-width) * 10 / 390);
 }
 
@@ -281,6 +294,9 @@
   color: $color-white;
   -webkit-text-stroke: calc(var(--pd-mobile-design-width) * 3 / 390) $color-blue;
   paint-order: stroke fill;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--pd-mobile-design-width) * 4 / 390);
 
   /* Duga imena bi izašla van kolone slike i prešla preko teksta. */
   &--dugacko {
@@ -290,12 +306,13 @@
 
 .predavac-shield {
   display: block;
-  width: calc(var(--pd-mobile-design-width) * 150 / 390);
-  height: calc(var(--pd-mobile-design-width) * 150 / 390);
+  width: calc(var(--pd-mobile-design-width) * 136 / 390);
+  height: calc(var(--pd-mobile-design-width) * 136 / 390);
   object-fit: contain;
 }
 
 .predavac-text {
+  flex: 1 1 auto;
   width: 100%;
   min-height: 0;
   overflow-y: auto;
@@ -340,6 +357,17 @@
   background: none;
   cursor: pointer;
   transform: translateY(-50%);
+  transition: transform 150ms ease;
+
+  &--prev:hover,
+  &--prev:focus-visible {
+    transform: translateY(-50%) translateX(-4px) scale(1.15);
+  }
+
+  &--next:hover,
+  &--next:focus-visible {
+    transform: translateY(-50%) translateX(4px) scale(1.15);
+  }
 }
 
 .predavac-arrow img {
@@ -361,6 +389,32 @@
   right: calc(var(--pd-mobile-design-width) * 20 / 390);
 }
 
+/* Strelice za predavače stoje levo i desno od imena, ispod slike. */
+.predavac-photo-arrow {
+  flex: none;
+  margin: 0;
+  padding: calc(var(--pd-mobile-design-width) * 4 / 390);
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: transform 150ms ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: scale(1.15);
+  }
+}
+
+.predavac-photo-arrow img {
+  display: block;
+  width: calc(var(--pd-mobile-design-width) * 10 / 390);
+  height: auto;
+}
+
+.predavac-photo-arrow--prev img {
+  transform: scaleX(-1);
+}
+
 .predavac-footer {
   display: none;
 }
@@ -373,15 +427,14 @@
       calc(var(--pd-design-width) * 64 / 1440)
     );
 
-    display: block;
-    padding-top: calc(var(--pd-design-width) * 110 / 1440);
+    padding-top: calc(var(--pd-design-width) * 24 / 1440);
     padding-bottom: calc(var(--pd-design-width) * 64 / 1440);
   }
 
   /* 1:1 geometrijski ekvivalent .radionice-title. */
   .predavac-header {
     width: var(--pd-design-width);
-    min-height: calc(var(--pd-design-width) * 177 / 1440);
+    height: calc(var(--pd-design-width) * 177 / 1440);
     margin-inline: auto;
     padding: calc(var(--pd-design-width) * 40 / 1440)
       calc(var(--pd-design-width) * 120 / 1440)
@@ -410,8 +463,10 @@
   }
 
   /* 1:1 geometrijski ekvivalent .radionice-band (visina 620/1440, isti zig-zag). */
+  /* Papir popunjava visinu ekrana, a nikad nije niži od trake radionica. */
   .predavac-band {
-    height: calc(var(--pd-design-width) * 620 / 1440);
+    flex: 1 1 auto;
+    min-height: calc(var(--pd-design-width) * 620 / 1440);
   }
 
   .predavac-content {
@@ -484,6 +539,7 @@
     line-height: 0.9;
     letter-spacing: -0.03em;
     -webkit-text-stroke: calc(var(--pd-design-width) * 5.5 / 1440) $color-blue;
+    gap: calc(var(--pd-design-width) * 6 / 1440);
 
     &--dugacko {
       font-size: calc(var(--pd-design-width) * 34 / 1440);
@@ -495,14 +551,26 @@
 
     grid-row: 1;
     grid-column: 2;
-    align-self: stretch;
-    justify-content: center;
-    gap: calc(var(--pd-u) * 18);
+    /*
+     * Fiksna visina poravnata sa slikom: meta i tabovi stoje uvek na istom
+     * mestu, a duži tekst skroluje unutar svog okvira.
+     */
+    align-self: center;
+    height: calc(var(--pd-design-width) * 540 / 1440);
     max-height: 100%;
+    gap: calc(var(--pd-u) * 18);
   }
 
+  /* Na desktopu su nivo i predznanje u istom redu, a predznanje se prelama u svojoj koloni. */
   .predavac-meta {
-    gap: calc(var(--pd-u) * 10) calc(var(--pd-u) * 36);
+    flex-direction: row;
+    align-items: flex-start;
+    gap: calc(var(--pd-u) * 36);
+    min-height: calc(var(--pd-u) * 19 * 1.25 * 3);
+  }
+
+  .predavac-meta-item + .predavac-meta-item {
+    flex: 1 1 0;
   }
 
   .predavac-meta-item {
@@ -574,21 +642,33 @@
     filter: none;
   }
 
+  .predavac-photo-arrow {
+    padding: calc(var(--pd-design-width) * 6 / 1440);
+  }
+
+  .predavac-photo-arrow img {
+    width: calc(var(--pd-design-width) * 20 / 1440);
+  }
+
   .predavac-arrow--prev {
-    left: calc(
-      (100% - var(--pd-design-width)) / 2 + var(--pd-design-width) * 40 / 1440
+    left: max(
+      16px,
+      calc((100% - var(--pd-design-width)) / 2 - var(--pd-design-width) * 24 / 1440)
     );
   }
 
   .predavac-arrow--next {
-    right: calc(
-      (100% - var(--pd-design-width)) / 2 + var(--pd-design-width) * 40 / 1440
+    right: max(
+      16px,
+      calc((100% - var(--pd-design-width)) / 2 - var(--pd-design-width) * 24 / 1440)
     );
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .predavac-arrow img {
+  .predavac-arrow,
+  .predavac-arrow img,
+  .predavac-photo-arrow {
     transition: none;
   }
 }

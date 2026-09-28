@@ -126,6 +126,31 @@
   pointer-events: none;
 }
 
+/*
+ * Otvoren predavač je popup preko celog ekrana: stranica se ne skroluje,
+ * navbar se sklanja (animacija je u Navbar.scss), a plava podloga ide do dna
+ * ekrana i završava se ravno, bez belih zubaca. Klasu na <html> postavlja
+ * Radionice.tsx.
+ */
+html.radionice-predavac-otvoren,
+html.radionice-predavac-otvoren body {
+  overflow: hidden;
+}
+
+html.radionice-predavac-otvoren body {
+  padding-right: var(--rd-scrollbar-width, 0px);
+}
+
+.radionice-page--predavac-open {
+  /* Iznad zubaca O projektu, koji bi inače virili na vrhu popupa. */
+  z-index: 3;
+  min-height: 100dvh;
+}
+
+.radionice-page--predavac-open::after {
+  display: none;
+}
+
 .radionice-background-base,
 .radionice-background-transition {
   position: absolute;
@@ -292,65 +317,6 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-}
-
-.radionice-paper-sheet::before,
-.radionice-paper-sheet::after {
-  content: "";
-  position: absolute;
-  z-index: 6;
-  inset: 4%;
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease-out;
-}
-
-.radionice-paper-sheet::before {
-  background:
-    linear-gradient(
-      29deg,
-      transparent 0 23%,
-      rgb(255 255 255 / 0.22) 24% 26%,
-      transparent 27% 100%
-    ),
-    linear-gradient(
-      151deg,
-      transparent 0 36%,
-      rgb(0 0 0 / 0.12) 37% 40%,
-      transparent 41% 100%
-    ),
-    linear-gradient(
-      73deg,
-      transparent 0 54%,
-      rgb(255 255 255 / 0.16) 55% 58%,
-      transparent 59% 100%
-    );
-}
-
-/* Nabori kao tanke linije (senka/odsjaj), bez svetlih ovala. */
-.radionice-paper-sheet::after {
-  background:
-    linear-gradient(
-      118deg,
-      transparent 0 29%,
-      rgb(0 0 0 / 0.12) 29.5% 30.5%,
-      rgb(255 255 255 / 0.22) 31% 32%,
-      transparent 32.5% 100%
-    ),
-    linear-gradient(
-      58deg,
-      transparent 0 61%,
-      rgb(0 0 0 / 0.1) 61.5% 62.5%,
-      rgb(255 255 255 / 0.18) 63% 64%,
-      transparent 64.5% 100%
-    ),
-    linear-gradient(
-      172deg,
-      transparent 0 48%,
-      rgb(255 255 255 / 0.14) 48.5% 49.3%,
-      transparent 50% 100%
-    );
 }
 
 .radionice-paper-content {
@@ -738,92 +704,6 @@
 }
 
 /*
- * Nabori se vide samo dok je papir zgužvan.
- * Dva pseudo-sloja daju utisak više preklopljenih listova bez canvas/WebGL fizike.
- */
-.radionice-page--view-transition .radionice-band::before,
-.radionice-page--view-transition .radionice-band::after,
-.radionice-page--view-transition .predavac-content::before,
-.radionice-page--view-transition .predavac-content::after {
-  content: "";
-  position: absolute;
-  z-index: 20;
-  inset: 0;
-  border-radius: inherit;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease-out;
-}
-
-.radionice-page--view-transition .radionice-band::before,
-.radionice-page--view-transition .predavac-content::before {
-  background:
-    linear-gradient(
-      28deg,
-      transparent 0 34%,
-      rgb(255 255 255 / 0.2) 35% 38%,
-      transparent 39% 100%
-    ),
-    linear-gradient(
-      144deg,
-      transparent 0 42%,
-      rgb(0 0 0 / 0.12) 43% 46%,
-      transparent 47% 100%
-    ),
-    linear-gradient(
-      78deg,
-      transparent 0 52%,
-      rgb(255 255 255 / 0.15) 53% 56%,
-      transparent 57% 100%
-    );
-}
-
-/*
- * Nabori su tanke linije (par senka/odsjaj), a ne mrlje: tamni krugovi su na
- * belom papiru izgledali kao rupe i fleke.
- */
-.radionice-page--view-transition .radionice-band::after,
-.radionice-page--view-transition .predavac-content::after {
-  inset: 6%;
-  background:
-    linear-gradient(
-      112deg,
-      transparent 0 31%,
-      rgb(0 0 0 / 0.07) 31.5% 32.5%,
-      rgb(255 255 255 / 0.35) 33% 34%,
-      transparent 34.5% 100%
-    ),
-    linear-gradient(
-      61deg,
-      transparent 0 57%,
-      rgb(0 0 0 / 0.06) 57.5% 58.5%,
-      rgb(255 255 255 / 0.3) 59% 60%,
-      transparent 60.5% 100%
-    ),
-    linear-gradient(
-      168deg,
-      transparent 0 64%,
-      rgb(0 0 0 / 0.05) 64.5% 65.3%,
-      transparent 66% 100%
-    );
-}
-
-.radionice-page--view-to-speaker-crumpling .radionice-band::before,
-.radionice-page--view-to-speaker-crumpling .radionice-band::after,
-.radionice-page--view-to-speaker-exiting .radionice-band::before,
-.radionice-page--view-to-speaker-exiting .radionice-band::after,
-.radionice-page--view-to-speaker-entering .predavac-content::before,
-.radionice-page--view-to-speaker-entering .predavac-content::after,
-.radionice-page--view-to-workshop-crumpling .predavac-content::before,
-.radionice-page--view-to-workshop-crumpling .predavac-content::after,
-.radionice-page--view-to-workshop-exiting .predavac-content::before,
-.radionice-page--view-to-workshop-exiting .predavac-content::after,
-.radionice-page--view-to-workshop-entering .radionice-band::before,
-.radionice-page--view-to-workshop-entering .radionice-band::after {
-  opacity: 1;
-}
-
-/*
  * Sadržaj nestaje pre nego što papir postane lopta.
  * Tako se u minimumu ne vide ikonice ili tekst sabijeni u sredini.
  */
@@ -1050,23 +930,6 @@
 .radionice-page--view-to-workshop-unfolding .radionice-default-view {
   transform: none;
   transition: transform 338ms var(--rd-view-unfold);
-}
-
-.radionice-page--view-transition .radionice-band::before,
-.radionice-page--view-transition .radionice-band::after {
-  content: none;
-}
-
-.radionice-page--view-transition .radionice-paper-sheet::before,
-.radionice-page--view-transition .radionice-paper-sheet::after {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Na otvorenom papiru nabora nema: gase se u prvom delu odgužvanja. */
-.radionice-page--view-to-workshop-unfolding .radionice-paper-sheet::before,
-.radionice-page--view-to-workshop-unfolding .radionice-paper-sheet::after {
-  opacity: 0;
 }
 
 /*

@@ -109,6 +109,11 @@ const RADIONICE: Radionica[] = WORKSHOPS.map((workshop) => ({
  * privremeno preuzima i vraća posle kratke pauze.
  */
 const BROJ_GRUPA = 3;
+/*
+ * Dok je predavač otvoren, sekcija se ponaša kao popup: stranica se ne
+ * skroluje, a navbar se sklanja (stilovi su u Radionice.scss).
+ */
+const KLASA_OTVORENOG_PREDAVACA = "radionice-predavac-otvoren";
 const BRZINA_TRAKE_PX_PO_SEKUNDI = 52;
 const NASTAVAK_AUTOPLAYA_MS = 450;
 const MAX_KORAK_SEKUNDI = 0.1;
@@ -680,9 +685,23 @@ const Radionice = () => {
     return () => resizeObserver.disconnect();
   }, [izracunajRazmereLopte]);
 
+  // Popup predavača počinje tačno na vrhu ekrana.
+  const poravnajSekciju = useCallback(() => {
+    const sekcija = sekcijaRef.current;
+
+    if (!sekcija) return;
+
+    window.scrollTo({
+      top: window.scrollY + sekcija.getBoundingClientRect().top,
+      behavior: "instant",
+    });
+  }, []);
+
   const otvoriPredavaca = useCallback(
     (radionica: Radionica) => {
       if (tranzicijaPrikazaUToku.current) return;
+
+      poravnajSekciju();
 
       // Faktor mora da bude svez: prozor je mogao da se promeni od poslednjeg racuna.
       izracunajRazmereLopte();
@@ -696,10 +715,10 @@ const Radionice = () => {
       setAktivniPredavacId(radionica.predavacId);
       setTranzicijaPrikaza({ faza: "crumpling", smer: "to-speaker" });
     },
-    [izracunajRazmereLopte],
+    [izracunajRazmereLopte, poravnajSekciju],
   );
 
-  const zatvoriPredavaca = () => {
+  const zatvoriPredavaca = useCallback(() => {
     if (aktivniPredavacId === null || tranzicijaPrikazaUToku.current) return;
 
     izracunajRazmereLopte();
@@ -712,7 +731,46 @@ const Radionice = () => {
 
     tranzicijaPrikazaUToku.current = true;
     setTranzicijaPrikaza({ faza: "crumpling", smer: "to-workshop" });
+  }, [aktivniPredavacId, izracunajRazmereLopte]);
+
+  const promeniRadionicu = (pomak: number) => {
+    if (!otvorenaRadionica || tranzicijaPrikazaUToku.current) return;
+
+    const indeks = RADIONICE.findIndex(
+      (radionica) => radionica.id === otvorenaRadionica.id,
+    );
+    const sledeca =
+      RADIONICE[(indeks + pomak + RADIONICE.length) % RADIONICE.length];
+
+    setOtvorenaRadionica(sledeca);
+    setAktivniPredavacId(sledeca.predavacId);
   };
+
+  useEffect(() => {
+    if (!predavacOtvoren) return;
+
+    const html = document.documentElement;
+    // Bez skrolbara se sadržaj ne sme pomeriti udesno.
+    const sirinaSkrolbara = window.innerWidth - html.clientWidth;
+
+    html.style.setProperty("--rd-scrollbar-width", `${sirinaSkrolbara}px`);
+    html.classList.add(KLASA_OTVORENOG_PREDAVACA);
+
+    const naTaster = (event: KeyboardEvent) => {
+      if (event.key === "Escape") zatvoriPredavaca();
+    };
+
+    document.addEventListener("keydown", naTaster);
+    // Promena širine (npr. rotacija telefona) pomera sekcije iznad Radionica.
+    window.addEventListener("resize", poravnajSekciju);
+
+    return () => {
+      document.removeEventListener("keydown", naTaster);
+      window.removeEventListener("resize", poravnajSekciju);
+      html.classList.remove(KLASA_OTVORENOG_PREDAVACA);
+      html.style.removeProperty("--rd-scrollbar-width");
+    };
+  }, [predavacOtvoren, zatvoriPredavaca, poravnajSekciju]);
 
   /*
    * Putanja lopte se meri jednom, na početku prelaza (pre prvog paint-a):
@@ -938,12 +996,15 @@ const Radionice = () => {
       {aktivniPredavacId !== null && otvorenaRadionica !== null && (
         <div className="radionice-predavac-view">
           <Predavac
+            key={otvorenaRadionica.id}
             predavacId={aktivniPredavacId}
             workshopId={otvorenaRadionica.id}
             workshopTitle={otvorenaRadionica.fullName}
             workshopIcon={otvorenaRadionica.detailIcon}
             lecturers={otvorenaRadionica.lecturers}
             onClose={zatvoriPredavaca}
+            onPrethodnaRadionica={() => promeniRadionicu(-1)}
+            onSledecaRadionica={() => promeniRadionicu(1)}
           />
         </div>
       )}
