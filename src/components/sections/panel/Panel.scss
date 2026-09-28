@@ -1014,14 +1014,28 @@ $panel-yellow: #ffd100;
      MOBILE SPARK
      ======================================================= */
 
+  /*
+   * Munja je vezana za krug (centar ekrana), ne za levu ivicu. Tačka sidra
+   * je vrh munje ispod kruga: u SVG-u (363.99, 158.56) od 410 × 339, tj.
+   * 88.78% širine i 46.77% visine, a na ekranu 72.33u levo od centra i
+   * 219.67u od vrha. Prirodna širina je 240u; rep je dugačak pa na uskim
+   * ekranima deo ostaje van ekrana. Na širim ekranima (preko ~630px) munja se
+   * uveća oko sidra taman toliko da rep i dalje prelazi levu ivicu.
+   * cqw umesto % jer istu širinu koristi i `top`, gde bi % bio visina.
+   */
   .panel-featured-spark {
+    --panel-spark-w: max(
+      calc(240 * var(--panel-mobile-unit)),
+      calc((50cqw - 72.33 * var(--panel-mobile-unit) + 8px) / 0.8878)
+    );
+
     content: url("../../../assets/panel/panel-spark-mobile.svg");
 
-    top: calc(167 * var(--panel-mobile-unit));
+    top: calc(219.67 * var(--panel-mobile-unit) - 0.3867 * var(--panel-spark-w));
 
-    left: -2%;
+    left: calc(50cqw - 72.33 * var(--panel-mobile-unit) - 0.8878 * var(--panel-spark-w));
 
-    width: calc(157 * var(--panel-mobile-unit));
+    width: var(--panel-spark-w);
 
     height: auto;
   }
