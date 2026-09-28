@@ -22,7 +22,7 @@ const faqItems: FaqItem[] = [
     id: 2,
     question: "Da li je obavezno poneti laptop za radionice?",
     answer:
-      'Laptop nije potreban za sve radionice, jer se neke održavaju u računarskim salama. Za one koje se održavaju van tih sala, laptop je potreban. Detaljnije informacije možete naći u sekciji "radionice" na sajtu.',
+      "Laptop nije obavezan za učešće na radionicama. Ukoliko odlučite da ponesete laptop, spisak potrebnih softvera biće vam dostavljen na email adresu.",
   },
   {
     id: 3,

@@ -926,6 +926,8 @@
     display: block;
 
     width: 100%;
+    /* Desktop visina (6.6667cqw) bi zaključala okvir, a pitanja u dva reda moraju da ga prošire. */
+    height: auto;
     min-height: 42px;
 
     padding: 0;
@@ -972,7 +974,8 @@
 
     width: 100%;
 
-    padding: 8px 62px 8px 14px;
+    /* Cik-cak ivica ulazi ~7px odozgo i ~10px odozdo, pa tekst ne sme bliže. */
+    padding: 13px 62px 15px 14px;
 
     font-family: $font-body;
     font-size: clamp(11.5px, 3.1cqw, 13px);
@@ -1262,7 +1265,7 @@
 
     width: 100%;
 
-    padding: 8px 58px 8px 14px;
+    padding: 13px 58px 15px 14px;
 
     font-size: clamp(11.5px, 3.1cqw, 13px);
   }
