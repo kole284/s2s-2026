@@ -7,7 +7,6 @@
   box-sizing: border-box;
   width: 248px;
   max-width: calc(100vw - 16px);
-  border: 2px solid $color-black;
   background: $color-white;
   box-shadow: 6px 6px 0 $color-yellow;
   cursor: default;
@@ -38,7 +37,6 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border-bottom: 2px solid $color-black;
   background: $color-white;
 }
 
@@ -48,7 +46,10 @@
   height: 100%;
   object-fit: contain;
   object-view-box: var(--logo-crop, none);
-  transform: scale(var(--logo-scale, 1));
+  /*
+   * Bez --logo-scale: to uvećanje je za heksagone, a ovde bi logo prerastao
+   * padding i ušao u tekst ispod. Logo i ovako popunjava svoj okvir.
+   */
 }
 
 .partner-preview-body {
