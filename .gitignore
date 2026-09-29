@@ -13,3 +13,6 @@ dist
 *.sln
 *.sw?
 .env
+
+# Lokalni MCP serveri (npr. figma-bridge)
+.mcp.json
