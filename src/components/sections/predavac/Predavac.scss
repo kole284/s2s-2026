@@ -346,6 +346,64 @@
   margin-top: calc(var(--pd-mobile-design-width) * 12 / 390);
 }
 
+/* Kartica "Softver". Mere su u em (prate font panela), pa važe i za mobilni i
+   za desktop bez posebnih pravila. */
+.predavac-softver-lista {
+  margin: 0.5em 0 0;
+  padding-left: 1.25em;
+}
+
+.predavac-softver-lista li + li {
+  margin-top: 0.25em;
+}
+
+.predavac-softver-lista li::marker {
+  color: $color-blue;
+}
+
+.predavac-text .predavac-softver-lista + p {
+  margin-top: 0.85em;
+}
+
+.predavac-text .predavac-softver-uvod {
+  margin-top: 1.1em;
+  font-weight: 700;
+}
+
+.predavac-softver-grupa {
+  margin-top: 0.9em;
+}
+
+.predavac-softver-grupa-naslov {
+  margin: 0 0 0.45em;
+  font-family: $font-display;
+  font-size: 0.72em;
+  font-weight: $font-black;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-blue;
+}
+
+.predavac-softver-cipovi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.predavac-softver-cip {
+  padding: 0.2em 0.55em 0.25em;
+  border: 1px solid rgba($color-blue, 0.55);
+  font-size: 0.88em;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: $color-blue-dark;
+  background: rgba($color-blue, 0.06);
+}
+
 /* Na mobilnom strelice stoje u plavom delu ispod papira, kao bele. */
 .predavac-arrow {
   position: absolute;

@@ -22,7 +22,7 @@ const faqItems: FaqItem[] = [
     id: 2,
     question: "Da li je obavezno poneti laptop za radionice?",
     answer:
-      "Laptop nije obavezan za učešće na radionicama. Ukoliko odlučite da ponesete laptop, spisak potrebnih softvera biće vam dostavljen na email adresu.",
+      "Laptop nije obavezan za učešće na radionicama. Ukoliko odlučite da ponesete laptop, spisak potrebnih softvera nalazi se u opisu radionica.",
   },
   {
     id: 3,

@@ -2,7 +2,9 @@ import { useId, type KeyboardEvent } from "react";
 
 import type { WorkshopDetails } from "@/data/workshopDetails";
 
-export type PredavacTab = "radionica" | "predavac";
+import SoftverRadionice from "./SoftverRadionice";
+
+export type PredavacTab = "radionica" | "predavac" | "softver";
 
 type PredavacInfoProps = {
   detalji?: WorkshopDetails;
@@ -14,7 +16,7 @@ type PredavacInfoProps = {
 };
 
 const NIVO_TACKE = { Osnovni: 1, Srednji: 2, Napredni: 3 } as const;
-const TABOVI: PredavacTab[] = ["radionica", "predavac"];
+const SVI_TABOVI: PredavacTab[] = ["radionica", "predavac", "softver"];
 
 const PredavacInfo = ({
   detalji,
@@ -25,10 +27,21 @@ const PredavacInfo = ({
   onTabChange,
 }: PredavacInfoProps) => {
   const id = useId();
-  const tekst = aktivniTab === "radionica" ? (detalji?.opis ?? []) : bio;
+  // Kartica "Softver" postoji samo kad radionica ima detalje.
+  const tabovi = detalji ? SVI_TABOVI : SVI_TABOVI.filter((tab) => tab !== "softver");
+  const softver = aktivniTab === "softver" ? detalji?.softver : undefined;
+  const tekst = softver
+    ? []
+    : aktivniTab === "radionica"
+      ? (detalji?.opis ?? [])
+      : bio;
+  // Spisak softvera se ne smanjuje kao dug opis (čipovi bi bili nečitljivi),
+  // nego se panel skroluje.
+  const dugacak = tekst.join("").length > 700;
   const naziviTabova: Record<PredavacTab, string> = {
     radionica: "O radionici",
     predavac: visePredavaca ? "O predavačima" : "O predavaču",
+    softver: "Softver",
   };
 
   // Strelice levo/desno pomeraju fokus i izbor između tabova (ARIA tabs obrazac).
@@ -36,7 +49,9 @@ const PredavacInfo = ({
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
 
     event.preventDefault();
-    const sledeci = aktivniTab === "radionica" ? "predavac" : "radionica";
+    const pomak = event.key === "ArrowRight" ? 1 : -1;
+    const indeks = Math.max(0, tabovi.indexOf(aktivniTab));
+    const sledeci = tabovi[(indeks + pomak + tabovi.length) % tabovi.length];
     onTabChange(sledeci);
     document.getElementById(`${id}-tab-${sledeci}`)?.focus();
   };
@@ -68,7 +83,7 @@ const PredavacInfo = ({
       )}
 
       <div className="predavac-tabs" role="tablist" aria-label="Opis">
-        {TABOVI.map((tab) => (
+        {tabovi.map((tab) => (
           <button
             key={tab}
             id={`${id}-tab-${tab}`}
@@ -93,8 +108,8 @@ const PredavacInfo = ({
         role="tabpanel"
         aria-labelledby={`${id}-tab-${aktivniTab}`}
         tabIndex={0}
-        className={`predavac-text${
-          tekst.join("").length > 700 ? " predavac-text--dugacak" : ""
+        className={`predavac-text${dugacak ? " predavac-text--dugacak" : ""}${
+          softver ? " predavac-text--softver" : ""
         }`}
       >
         {aktivniTab === "predavac" && visePredavaca && (
@@ -103,6 +118,7 @@ const PredavacInfo = ({
         {tekst.map((pasus, indeks) => (
           <p key={indeks}>{pasus}</p>
         ))}
+        {softver && <SoftverRadionice softver={softver} />}
       </div>
     </div>
   );
