@@ -3,6 +3,11 @@ import arrowLeftMobile from "@/assets/tim/arrow-left-mobile.svg";
 import arrowLeft from "@/assets/tim/arrow-left.svg";
 import circleStriped from "@/assets/tim/circle-striped.svg";
 import coordinatorLabel from "@/assets/tim/coordinator-label.svg";
+import lightningDesktopBetween from "@/assets/tim/lightning-desktop-between.svg";
+import lightningDesktopLeft from "@/assets/tim/lightning-desktop-left.svg";
+import lightningDesktopLeftLong from "@/assets/tim/lightning-desktop-left-long.svg";
+import lightningDesktopRightLower from "@/assets/tim/lightning-desktop-right-lower.svg";
+import lightningDesktopRightUpper from "@/assets/tim/lightning-desktop-right-upper.svg";
 import lightningMobileBottom from "@/assets/tim/lightning-mobile-bottom.svg";
 import lightningMobileTop from "@/assets/tim/lightning-mobile-top.svg";
 import star01 from "@/assets/tim/star-01.svg";
@@ -273,11 +278,15 @@ const TEAM_FRAME_PATH = `
   Z
 `;
 
-const LIGHTNING_LEFT_PATH = `M77.4 460.3 L-1 483.3 L-1527.8 483.3 L-1527.8 520.8 L-1 520.8 L85.8 486.4 L119.1 511.4 L154.2 478.4 L168.1 454.8 L186.5 423.5 L252.8 329.8 L217.8 349.8 L181.6 405.5 L168.1 426.7 L147.2 454.8 L119.1 486.4 L96.2 456.9 L91 423.5 L112.8 413.5 L117 392.3 L138.2 375.6 L209.9 320 L148.3 354.6 L91 396.5 L60.8 423.5 Z`;
-const LIGHTNING_LEFT_INNER_PATH = `M250 386.4 L191.3 381.9 L188.5 379.1 L179.9 394 L254.2 405.5 L276.7 362.1 L310.1 345.4 L303.5 337.4 L310.1 327.4 L294.4 329.4 L287.8 343 L260.1 362.1 Z`;
-const LIGHTNING_BETWEEN_PATH = `M482.3 201 L420.1 253.3 L420.1 259.5 L482.3 216.9 L499.7 224.9 L514.9 205.5 L566.7 208.6 L604.9 169.1 L595.8 151 L566.7 198.2 L514.9 192.3 L495.1 211.7 Z`;
-const LIGHTNING_RIGHT_UPPER_PATH = `M947.6 132.9 L999 136.4 L2388.9 136.4 L2388.9 147.8 L999 147.8 L972.2 147.8 L962.5 153.8 L952.8 146.8 L944.4 166.2 L932.6 154.4 L922.2 174.6 L908.3 159.3 L895.8 168.3 L880.6 155.1 L861.1 170.8 L861.1 157.6 L880.6 145.4 L895.1 157.9 L909.7 148.2 L920.8 162.8 L931.2 139.2 L942.4 151.7 Z`;
-const LIGHTNING_RIGHT_LOWER_PATH = `M971.5 315.2 L1000 344 L2388.9 552.4 L2388.9 570.4 L1000 362.1 L971.5 338.1 L960.4 344.7 L950.7 357.9 L954.9 370.4 L947.2 380.8 L952.1 389.2 L935.4 394.7 L927.1 410 L916 405.8 L905.9 413.5 L892.4 419.4 L860.8 422.5 L870.8 413.5 L893.8 405.8 L910.4 401 L904.9 389.2 L921.5 380.8 L915.3 368.3 L925.7 356.5 L918.8 345.4 L906.9 353.8 L894.4 343.3 L881.9 351.7 L868.8 339.9 L843.8 344 L851 338.1 L863.9 330.1 L876.4 337.8 L888.9 327.4 L900.7 337.1 L912.5 327.4 L920.5 321.5 L915.3 291.6 L896.2 306.2 L875.7 283.3 L860.8 277.4 L860.8 257.2 L875.7 260.3 L900.7 291.6 L915.3 270.4 L936.1 315.2 L952.8 332.9 Z`;
+
+const DESKTOP_LIGHTNINGS = [
+  // Produžena velika leva munja; "left" daje i mali unutrašnji komad.
+  { id: "left-long", src: lightningDesktopLeftLong },
+  { id: "left", src: lightningDesktopLeft },
+  { id: "between", src: lightningDesktopBetween },
+  { id: "right-upper", src: lightningDesktopRightUpper },
+  { id: "right-lower", src: lightningDesktopRightLower },
+];
 
 const preloadTeam = async (index: number) => {
   const team = TEAMS[index]!;
@@ -519,22 +528,17 @@ const Tim = () => {
       </div>
 
       <div className="team-stage">
-        <svg
-          className="team-lightnings"
-          viewBox="0 0 1000 650"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path fill="white" d={LIGHTNING_LEFT_PATH} />
-          <path fill="white" d={LIGHTNING_LEFT_INNER_PATH} />
-          <path fill="white" d={LIGHTNING_BETWEEN_PATH} />
-          <path fill="white" d={LIGHTNING_RIGHT_UPPER_PATH} />
-          <path
-            fill="white"
-            d={LIGHTNING_RIGHT_LOWER_PATH}
-            transform="translate(50 -30)"
+
+        {/* Munje iz Figma frame-a "Tim - Desktop" (desktop i tablet). */}
+        {DESKTOP_LIGHTNINGS.map(({ id, src }) => (
+          <img
+            key={id}
+            className={`team-desktop-lightning team-desktop-lightning--${id}`}
+            src={src}
+            alt=""
+            aria-hidden="true"
           />
-        </svg>
+        ))}
         <div className="team-circle-solid" aria-hidden="true" />
 
         {["top"].map((position, ribbonIndex) => (
@@ -717,7 +721,12 @@ const Tim = () => {
 
             <div className="team-group-caption">
               <h2
-                className="team-group-title"
+                className={`team-group-title${
+                  // "Tim za informacione" ne staje u jedan red, pa bi naziv išao u tri reda.
+                  `${activeTeam.titlePrefix} ${activeTeam.titleFirstLine}`.length > 16
+                    ? " team-group-title--dugacak"
+                    : ""
+                }`}
                 aria-live="polite"
                 aria-atomic="true"
               >

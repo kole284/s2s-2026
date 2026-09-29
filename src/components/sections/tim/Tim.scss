@@ -2,6 +2,11 @@
   @return calc(var(--team-unit) * #{$value});
 }
 
+// Desktop: 1 px Figma frame-a "Tim - Desktop" (1440 × 1024).
+@function team-figma($value) {
+  @return calc(var(--team-canvas) / 1440 * #{$value});
+}
+
 .team-section {
   /*
    * Isti desktop design-space kao ostale sekcije:
@@ -363,18 +368,6 @@
   width: team-size(130);
 }
 
-.team-lightnings {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-  user-select: none;
-}
-
 /* ==========================================================================
    DESKTOP TEAM BAND — rebuilt from scratch from the supplied Figma SVG
    ========================================================================== */
@@ -636,6 +629,10 @@
   display: none;
 }
 
+.team-desktop-lightning {
+  display: none;
+}
+
 .team-mobile-ribbon {
   display: none;
 }
@@ -772,9 +769,6 @@
     display: none;
   }
 
-  .team-lightnings {
-    display: none;
-  }
 
   .team-circle-solid {
     top: team-size(210);
@@ -922,27 +916,248 @@
   }
 }
 
-@media #{$tablet} {
+/* ==========================================================================
+   DESKTOP I TABLET — raspored 1:1 iz Figma frame-a "Tim - Desktop" (1440 × 1024)
+   ========================================================================== */
+
+/*
+ * Platno se skalira po ŠIRINI ekrana, pa munje uvek dodiruju obe ivice, a
+ * kartice su u istom odnosu kao u Figmi. Sekcija je zato viša od ekrana.
+ * Na širokim prozorima (npr. 1920 × 965 sa trakama browsera) platno staje
+ * na 190dvh da kartice ne bi prerasle ekran; tada prazninu sa strane
+ * popunjavaju produžene munje (do ~2.7 : 1). Sve pozicije su Figma px
+ * (team-figma), bez ručnih korekcija starog 1000-unit rasporeda.
+ */
+@media #{$tablet}, #{$desktop} {
   .team-section {
-    /*
-     * Tablet nema dovoljno širine za zamrznuti 1584px desktop dizajn --
-     * dobija sopstvenu, viewport-relative skalu (isti princip kao već
-     * postojeći mobilni --team-mobile-design-width), bez *1.1
-     * multiplikatora (za razliku od zamrznute desktop vrednosti) jer bi
-     * taj multiplikator ponovo gurnuo dizajn preko 100vw i vratio isti
-     * problem sečenja koji ovim rešavamo.
-     */
-    --team-design-width: min(100vw, 140.625dvh);
+    --team-canvas: min(100cqw, 190dvh);
+    /* Stari 1000-unit sistem (traka "CR") ostaje isti kao na 1440 × 1024. */
+    --team-design-width: calc(var(--team-canvas) * 1.1);
+    --team-unit: calc(var(--team-design-width) / 1000);
+    --team-side-space: calc((100cqw - var(--team-design-width)) / 2);
+
+    display: block;
+    min-height: 0;
+    padding: 0;
+    container-type: inline-size;
+  }
+
+  .team-stage {
+    width: team-figma(1440);
+    height: team-figma(1024);
+    margin-inline: auto;
+  }
+
+  .team-mobile-heading {
+    top: team-figma(108);
+    font-size: team-figma(72);
+  }
+
+  /* Traka "CR" u Figmi kreće iz gornjeg levog ugla, više nego na starom rasporedu. */
+  .team-band {
+    top: calc(#{team-size(-120)} - #{team-figma(250)});
+  }
+
+
+  .team-desktop-lightning {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .team-desktop-lightning--left {
+    left: team-figma(-1.5);
+    top: team-figma(578.5);
+    width: team-figma(429.5);
+  }
+
+  /* Ista velika leva munja, produžena 315px ulevo van frame-a. */
+  .team-desktop-lightning--left-long {
+    left: team-figma(-316.5);
+    top: team-figma(578.5);
+    width: team-figma(609);
+  }
+
+  /*
+   * Figma: 209 × 112.5 na (494, 284). Uvećana 1.15× oko istog centra da krajevi
+   * sigurno uđu ispod obe kartice (ivice belih oblika su nazubljene).
+   */
+  .team-desktop-lightning--between {
+    left: team-figma(478.3);
+    top: team-figma(275.6);
+    width: team-figma(240.35);
+  }
+
+  /*
+   * Produžene desne munje (nastavak van frame-a). Gornja je 3.5px levlje od
+   * Figme da joj levi kraj uđe ispod kartice tima (inače procep od ~1px).
+   */
+  .team-desktop-lightning--right-upper {
+    left: team-figma(1236);
+    top: team-figma(251);
+    width: team-figma(625);
+  }
+
+  .team-desktop-lightning--right-lower {
+    left: team-figma(1217.5);
+    top: team-figma(430);
+    width: team-figma(586);
+  }
+
+  .team-circle-solid {
+    top: team-figma(352);
+    right: auto;
+    left: team-figma(1371);
+    width: team-figma(137);
+    height: team-figma(131);
+  }
+
+  /* Dekoracije su u Figmi isečene na desnoj/donjoj ivici frame-a. */
+  .team-circle-striped {
+    top: team-figma(58);
+    right: 0;
+    width: team-figma(138);
+  }
+
+  .team-star-top {
+    right: 0;
+    bottom: team-figma(227);
+    width: team-figma(158);
+  }
+
+  .team-star-large {
+    right: 0;
+    bottom: team-figma(6);
+    width: team-figma(293);
+  }
+
+  .team-star-small {
+    right: 0;
+    bottom: 0;
+    width: team-figma(425);
+  }
+
+  /* Kartice: omotači pokrivaju platno, delovi su na Figma koordinatama. */
+  .team-content {
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .team-coordinator,
+  .team-group {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    /* Bazni center bi apsolutni omotač skupio na 0 × 0 u sredini. */
+    justify-self: stretch;
+    align-self: stretch;
+    pointer-events: none;
+  }
+
+  .team-arrow {
+    top: auto;
+    width: team-figma(53);
+    height: team-figma(73);
+    padding: 0;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .team-arrow-left {
+    left: team-figma(137.9);
+    top: team-figma(420);
+
+    &:not(:disabled):hover img {
+      translate: team-figma(-4) 0;
+    }
+  }
+
+  /* U Figmi je rotirana za 180°: okvir je x 607–646, y 418–483. */
+  .team-arrow-right {
+    right: auto;
+    left: team-figma(600.2);
+    top: team-figma(414);
+
+    &:not(:disabled):hover img {
+      translate: team-figma(4) 0;
+    }
+  }
+
+  .team-coordinator-photo {
+    position: absolute;
+    top: team-figma(231.11);
+    left: team-figma(154.96);
+    width: team-figma(485);
+    margin: 0;
+  }
+
+  .team-coordinator-caption {
+    position: absolute;
+    top: team-figma(441.03);
+    left: team-figma(187.54);
+    display: block;
+    width: team-figma(426);
+    height: team-figma(185);
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .team-coordinator-label {
+    position: absolute;
+    top: team-figma(40);
+    left: team-figma(60.25);
+    width: team-figma(288);
+    max-width: none;
+  }
+
+  .team-coordinator-name {
+    position: absolute;
+    top: team-figma(87.32);
+    left: team-figma(-22.54);
+    width: team-figma(442);
+    font-size: team-figma(35);
+    line-height: calc(36 / 35);
+  }
+
+  .team-coordinator-name--pr span + span {
+    margin-top: 0;
+  }
+
+  .team-group-photo {
+    position: absolute;
+    top: team-figma(206);
+    left: team-figma(681.32);
+    width: team-figma(567.57);
+  }
+
+  /* Gornjih 43px podloge je ispod fotografije; tekst je centriran u vidljivom delu. */
+  .team-group-caption {
+    position: absolute;
+    top: team-figma(546.11);
+    left: team-figma(681);
+    width: team-figma(594);
+    height: team-figma(161);
+    min-height: 0;
+    margin: 0;
+    padding: team-figma(43) 0 0;
+  }
+
+  .team-group-title {
+    width: team-figma(393);
+    font-size: team-figma(35);
+    line-height: normal;
+    transform: translateX(team-figma(-10.5));
+  }
+
+  .team-group-title--dugacak {
+    font-size: team-figma(28);
   }
 }
 
-/*
- * Tablet u portretu: 100svh je viši od stage-a (650 jedinica), pa je
- * min-height dodavao stotine px praznog plavog prostora iznad kartica i
- * ispod njih. Visinu sada određuju stage i postojeći padding sekcije.
- */
-@media #{$tablet} and (orientation: portrait) {
-  .team-section {
-    min-height: 0;
-  }
-}
