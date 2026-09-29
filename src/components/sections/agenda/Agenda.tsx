@@ -17,6 +17,11 @@ import sharedDay1Badge from "@/assets/agenda/shared/day-1-badge.svg";
 import sharedDay2Marker from "@/assets/agenda/shared/day-2-marker.svg";
 import "./Agenda.scss";
 
+// "Radionica 1" se nikad ne lomi između reči i broja (uski ekran ili tekst
+// uvećan u Instagram browseru), pa broj ne ostane sam u novom redu.
+const bezPrelomaPreBroja = (tekst: string) =>
+  tekst.replace(/ (\d)/g, "\u00a0$1");
+
 type AgendaDay = 1 | 2;
 
 interface AgendaItem {
@@ -722,7 +727,7 @@ const Agenda = () => {
                   }}
                 >
                   <time className="agenda__event-time">{item.time}</time>
-                  <p className="agenda__event-title">{item.title}</p>
+                  <p className="agenda__event-title">{bezPrelomaPreBroja(item.title)}</p>
                 </div>
               </article>
             );
@@ -813,7 +818,7 @@ const Agenda = () => {
                   }}
                 >
                   <time className="agenda__event-time">{item.time}</time>
-                  <p className="agenda__event-title">{item.title}</p>
+                  <p className="agenda__event-title">{bezPrelomaPreBroja(item.title)}</p>
                 </div>
               </article>
             );

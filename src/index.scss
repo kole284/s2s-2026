@@ -16,6 +16,11 @@ body,
 }
 
 html {
+  /* Android WebView (Instagram, Facebook) uvećava tekst po sistemskoj
+     veličini fonta, a layout ostaje isti, pa tekst izlazi iz oblika. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
   min-height: 100%;
   background-color: $color-blue-dark;
 }
