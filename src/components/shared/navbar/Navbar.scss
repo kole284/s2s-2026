@@ -120,22 +120,6 @@ body.navbar-menu-scroll-locked {
   height: 52px;
 }
 
-.mobile-menu-control--exit {
-  right: 14px;
-  left: auto;
-}
-
-.mobile-menu-control--exit .mobile-menu-control__close {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-}
-
-.navbar-exit-icon {
-  display: block;
-  width: 34px;
-  height: auto;
-}
-
 @media (hover: hover) {
   .mobile-menu-control:hover {
     transform: rotate(-2deg);
@@ -580,15 +564,6 @@ body.navbar-menu-scroll-locked {
     height: 72px;
   }
 
-  .mobile-menu-control--exit {
-    right: 20px;
-    left: auto;
-  }
-
-  .navbar-exit-icon {
-    width: 40px;
-  }
-
   .mobile-menu-control__burger img {
     width: 62px;
     height: 61px;
@@ -633,7 +608,7 @@ body.navbar-menu-scroll-locked {
   }
 }
 
-/* Prijava: bez navbara, ostaje samo X za povratak na naslovnu. */
+/* Prijava: bez navbara. X za povratak crta sama sekcija (PrijavaExit). */
 @media #{$desktop} {
   .navbar--prijava .navbar-shape,
   .navbar--prijava .navbar-logo,
@@ -644,53 +619,6 @@ body.navbar-menu-scroll-locked {
   .navbar--prijava {
     height: 0;
     pointer-events: none;
-  }
-
-  .mobile-menu-control--exit {
-    top: calc(var(--navbar-design-width, 100vw) * 28 / 1440);
-    right: calc(var(--navbar-design-width, 100vw) * 44 / 1440);
-    display: flex;
-    width: calc(var(--navbar-design-width, 100vw) * 64 / 1440);
-    height: calc(var(--navbar-design-width, 100vw) * 64 / 1440);
-  }
-
-  .navbar--scrolled .mobile-menu-control--exit {
-    top: calc(var(--navbar-design-width, 100vw) * 12 / 1440);
-  }
-
-  .navbar-exit-icon {
-    width: calc(var(--navbar-design-width, 100vw) * 44 / 1440);
-  }
-}
-
-/* The registration exit is a viewport control: it must stay in the same
-   upper-right position while the long form scrolls. */
-.navbar--prijava .mobile-menu-control--exit {
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  left: auto;
-}
-
-.navbar--prijava.navbar--scrolled .mobile-menu-control--exit {
-  top: 14px;
-}
-
-@media #{$tablet} {
-  .navbar--prijava .mobile-menu-control--exit,
-  .navbar--prijava.navbar--scrolled .mobile-menu-control--exit {
-    top: 18px;
-    right: 20px;
-    left: auto;
-  }
-}
-
-@media #{$desktop} {
-  .navbar--prijava .mobile-menu-control--exit,
-  .navbar--prijava.navbar--scrolled .mobile-menu-control--exit {
-    top: calc(var(--navbar-design-width, 100vw) * 28 / 1440);
-    right: calc(var(--navbar-design-width, 100vw) * 44 / 1440);
-    left: auto;
   }
 }
 

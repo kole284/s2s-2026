@@ -15,14 +15,12 @@ import type { NivoZnanja, PrijavaForma } from "./types";
 import prijavaPaperMobile from "@/assets/prijava/decor/bela_pozadina_sa_reckama.svg";
 import prijavaPaperDesktop from "@/assets/prijava/decor/Okvir-forme.svg";
 import prijavaWorkshopPaper from "./components/workshop-paper.svg";
-import prijavaStarLeft from "@/assets/prijava/decor/zvezda_levo.svg";
-import prijavaStarRight from "@/assets/prijava/decor/zvezda_desno.svg";
-import prijavaDesktopStar from "@/assets/prijava/decor/Vector-11.svg";
 import rombImg from "@/assets/prijava/fields/romb.svg";
 import prijavaButtonShell from "@/assets/prijava/fields/prijava-button-shell.svg";
 import radionicaRequired from "@/assets/prijava/fields/radionica-required.svg";
 import munjicaImg from "@/assets/prijava/icons/munjica.svg";
 import prijavaCornerStars from "@/assets/prijava/decor/zvezde.svg";
+import PrijavaExit from "./components/PrijavaExit";
 import { WORKSHOPS } from "@/data/workshops";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
@@ -1156,6 +1154,7 @@ const Prijava = () => {
 
   return (
     <section className="prijava" id="prijava">
+      <PrijavaExit />
       {!prijaveZakljucane ? (
         <div className="prijava__scroll-content">
           <div className="prijava__canvas">
@@ -1177,34 +1176,6 @@ const Prijava = () => {
             <span className="prijava__side-shape prijava__side-shape--blue-right" />
             <span className="prijava__side-shape prijava__side-shape--yellow-right" />
           </div>
-
-          <img
-            src={prijavaStarLeft}
-            alt=""
-            className="prijava__star prijava__star--left"
-            aria-hidden="true"
-          />
-
-          <img
-            src={prijavaStarRight}
-            alt=""
-            className="prijava__star prijava__star--right"
-            aria-hidden="true"
-          />
-
-          <img
-            src={prijavaDesktopStar}
-            alt=""
-            className="prijava__star prijava__star--desktop prijava__star--left"
-            aria-hidden="true"
-          />
-
-          <img
-            src={prijavaDesktopStar}
-            alt=""
-            className="prijava__star prijava__star--desktop prijava__star--right"
-            aria-hidden="true"
-          />
 
           <div className="prijava__paper-shell">
             <img

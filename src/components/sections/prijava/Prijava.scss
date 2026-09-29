@@ -2679,7 +2679,8 @@
       z-index: 1;
       color: $color-black;
       font-family: $font-display;
-      font-size: clamp(13px, 4.35vw, 17px);
+      // Manje od oblika dugmeta, da ostane mesta i kad WebView uveća tekst.
+      font-size: clamp(12px, 3.7vw, 15px);
       font-weight: $font-black;
       line-height: 1;
     }
@@ -2700,8 +2701,11 @@
       // Spusteno ispod fiksnog X-a u navbaru i smanjeno da se ne preklapaju.
       top: -100px;
       left: 50%;
-      width: 262px;
-      min-width: 0;
+      // Širi se sa tekstom (npr. uvećan font u Instagram browseru), ali
+      // nikad preko ivica ekrana.
+      width: max-content;
+      min-width: 262px;
+      max-width: calc(100vw - 24px);
       min-height: 84px;
       padding: 6px 12px 8px;
       box-sizing: border-box;
@@ -2889,8 +2893,17 @@
       width: min(100%, 294px);
       margin: 0 auto;
 
+      // Zvezdica za obavezno je na gornjoj ivici, pa levo ne treba čuvati
+      // mesto za nju; tako i uvećan font (Instagram) staje bez "...".
       &__value {
-        font-size: 18px;
+        left: calc(var(--workshop-select-left-inset) + 10px);
+        right: calc(
+          var(--workshop-select-right-inset) +
+          var(--workshop-select-chevron-width) +
+          12px
+        );
+        font-size: 17px;
+        text-align: center;
       }
 
       &__option {
@@ -2957,7 +2970,9 @@
     }
 
     .prijava-panel-attendance {
-      grid-template-columns: auto minmax(0, 1fr);
+      // Jedna kolona (ikonice nema), da žuto pitanje ide celom širinom i
+      // stoji na sredini kartice.
+      grid-template-columns: minmax(0, 1fr);
       gap: 11px 12px;
       padding: 15px 14px 17px;
 
@@ -2968,7 +2983,7 @@
       }
 
       &__content {
-        padding-right: 40px;
+        padding-right: 0;
       }
 
       &__title {

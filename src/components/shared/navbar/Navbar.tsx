@@ -2,7 +2,6 @@ import './Navbar.scss';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
-import closeIcon from '@/assets/Layer_1.svg';
 import hamburgerIcon from '@/assets/Group(2).svg';
 import logoS2S from '@/assets/branding/s2s-logo-navbar.webp';
 import { SECTION_ROUTE_BY_PATH, SECTION_ROUTES } from '@/routes/sectionRoutes';
@@ -251,21 +250,8 @@ const Navbar = () => {
               <img src={logoS2S} alt="S2S" className="navbar-logo-img" />
             </button>
 
-            {isPrijavaPage ? (
-              <button
-                type="button"
-                className="mobile-menu-control mobile-menu-control--exit"
-                onClick={() => navigateToSection('/', 'naslovna')}
-                aria-label="Zatvori prijavu"
-              >
-                <span
-                  className="mobile-menu-control__state mobile-menu-control__close"
-                  aria-hidden="true"
-                >
-                  <img src={closeIcon} alt="" className="navbar-exit-icon" />
-                </span>
-              </button>
-            ) : (
+            {/* Na prijavi X crta sama sekcija (PrijavaExit), da skroluje sa formom. */}
+            {isPrijavaPage ? null : (
               <button
                 type="button"
                 className={`mobile-menu-control ${isMenuOpen ? 'is-open' : ''}`}

@@ -1,0 +1,83 @@
+// Absolute u odnosu na .prijava (koja je na telefonu i sama scroll kontejner),
+// pa X skroluje sa sadržajem umesto da prati ekran.
+.prijava-exit {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 50;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 64px;
+  height: 64px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  outline: 0;
+
+  cursor: pointer;
+
+  transition: transform 150ms ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-yellow;
+    outline-offset: 2px;
+  }
+}
+
+.prijava-exit__icon {
+  display: block;
+  width: 34px;
+  height: auto;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+@media #{$tablet} {
+  .prijava-exit {
+    top: 4px;
+    right: 4px;
+    width: 72px;
+    height: 72px;
+  }
+
+  .prijava-exit__icon {
+    width: 40px;
+  }
+}
+
+@media #{$desktop} {
+  // Veličina kao ranije u navbaru (--navbar-design-width), ali uz sam ćošak.
+  .prijava-exit {
+    --prijava-exit-unit: calc(min(88vw, 140.625dvh) / 1440);
+
+    top: calc(var(--prijava-exit-unit) * 8);
+    right: calc(var(--prijava-exit-unit) * 8);
+    width: calc(var(--prijava-exit-unit) * 64);
+    height: calc(var(--prijava-exit-unit) * 64);
+  }
+
+  .prijava-exit__icon {
+    width: calc(var(--prijava-exit-unit) * 44);
+  }
+}
+
+@media (hover: hover) {
+  .prijava-exit:hover {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prijava-exit {
+    transition: none;
+  }
+}
