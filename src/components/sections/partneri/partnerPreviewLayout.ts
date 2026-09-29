@@ -1,3 +1,5 @@
+export const HOVER_MEDIA_QUERY = "(hover: hover) and (pointer: fine)";
+
 // Približna visina kartice; ako iznad loga nema toliko mesta, kartica ide ispod.
 const CARD_MIN_SPACE_ABOVE = 250;
 

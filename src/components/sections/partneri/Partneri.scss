@@ -794,7 +794,8 @@
 
     color: $color-black;
 
-    font-size: calc(27 * var(--partner-u));
+    // 24u (a ne 27u): POKROVITELJ inače stoji ~9px od leve ivice ekrana.
+    font-size: calc(24 * var(--partner-u));
     white-space: nowrap;
   }
 
@@ -945,5 +946,36 @@
   .media-section .hexagon-svg,
   .hexagon-marquee-track {
     animation: none !important;
+  }
+}
+
+/* Link pokrovitelja: providan sloj preko celog heksagona (vidi SponsorHexagon). */
+.sponsor-link {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: block;
+  cursor: pointer;
+  -webkit-user-drag: none;
+
+  &:focus-visible {
+    outline: calc(3 * var(--partner-u)) solid $color-yellow;
+    outline-offset: calc(4 * var(--partner-u));
+  }
+}
+
+.hexagon--sponsor {
+  transition: transform 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hexagon--sponsor:has(.sponsor-link:hover) {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hexagon--sponsor {
+    transition: none;
   }
 }

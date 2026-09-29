@@ -16,6 +16,7 @@ type PartnerPreviewProps = {
 };
 
 const PARTNER_KIND_LABEL: Record<PartnerKind, string> = {
+  pokrovitelj: "POKROVITELJ PROJEKTA",
   godisnji: "GODIŠNJI",
   robni: "ROBNI",
   naturalni: "NATURALNI",

@@ -3,6 +3,7 @@ import type {
   CSSProperties,
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
+  ReactNode,
 } from "react";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -11,11 +12,11 @@ import calendarIllustration from "@/assets/partneri/kalendar.svg";
 import cameraIllustration from "@/assets/partneri/kamera.svg";
 import canIllustration from "@/assets/partneri/konzerva.svg";
 import crownIllustration from "@/assets/partneri/kruna.svg";
-import wonderLogo from "@/assets/partneri/pokrovitelj/wonder-wordmark-gradient.webp";
 
 import PartnerPreview from "./PartnerPreview";
-import { isLeavingTowardPreview } from "./partnerPreviewLayout";
-import { GODISNJI_PARTNERS, ROBNI_PARTNERS } from "./partners";
+import { HOVER_MEDIA_QUERY, isLeavingTowardPreview } from "./partnerPreviewLayout";
+import { GODISNJI_PARTNERS, ROBNI_PARTNERS, SPONSOR_PARTNER } from "./partners";
+import { useSponsorPreview } from "./useSponsorPreview";
 import type { Partner } from "./partners";
 
 import "./Partneri.scss";
@@ -27,6 +28,7 @@ type HexagonProps = {
   logoAlt?: string;
   logoCrop?: string;
   logoScale?: number;
+  children?: ReactNode;
 };
 
 type MarqueeDirection = "left" | "right";
@@ -47,7 +49,6 @@ const AUTOPLAY_RESUME_DELAY_MS = 450;
 const MAX_FRAME_DELTA_SECONDS = 0.1;
 // Pomeranje manje od ovoga je klik/tap na logo, veće je prevlačenje trake.
 const DRAG_THRESHOLD_PX = 6;
-const HOVER_MEDIA_QUERY = "(hover: hover) and (pointer: fine)";
 // Koliko kartica čeka kad miš sa loga krene ka njoj, da stigne do linka.
 const PREVIEW_HIDE_DELAY_MS = 2000;
 
@@ -60,6 +61,7 @@ const Hexagon = ({
   logoAlt,
   logoCrop,
   logoScale,
+  children,
 }: HexagonProps) => {
   const isSponsor = className.includes("hexagon--sponsor");
   const isLogoSlot = Boolean(logoSrc);
@@ -109,7 +111,61 @@ const Hexagon = ({
           decoding="async"
         />
       )}
+
+      {children}
     </span>
+  );
+};
+
+// Heksagon pokrovitelja je link ka njegovom sajtu (sloj preko celog
+// heksagona, da raspored heksagona u gridu/na telefonu ostane isti), a na
+// desktopu pri prelasku mišem otvara istu karticu kao ostali partneri.
+const SponsorHexagon = () => {
+  const { anchor, open, leave, hide, cancelHide } = useSponsorPreview();
+
+  return (
+    <Hexagon
+      className="hexagon--sponsor"
+      logoSrc={SPONSOR_PARTNER.src}
+      logoAlt=""
+      logoScale={0.92}
+    >
+      <a
+        className="sponsor-link"
+        href={SPONSOR_PARTNER.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        draggable={false}
+        aria-label={`${SPONSOR_PARTNER.name}, pokrovitelj projekta (otvara se u novom tabu)`}
+        onPointerEnter={(event) => {
+          if (event.pointerType === "mouse") {
+            open(event.currentTarget);
+          }
+        }}
+        onPointerLeave={(event) => {
+          if (event.pointerType === "mouse") {
+            leave(event.clientY);
+          }
+        }}
+        onFocus={(event) => {
+          if (event.currentTarget.matches(":focus-visible")) {
+            open(event.currentTarget);
+          }
+        }}
+        onBlur={hide}
+        onClick={hide}
+      />
+
+      {anchor ? (
+        <PartnerPreview
+          partner={SPONSOR_PARTNER}
+          anchor={anchor}
+          onPointerEnter={cancelHide}
+          onPointerLeave={hide}
+          onOpen={hide}
+        />
+      ) : null}
+    </Hexagon>
   );
 };
 
@@ -591,12 +647,7 @@ const Partneri = () => (
         </div>
 
         <div className="sponsor-visual">
-          <Hexagon
-            className="hexagon--sponsor"
-            logoSrc={wonderLogo}
-            logoAlt="Wonder"
-            logoScale={0.92}
-          />
+          <SponsorHexagon />
 
           <img
             src={crownIllustration}

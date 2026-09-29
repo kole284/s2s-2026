@@ -1,3 +1,5 @@
+import wonderLogo from "@/assets/partneri/pokrovitelj/wonder-wordmark-gradient.webp";
+
 const robniModules = import.meta.glob("@/assets/partneri/robni/*", {
   eager: true,
   import: "default",
@@ -26,7 +28,7 @@ const resolveAsset = (modules: Record<string, string>, filename: string): string
   return entry[1];
 };
 
-export type PartnerKind = "godisnji" | "robni" | "naturalni";
+export type PartnerKind = "pokrovitelj" | "godisnji" | "robni" | "naturalni";
 
 export type Partner = {
   name: string;
@@ -78,6 +80,7 @@ const ROBNI_FILES: readonly PartnerFile[] = [
   ["Slatka poruka", "slatka-poruka-trim.png", "https://www.instagram.com/slatkaporuka", undefined, 1.4],
   ["Pinecone Bar & Theater", "pinecone-bar-and-theater-trim.svg", "https://pinecone.theater/en"],
   ["BeoGraf štamparija", "beograf.jpeg", "https://stamparijabeograf.rs"],
+  ["Napkinote", "napkinote.png", "https://www.instagram.com/napkinote/"],
 ];
 
 const NATURALNI_FILES: readonly PartnerFile[] = [
@@ -88,6 +91,13 @@ const NATURALNI_FILES: readonly PartnerFile[] = [
   ["Jelena popsi", "jelena-popsi.png", "https://www.instagram.com/j.cake_pops"],
   ["Boombox", "boombox.svg", "https://boombox.eu/sr/", undefined, 1.35],
   ["Choc Shock", "choc-shock.webp", "https://www.instagram.com/choc_shock/", "inset(15% 17% 12% 16%)", 1.4],
+  // Pizza Fabrika: isečak je u samom fajlu (object-view-box radi samo u Chrome-u).
+  // Zeleni pravougaonik ne sme preko kosih ivica heksagona; na 1.03 uglovi
+  // tačno dodiruju ivicu, pa 0.98 ostavlja mali razmak.
+  ["Pizza Fabrika", "pizza-fabrika.webp", "https://www.pizza-fabrika.rs/", undefined, 0.98],
+  // Okrugao logo sa providnim uglovima (bez belog kvadrata koji bi virio iz
+  // heksagona); krug je ~82% širine heksagona, bar 6px od kosih ivica.
+  ["Veganluk", "veganluk.webp", "https://www.veganluk.com/", undefined, 1.35],
 ];
 
 const toPartner = (
@@ -102,6 +112,13 @@ const toPartner = (
   crop,
   scale,
 });
+
+export const SPONSOR_PARTNER: Partner = {
+  name: "Wonder",
+  src: wonderLogo,
+  url: "https://wonder.design/",
+  kind: "pokrovitelj",
+};
 
 export const GODISNJI_PARTNERS: Partner[] = GODISNJI_FILES.map((file) =>
   toPartner(godisnjiModules, "godisnji", file),
