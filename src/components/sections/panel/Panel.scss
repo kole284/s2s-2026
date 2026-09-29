@@ -5,7 +5,12 @@ $panel-yellow: #ffd100;
    ========================================================= */
 
 .panel-section {
-  --section-design-width: min(100vw, 140.625dvh);
+  /*
+   * Canvas sme da bude i do 20% viši od sekcije (168.75dvh umesto
+   * 140.625dvh), pa je na širokim ekranima sve krupnije. Višak visine je
+   * prazan prostor ispod kartice, koji overflow: hidden odseca.
+   */
+  --section-design-width: min(100vw, 168.75dvh);
 
   position: relative;
 
@@ -36,11 +41,15 @@ $panel-yellow: #ffd100;
   top: 50%;
   left: 50%;
 
-  width: min(100vw, 140.625dvh);
+  width: var(--section-design-width);
 
   aspect-ratio: 1440 / 1024;
 
-  transform: translate(-50%, -50%);
+  /* Sadržaj spušten 110 design px da stoji na sredini sekcije, ispod navbara. */
+  transform: translate(
+    -50%,
+    calc(-50% + var(--section-design-width) * 110 / 1440)
+  );
 
   container-type: inline-size;
 }
@@ -323,7 +332,7 @@ $panel-yellow: #ffd100;
 
   display: block;
 
-  width: 12.2917%;
+  width: 14.7222%;
   height: auto;
 
   pointer-events: none;
@@ -410,14 +419,14 @@ $panel-yellow: #ffd100;
   z-index: 4;
 
   top: 37.5%;
-  left: 43.0556%;
+  left: 42.9167%;
   right: 4.1667%;
 
   display: grid;
 
   grid-template-columns: repeat(4, minmax(0, 1fr));
 
-  column-gap: 1.1111cqw;
+  column-gap: 0.5093cqw;
 
   pointer-events: none;
 }
@@ -436,7 +445,7 @@ $panel-yellow: #ffd100;
   position: relative;
 
   width: 100%;
-  height: 9.8611cqw;
+  height: 10.3472cqw;
 
   overflow: hidden;
 }
