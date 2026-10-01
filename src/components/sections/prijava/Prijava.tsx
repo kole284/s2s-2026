@@ -1702,7 +1702,7 @@ const Prijava = () => {
                             className="prijava-panel-block__description prijava-panel-block__description--reasons-question prijava-panel-block__description--panel-question-ribbon"
                             htmlFor="prijava-pitanje-predavaci"
                           >
-                            Koje pitanje bi postavio/la predavačima?
+                            Koje pitanje bi postavio/la panelistima?
                           </label>
 
                           <div className="prijava-panel-textarea-shell prijava-panel-textarea-shell--question">
@@ -1722,7 +1722,7 @@ const Prijava = () => {
                               placeholder={
                                 forma.prisustvoPanelu === true
                                   ? "Upiši pitanje..."
-                                  : "Izaberi DA ako želiš da postaviš pitanje predavačima."
+                                  : "Izaberi DA ako želiš da postaviš pitanje panelistima."
                               }
                               disabled={forma.prisustvoPanelu !== true}
                             />
