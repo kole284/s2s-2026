@@ -1,5 +1,27 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mediaqueries" as *;
+@use "sass:math";
+
+/* Plava ivica oko imena predavača kao 16 senki oko slova. Ranije je bila
+   -webkit-text-stroke + paint-order: stroke fill, ali stariji Chrome (npr. na
+   Huawei telefonima) ne podržava paint-order za tekst, pa je kontura išla
+   preko slova i ime je bilo plava mrlja. Senka je uvek iza teksta. */
+@function predavac-outline($width, $color, $steps: 16) {
+  $shadows: ();
+
+  @for $i from 0 to $steps {
+    $angle: math.div(360deg, $steps) * $i;
+    $x: math.div(math.round(math.cos($angle) * 1000), 1000);
+    $y: math.div(math.round(math.sin($angle) * 1000), 1000);
+    $shadows: append(
+      $shadows,
+      calc(#{$width} * #{$x}) calc(#{$width} * #{$y}) 0 $color,
+      comma
+    );
+  }
+
+  @return $shadows;
+}
 
 /*
  * Predavač je detail stanje sekcije Radionice i koristi ISTU geometriju
@@ -292,8 +314,8 @@
   letter-spacing: -0.025em;
   word-spacing: 0.18em;
   color: $color-white;
-  -webkit-text-stroke: calc(var(--pd-mobile-design-width) * 3 / 390) $color-blue;
-  paint-order: stroke fill;
+  --predavac-name-outline: calc(var(--pd-mobile-design-width) * 1.5 / 390);
+  text-shadow: predavac-outline(var(--predavac-name-outline), $color-blue);
   display: flex;
   align-items: center;
   gap: calc(var(--pd-mobile-design-width) * 4 / 390);
@@ -596,7 +618,7 @@
     font-size: calc(var(--pd-design-width) * 44 / 1440);
     line-height: 0.9;
     letter-spacing: -0.03em;
-    -webkit-text-stroke: calc(var(--pd-design-width) * 5.5 / 1440) $color-blue;
+    --predavac-name-outline: calc(var(--pd-design-width) * 2.75 / 1440);
     gap: calc(var(--pd-design-width) * 6 / 1440);
 
     &--dugacko {
