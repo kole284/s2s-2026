@@ -131,7 +131,7 @@ const SponsorHexagon = () => {
       logoScale={0.92}
     >
       <a
-        className="sponsor-link"
+        className="pokrovitelj-link"
         href={SPONSOR_PARTNER.url}
         target="_blank"
         rel="noopener noreferrer"

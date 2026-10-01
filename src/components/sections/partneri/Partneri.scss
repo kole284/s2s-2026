@@ -949,14 +949,16 @@
   }
 }
 
-/* Link pokrovitelja: providan sloj preko celog heksagona (vidi SponsorHexagon). */
+/* Link pokrovitelja: providan sloj preko celog heksagona (vidi SponsorHexagon).
+   Ne sme se zvati "sponsor-link": blokatori reklama (uBlock i sl.) sakrivaju
+   elemente sa tom klasom (display: none), pa hover i klik nisu radili. */
 /* SVG heksagona je samo ukras. Firefox 152 ga je stavljao iznad linka pri
    hvatanju miša, pa link nije dobijao hover; ovako miš može da pogodi samo link. */
 .hexagon--sponsor .hexagon-svg {
   pointer-events: none;
 }
 
-.sponsor-link {
+.pokrovitelj-link {
   position: absolute;
   z-index: 5;
   inset: 0;
@@ -975,7 +977,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .hexagon--sponsor:has(.sponsor-link:hover) {
+  .hexagon--sponsor:has(.pokrovitelj-link:hover) {
     transform: scale(1.04);
   }
 }
