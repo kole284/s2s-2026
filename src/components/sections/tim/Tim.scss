@@ -712,6 +712,11 @@
     --team-unit: calc(var(--team-mobile-design-width) / 390);
     width: team-size(340);
     transform: translateY(team-size(38));
+    /* Koordinator (beli oblik sa imenom) se preklapa sa vrhom grupne slike;
+       mora biti iznad nje (.team-group-photo ima z-index 2), inače slika
+       seče donji red imena. */
+    position: relative;
+    z-index: 3;
   }
 
   .team-coordinator-caption {
