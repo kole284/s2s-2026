@@ -950,9 +950,15 @@
 }
 
 /* Link pokrovitelja: providan sloj preko celog heksagona (vidi SponsorHexagon). */
+/* SVG heksagona je samo ukras. Firefox 152 ga je stavljao iznad linka pri
+   hvatanju miša, pa link nije dobijao hover; ovako miš može da pogodi samo link. */
+.hexagon--sponsor .hexagon-svg {
+  pointer-events: none;
+}
+
 .sponsor-link {
   position: absolute;
-  z-index: 2;
+  z-index: 5;
   inset: 0;
   display: block;
   cursor: pointer;
