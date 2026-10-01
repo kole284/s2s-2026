@@ -1,13 +1,13 @@
 .partneri-page {
   --partner-u: 0.0694444444vw;
   --partner-stroke: 0.0738888888vw;
-  --section-design-width: min(100vw, 140.625dvh);
+  --section-design-width: min(100vw, calc(140.625 * var(--app-dvh)));
 
   position: relative;
 
   width: 100%;
   height: calc(1200 * var(--partner-u));
-  min-height: 100vh;
+  min-height: calc(100 * var(--app-vh));
 
   margin-top: -1px;
 

@@ -14,7 +14,7 @@
 
 .radionice-page {
   --rd-mobile-design-width: 100vw;
-  --rd-design-width: min(100vw, 140.625dvh);
+  --rd-design-width: min(100vw, calc(140.625 * var(--app-dvh)));
   --rd-zigzag-depth: calc(var(--rd-mobile-design-width) * 36 / 390);
   --rd-stage-height: calc(var(--rd-mobile-design-width) * 480 / 390);
   --rd-paper-shape: polygon(
@@ -144,7 +144,7 @@ html.radionice-predavac-otvoren body {
 .radionice-page--predavac-open {
   /* Iznad zubaca O projektu, koji bi inače virili na vrhu popupa. */
   z-index: 3;
-  min-height: 100dvh;
+  min-height: calc(100 * var(--app-dvh));
 }
 
 .radionice-page--predavac-open::after {

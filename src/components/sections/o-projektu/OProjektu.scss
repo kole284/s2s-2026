@@ -1,5 +1,5 @@
 .o-projektu {
-  --o-projektu-design-width: min(100vw, 140.625dvh);
+  --o-projektu-design-width: min(100vw, calc(140.625 * var(--app-dvh)));
   --o-projektu-bottom-teeth: calc(var(--o-projektu-design-width) * 64 / 1440);
   --o-projektu-teeth-shape: polygon(
     0 0,

@@ -1,5 +1,5 @@
 .agenda {
-  --section-design-width: min(100vw, 140.625dvh);
+  --section-design-width: min(100vw, calc(140.625 * var(--app-dvh)));
 
   position: relative;
 
@@ -30,7 +30,7 @@
   .agenda {
     aspect-ratio: 1440 / 977.92;
     min-height: 0;
-    max-height: 95.5dvh;
+    max-height: calc(95.5 * var(--app-dvh));
   }
 }
 
@@ -95,7 +95,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 1440 / 1024;
-  max-height: 100dvh;
+  max-height: calc(100 * var(--app-dvh));
 
   align-items: center;
   justify-content: center;
@@ -192,7 +192,7 @@
 
   z-index: 4;
 
-  width: min(100%, calc(100dvh * 1.40625));
+  width: min(100%, calc(100 * var(--app-dvh) * 1.40625));
 
   aspect-ratio: 1440 / 1024;
 

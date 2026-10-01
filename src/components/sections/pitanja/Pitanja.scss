@@ -1,14 +1,14 @@
 @use "sass:math";
 
 .pitanja {
-  --pitanja-design-width: min(100vw, 140.625dvh);
+  --pitanja-design-width: min(100vw, calc(140.625 * var(--app-dvh)));
   --section-design-width: var(--pitanja-design-width);
 
   position: relative;
 
   width: 100%;
   height: auto;
-  min-height: 100dvh;
+  min-height: calc(100 * var(--app-dvh));
 
   overflow: hidden;
 
@@ -215,7 +215,7 @@
 
   width: 100%;
   height: auto;
-  min-height: 100dvh;
+  min-height: calc(100 * var(--app-dvh));
 
   overflow: visible;
 }
@@ -227,8 +227,8 @@
 
   flex: 0 0 auto;
 
-  width: min(100%, calc(100dvh * 1.40625));
-  min-height: 100dvh;
+  width: min(100%, calc(100 * var(--app-dvh) * 1.40625));
+  min-height: calc(100 * var(--app-dvh));
 
   overflow: visible;
 
@@ -566,7 +566,7 @@
   top: 25%;
   right: -8%;
 
-  width: min(20.16vw, 28.8dvh);
+  width: min(20.16vw, calc(28.8 * var(--app-dvh)));
   height: auto;
 
   pointer-events: none;
@@ -663,7 +663,7 @@
 
   .pitanja__question-mark {
     top: calc(
-      (100dvh - var(--pitanja-design-width) * 1024 / 1440) / 2 +
+      (calc(100 * var(--app-dvh)) - var(--pitanja-design-width) * 1024 / 1440) / 2 +
         var(--pitanja-design-width) * 256 / 1440
     );
     right: calc(
@@ -857,7 +857,7 @@
     margin: 0;
 
     font-family: $font-display;
-    font-size: clamp(44px, min(14.8718cqw, 7.1dvh), 58px);
+    font-size: clamp(44px, min(14.8718cqw, calc(7.1 * var(--app-dvh))), 58px);
     font-weight: $font-black;
 
     line-height: $section-heading-line-height;
@@ -1150,7 +1150,7 @@
 
 @media (min-width: 600px) and (max-width: 1024px) and (orientation: portrait) {
   .pitanja {
-    --pitanja-mobile-answer-height: clamp(220px, 24dvh, 290px);
+    --pitanja-mobile-answer-height: clamp(220px, calc(24 * var(--app-dvh)), 290px);
     --pitanja-mobile-min-bottom-space: 48px;
   }
 
@@ -1172,9 +1172,9 @@
   .pitanja__mobile-canvas {
     width: min(100%, 680px);
 
-    padding: clamp(28px, 2.8dvh, 36px) 0 clamp(128px, 11.8dvh, 150px);
+    padding: clamp(28px, calc(2.8 * var(--app-dvh)), 36px) 0 clamp(128px, calc(11.8 * var(--app-dvh)), 150px);
 
-    gap: clamp(18px, 2dvh, 26px);
+    gap: clamp(18px, calc(2 * var(--app-dvh)), 26px);
   }
 
   .pitanja__bottom-paper--mobile {
@@ -1205,7 +1205,7 @@
 
     margin: 0 16px;
 
-    gap: clamp(10px, 1.2dvh, 16px);
+    gap: clamp(10px, calc(1.2 * var(--app-dvh)), 16px);
   }
 
   .pitanja__faq-item {
@@ -1215,7 +1215,7 @@
 
   .pitanja__question {
     height: auto;
-    min-height: clamp(62px, 6.4dvh, 76px);
+    min-height: clamp(62px, calc(6.4 * var(--app-dvh)), 76px);
   }
 
   .pitanja__question-text {
@@ -1239,7 +1239,7 @@
     top: auto;
     left: auto;
 
-    padding: clamp(28px, 3dvh, 38px) 48px 44.1px clamp(24px, 4cqw, 32px);
+    padding: clamp(28px, calc(3 * var(--app-dvh)), 38px) 48px 44.1px clamp(24px, 4cqw, 32px);
 
     font-size: clamp(17px, 2.45cqw, 20px);
   }

@@ -21,7 +21,7 @@
      zoom-outu, a veći pri zoom-inu od ostatka sajta). Ista vrednost kao ranije
      na svim viewportima do 1440 × 1024 (mobile ispod ima svoj,
      --team-mobile-design-width). */
-  --team-design-width: min(110vw, 154.6875dvh);
+  --team-design-width: min(110vw, calc(154.6875 * var(--app-dvh)));
   --team-unit: calc(var(--team-design-width) / 1000);
   --team-side-space: calc((100vw - var(--team-design-width)) / 2);
   position: relative;
@@ -32,7 +32,7 @@
   align-content: center;
   box-sizing: border-box;
   width: 100%;
-  min-height: 100svh;
+  min-height: calc(100 * var(--app-svh));
   padding: team-size(40) team-size(24);
   overflow: hidden;
   background-color: $color-blue;
@@ -601,7 +601,7 @@
   z-index: 4;
   /* max(0.25em, ...) drži kvačicu na "Š" unutar sekcije (overflow: hidden)
      na visokim tablet ekranima gde je izraz u calc() negativan. */
-  top: max(0.25em, calc(#{team-size(60)} - 5svh));
+  top: max(0.25em, calc(#{team-size(60)} - calc(5 * var(--app-svh))));
   left: 50%;
 
   box-sizing: border-box;
@@ -651,7 +651,7 @@
     --team-design-width: 110vw;
 
     display: block;
-    min-height: 100svh;
+    min-height: calc(100 * var(--app-svh));
     padding: team-size(24) 16px team-size(170);
 
     /* Partneri se završava na razlomljenoj poziciji (visina u vw), pa bi se
@@ -930,7 +930,7 @@
  */
 @media #{$tablet}, #{$desktop} {
   .team-section {
-    --team-canvas: min(100cqw, 190dvh);
+    --team-canvas: min(100cqw, calc(190 * var(--app-dvh)));
     /* Stari 1000-unit sistem (traka "CR") ostaje isti kao na 1440 × 1024. */
     --team-design-width: calc(var(--team-canvas) * 1.1);
     --team-unit: calc(var(--team-design-width) / 1000);

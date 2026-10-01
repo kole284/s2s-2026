@@ -11,7 +11,7 @@ const Igra = () => (
   <iframe
     title="Igrica"
     src="/igrica/"
-    style={{ display: 'block', width: '100%', height: '100dvh', border: 0 }}
+    style={{ display: 'block', width: '100%', height: 'calc(100 * var(--app-dvh))', border: 0 }}
   />
 );
 

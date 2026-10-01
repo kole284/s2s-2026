@@ -139,7 +139,7 @@ body.navbar-menu-scroll-locked {
   z-index: 10000;
   inset: 0;
   width: 100%;
-  height: 100dvh;
+  height: calc(100 * var(--app-dvh));
   background: $color-white;
   animation: mobile-menu-overlay-in 200ms ease both;
 }
@@ -353,7 +353,7 @@ body.navbar-menu-scroll-locked {
     // design width vezan za 100vw (svaki ekran uži od ~1.4:1, npr. tablet u
     // landscapeu), logo i CTA su izlazili van ekrana. 88vw ostavlja isti
     // razmak od ivica kao na 1440 × 900, gde je design width 1265px (87.8vw).
-    --navbar-design-width: min(88vw, 140.625dvh);
+    --navbar-design-width: min(88vw, calc(140.625 * var(--app-dvh)));
     --navbar-white-top-inset: calc(var(--navbar-design-width) * 11 / 1440);
     --navbar-white-bottom-inset: calc(
       var(--navbar-design-width) * 35 / 1440
@@ -572,7 +572,7 @@ body.navbar-menu-scroll-locked {
   .navbar-mobile-menu {
     // Veličina linkova prati širinu, ali je ograničena i visinom ekrana, da
     // svih 9 linkova + CTA stane i na tabletu u landscapeu.
-    --navbar-tablet-link-size: clamp(30px, min(5.4vw, 4.4dvh), 52px);
+    --navbar-tablet-link-size: clamp(30px, min(5.4vw, calc(4.4 * var(--app-dvh))), 52px);
 
     left: 50%;
     width: min(72vw, 540px);

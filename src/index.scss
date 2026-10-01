@@ -7,6 +7,21 @@
   font-display: swap;
 }
 
+/* Visina ekrana za sve sekcije; vidi src/utils/fixViewportHeight.ts.
+   Bez podrške za svh/dvh ostaje vh, kao ranije rezervni red "100vh". */
+:root {
+  --app-vh: 1vh;
+  --app-svh: 1vh;
+  --app-dvh: 1vh;
+}
+
+@supports (height: 1svh) {
+  :root {
+    --app-svh: 1svh;
+    --app-dvh: 1dvh;
+  }
+}
+
 html,
 body,
 #root {
@@ -25,10 +40,25 @@ html {
   background-color: $color-blue-dark;
 }
 
+/*
+ * Firefox na Androidu ne iscrtava stranicu u donjoj traci ekrana (gde je bila
+ * njegova traka sa alatkama) i tu pokazuje pozadinu html-a. Tamno plava se
+ * tamo videla kao traka preko svih sekcija, pa je u Firefox-u na telefonu
+ * pozadina bela, kao većina sekcija. Ostali browseri zadržavaju tamno plavu
+ * (boja footera kad stranica "odskoči" na dnu).
+ */
+@media #{$mobile} {
+  @supports (-moz-appearance: none) {
+    html {
+      background-color: $color-white;
+    }
+  }
+}
+
 body,
 #root {
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: calc(100 * var(--app-dvh));
   background-color: $color-white;
 }
 

@@ -479,7 +479,7 @@
 
 @media #{$tablet}, #{$desktop} {
   .predavac-page {
-    --pd-design-width: var(--rd-design-width, min(100vw, 140.625dvh));
+    --pd-design-width: var(--rd-design-width, min(100vw, calc(140.625 * var(--app-dvh))));
     --pd-zigzag-depth: var(
       --rd-zigzag-depth,
       calc(var(--pd-design-width) * 64 / 1440)

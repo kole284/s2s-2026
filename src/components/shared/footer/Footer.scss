@@ -6,7 +6,7 @@
    * Sve dimenzije footera izlaze iz istog tokena, pa browser zoom
    * ne menja međusobne proporcije elemenata.
    */
-  --footer-design-width: min(100vw, 140.625dvh);
+  --footer-design-width: min(100vw, calc(140.625 * var(--app-dvh)));
   --footer-base-u: calc(var(--footer-design-width) / 1440);
   --footer-u: calc(var(--footer-base-u) * 1.1);
 

@@ -10,7 +10,7 @@ $panel-yellow: #ffd100;
    * 140.625dvh), pa je na širokim ekranima sve krupnije. Višak visine je
    * prazan prostor ispod kartice, koji overflow: hidden odseca.
    */
-  --section-design-width: min(100vw, 168.75dvh);
+  --section-design-width: min(100vw, calc(168.75 * var(--app-dvh)));
 
   position: relative;
 
@@ -23,7 +23,7 @@ $panel-yellow: #ffd100;
    */
   height: auto;
   aspect-ratio: 1440 / 1024;
-  max-height: 100dvh;
+  max-height: calc(100 * var(--app-dvh));
 
   overflow: hidden;
 
@@ -733,7 +733,7 @@ $panel-yellow: #ffd100;
 @media #{$mobile} {
   .panel-section {
     /* svh, ne dvh: visina ne sme da prati Android Chrome adresnu traku. */
-    min-height: 100svh;
+    min-height: calc(100 * var(--app-svh));
 
     height: auto;
     aspect-ratio: auto;
@@ -749,7 +749,7 @@ $panel-yellow: #ffd100;
     left: auto;
 
     width: 100%;
-    min-height: 100svh;
+    min-height: calc(100 * var(--app-svh));
 
     aspect-ratio: auto;
 

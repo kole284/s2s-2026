@@ -3,11 +3,11 @@
 @use "@/styles/mediaqueries" as *;
 
 .prijava {
-  --prijava-design-width: min(100vw, 160dvh);
+  --prijava-design-width: min(100vw, calc(160 * var(--app-dvh)));
 
   position: relative;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: calc(100 * var(--app-dvh));
   overflow: hidden;
   color: $color-black;
   background: $color-blue;
@@ -2407,7 +2407,7 @@
 @media #{$mobile} {
   .prijava {
     height: 100vh;
-    height: 100svh;
+    height: calc(100 * var(--app-svh));
     min-height: 0;
     overflow-x: clip;
     overflow-y: auto;
@@ -2423,7 +2423,7 @@
     &__canvas {
       display: flow-root;
       min-height: max(844px, 100vh);
-      min-height: max(844px, 100svh);
+      min-height: max(844px, calc(100 * var(--app-svh)));
       overflow: visible;
     }
 
@@ -3426,7 +3426,7 @@
     --workshop-shadow: calc(var(--prijava-design-width) * 6 / 1440);
 
     &:has(.form_step--2) {
-      --prijava-design-width: min(100vw, 141dvh);
+      --prijava-design-width: min(100vw, calc(141 * var(--app-dvh)));
       place-items: start center;
     }
 
@@ -3437,7 +3437,7 @@
     }
 
     display: grid;
-    min-height: 100dvh;
+    min-height: calc(100 * var(--app-dvh));
     padding: 0;
     overflow: hidden;
     place-items: center;
@@ -5705,7 +5705,7 @@
     display: flex;
     width: calc(100vw - 32px);
     max-width: 360px;
-    max-height: calc(100dvh - 48px);
+    max-height: calc(100 * var(--app-dvh) - 48px);
     padding: 26px 20px 22px;
     flex-direction: column;
     overflow-y: auto;
@@ -5784,7 +5784,7 @@
   /* Skala koraka 2 (min(100vw, 141dvh)), a ne --prijava-design-width koje
      se razlikuje po koracima, da zvezdica bude ista na svakom koraku. */
   .prijava .prijava-required-star.prijava-required-star {
-    width: calc(min(100vw, 141dvh) * 34 / 1440);
+    width: calc(min(100vw, 141 * var(--app-dvh)) * 34 / 1440);
     height: auto;
   }
 }
