@@ -342,8 +342,13 @@
   &-field--zakljucano {
     .prijava-field__input {
       // Pun naziv fakulteta je dug, pa se u zakljucanom stanju malo smanji
-      // da stane u uzu mobilnu sirinu polja.
-      font-size: clamp(13px, 3.9vw, 18px);
+      // da stane u uzu mobilnu sirinu polja. Samo na telefonu: na desktopu
+      // je max 18px ostajao sitan pri zumu browsera (npr. 20%), dok ostala
+      // polja rastu sa sirinom.
+      @media #{$mobile} {
+        font-size: clamp(13px, 3.9vw, 18px);
+      }
+
       color: $color-black;
       background: $color-white;
       opacity: 1;
@@ -882,10 +887,11 @@
       );
       left: calc(
         var(--workshop-select-left-inset) +
-        var(--workshop-select-required-size) +
-        16px
+        var(--workshop-select-chevron-width) +
+        20px
       );
       overflow: hidden;
+      text-align: center;
       color: $color-black;
       font-family: $font-display;
       font-size: 18px;
@@ -4082,6 +4088,8 @@
       max-width: none;
       margin: 0;
 
+      // Jednak razmak levo i desno (širina strelice), pa je tekst centriran u
+      // okviru; zvezdica za obavezno je na gornjoj ivici, ne levo od teksta.
       &__value {
         right: calc(
           var(--workshop-select-right-inset) +
@@ -4090,10 +4098,11 @@
         );
         left: calc(
           var(--workshop-select-left-inset) +
-          var(--workshop-select-required-size) +
-          calc(var(--prijava-design-width) * 18 / 1440)
+          var(--workshop-select-chevron-width) +
+          calc(var(--prijava-design-width) * 24 / 1440)
         );
         font-size: calc(var(--prijava-design-width) * 25 / 1440);
+        text-align: center;
       }
 
       &__chevron {
@@ -5787,4 +5796,13 @@
     width: calc(min(100vw, 141 * var(--app-dvh)) * 34 / 1440);
     height: auto;
   }
+}
+
+/* Nivo znanja za drugu želju je onemogućen dok se ne izabere radionica. Klik
+   se ionako ne računa, ali dugme je na telefonu bljesnulo na tap i imalo
+   kursor "ruku", pa je delovalo kao da je izabrano. */
+.prijava .prijava-workshop-level:disabled {
+  cursor: default;
+  pointer-events: none;
+  -webkit-tap-highlight-color: transparent;
 }

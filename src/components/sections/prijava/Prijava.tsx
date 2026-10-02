@@ -1767,7 +1767,7 @@ const Prijava = () => {
                             onChange={(event) =>
                               promeniPolje("razloziZaS2S", event.target.value)
                             }
-                            placeholder={"1. ...\n2. ...\n3. ..."}
+                            placeholder="Upiši..."
                             aria-invalid={Boolean(greske.razloziZaS2S)}
                           />
                         </div>
