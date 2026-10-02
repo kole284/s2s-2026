@@ -5806,3 +5806,19 @@
   pointer-events: none;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Tastatura na telefonu: forma se skroluje unutar .prijava (100svh), a body je
+   beo i viši, pa se pri otvaranju tastature ispod forme videla bela traka.
+   Pozadina iza prijave je zato plava, a forma dobija prostor ispod sebe koliko
+   je visoka tastatura (vidi usePoljeIznadTastature.ts). */
+html:has(#prijava),
+body:has(#prijava),
+#root:has(#prijava) {
+  background-color: $color-blue;
+}
+
+@media #{$mobile} {
+  .prijava__scroll-content {
+    padding-bottom: var(--prijava-tastatura, 0px);
+  }
+}

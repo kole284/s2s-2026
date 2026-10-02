@@ -21,6 +21,7 @@ import radionicaRequired from "@/assets/prijava/fields/radionica-required.svg";
 import munjicaImg from "@/assets/prijava/icons/munjica.svg";
 import prijavaCornerStars from "@/assets/prijava/decor/zvezde.svg";
 import PrijavaExit from "./components/PrijavaExit";
+import { usePoljeIznadTastature } from "./usePoljeIznadTastature";
 import { WORKSHOPS } from "@/data/workshops";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
@@ -664,6 +665,8 @@ const buildPayload = (
 
 const Prijava = () => {
   const navigate = useNavigate();
+  const sekcijaRef = useRef<HTMLElement>(null);
+  usePoljeIznadTastature(sekcijaRef);
   const [sada, setSada] = useState(() => Date.now());
   const prijaveZakljucane = sada < PRIJAVE_SE_OTVARAJU;
   const odbrojavanje = formatirajOdbrojavanje(PRIJAVE_SE_OTVARAJU - sada);
@@ -1153,7 +1156,7 @@ const Prijava = () => {
   };
 
   return (
-    <section className="prijava" id="prijava">
+    <section className="prijava" id="prijava" ref={sekcijaRef}>
       <PrijavaExit />
       {!prijaveZakljucane ? (
         <div className="prijava__scroll-content">
