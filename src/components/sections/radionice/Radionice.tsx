@@ -653,22 +653,53 @@ const Radionice = () => {
 
     if (!Number.isFinite(faktorX)) return;
 
-    const sekcijaRect = sekcija.getBoundingClientRect();
-    const trakaRect = traka.getBoundingClientRect();
-
-    if (trakaRect.height <= 0) return;
+    // offset* mere bez transforma: tokom prelaza je traka već skalirana, a
+    // getBoundingClientRect bi vratio smanjenu veličinu i lopta bi skakala.
+    if (traka.offsetHeight <= 0) return;
 
     const ugao = (UGAO_LOPTE_STEPENI * Math.PI) / 180;
-    const kutijaX = sekcijaRect.width;
-    const kutijaY = trakaRect.height;
-    const sirinaLopte =
-      (kutijaX * Math.cos(ugao) + kutijaY * Math.sin(ugao)) * UDEO_OBLIKA_X;
-    const visinaLopte =
-      (kutijaX * Math.sin(ugao) + kutijaY * Math.cos(ugao)) * UDEO_OBLIKA_Y;
+
+    // Gabarit zgužvanog oblika za papir datih dimenzija (pre skaliranja).
+    const gabarit = (kutijaX: number, kutijaY: number) => ({
+      sirina:
+        (kutijaX * Math.cos(ugao) + kutijaY * Math.sin(ugao)) * UDEO_OBLIKA_X,
+      visina:
+        (kutijaX * Math.sin(ugao) + kutijaY * Math.cos(ugao)) * UDEO_OBLIKA_Y,
+    });
+
+    const plavi = gabarit(traka.offsetWidth, traka.offsetHeight);
+    // Ciljna lopta: širina kao do sada, a otprilike kvadratna.
+    const velicinaLopte = faktorX * plavi.sirina;
 
     sekcija.style.setProperty(
       "--rd-view-ball-scale-y",
-      `${(faktorX * sirinaLopte * REZERVA_VISINE_LOPTE) / visinaLopte}`,
+      `${(velicinaLopte * REZERVA_VISINE_LOPTE) / plavi.visina}`,
+    );
+
+    /*
+     * Beli papir predavača je drugačije veličine od plave trake (visok je
+     * koliko ekran), pa bi isti faktori dali drugačiju loptu. Dobija svoje
+     * faktore, da obe lopte budu iste veličine.
+     */
+    const papirPredavaca = sekcija.querySelector<HTMLElement>(
+      ".radionice-predavac-view .predavac-band",
+    );
+
+    if (!papirPredavaca || papirPredavaca.offsetHeight <= 0) {
+      sekcija.style.removeProperty("--rd-predavac-ball-scale-x");
+      sekcija.style.removeProperty("--rd-predavac-ball-scale-y");
+      return;
+    }
+
+    const beli = gabarit(papirPredavaca.offsetWidth, papirPredavaca.offsetHeight);
+
+    sekcija.style.setProperty(
+      "--rd-predavac-ball-scale-x",
+      `${velicinaLopte / beli.sirina}`,
+    );
+    sekcija.style.setProperty(
+      "--rd-predavac-ball-scale-y",
+      `${(velicinaLopte * REZERVA_VISINE_LOPTE) / beli.visina}`,
     );
   }, []);
 
@@ -691,8 +722,14 @@ const Radionice = () => {
 
     if (!sekcija) return;
 
+    const odstupanje = sekcija.getBoundingClientRect().top;
+
+    // Delovi piksela (zum, zaokruživanje) se ignorišu, da poravnanje na
+    // scroll događaju ne bi samo sebe okidalo u krug.
+    if (Math.abs(odstupanje) < 1) return;
+
     window.scrollTo({
-      top: window.scrollY + sekcija.getBoundingClientRect().top,
+      top: window.scrollY + odstupanje,
       behavior: "instant",
     });
   }, []);
@@ -756,6 +793,13 @@ const Radionice = () => {
     html.style.setProperty("--rd-scrollbar-width", `${sirinaSkrolbara}px`);
     html.classList.add(KLASA_OTVORENOG_PREDAVACA);
 
+    // Sekcija je poravnata pre otvaranja, ali skriven skrolbar i sekcija
+    // visine ekrana mogu da pomere raspored (Firefox tada sam koriguje skrol),
+    // pa je ispod popupa ostajala bela traka. Poravnava se ponovo, odmah i
+    // u sledećem frejmu, kad se raspored smiri.
+    poravnajSekciju();
+    const ponovnoPoravnanje = window.requestAnimationFrame(poravnajSekciju);
+
     const naTaster = (event: KeyboardEvent) => {
       if (event.key === "Escape") zatvoriPredavaca();
     };
@@ -763,14 +807,28 @@ const Radionice = () => {
     document.addEventListener("keydown", naTaster);
     // Promena širine (npr. rotacija telefona) pomera sekcije iznad Radionica.
     window.addEventListener("resize", poravnajSekciju);
+    // Dok je popup otvoren stranica se ne skroluje (overflow: hidden), ali
+    // browser ipak ume da pomeri skrol (Firefox scroll anchoring i sl.), pa
+    // ispod popupa ostane bela traka. Svaki takav pomeraj se odmah vraća.
+    window.addEventListener("scroll", poravnajSekciju, { passive: true });
 
     return () => {
+      window.cancelAnimationFrame(ponovnoPoravnanje);
       document.removeEventListener("keydown", naTaster);
       window.removeEventListener("resize", poravnajSekciju);
+      window.removeEventListener("scroll", poravnajSekciju);
       html.classList.remove(KLASA_OTVORENOG_PREDAVACA);
       html.style.removeProperty("--rd-scrollbar-width");
     };
   }, [predavacOtvoren, zatvoriPredavaca, poravnajSekciju]);
+
+  // Kad se animacija otvaranja (ili promene radionice) završi, popup mora
+  // tačno da pokriva ekran, čak i ako je browser u međuvremenu pomerio skrol.
+  useEffect(() => {
+    if (predavacOtvoren && tranzicijaPrikaza === null) {
+      poravnajSekciju();
+    }
+  }, [predavacOtvoren, tranzicijaPrikaza, poravnajSekciju]);
 
   /*
    * Putanja lopte se meri jednom, na početku prelaza (pre prvog paint-a):
@@ -848,8 +906,15 @@ const Radionice = () => {
   const fazaPrelaza = tranzicijaPrikaza?.faza;
 
   useLayoutEffect(() => {
+    if (!fazaPrelaza) return;
+
+    // Papiri menjaju veličinu tokom prelaza (sekcija postaje visoka koliko
+    // ekran, prikaz predavača se tek iscrtava), pa se faktori lopte računaju
+    // u svakoj fazi, pre iscrtavanja, da plava i bela lopta budu iste.
+    izracunajRazmereLopte();
+
     if (fazaPrelaza === "crumpling") izmeriPutanjuLopte();
-  }, [fazaPrelaza, izmeriPutanjuLopte]);
+  }, [fazaPrelaza, izracunajRazmereLopte, izmeriPutanjuLopte]);
 
   const predjiNaSledecuFazu = useCallback(
     (trenutna: TranzicijaPrikaza) => {

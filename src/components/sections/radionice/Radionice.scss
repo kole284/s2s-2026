@@ -141,6 +141,15 @@ html.radionice-predavac-otvoren body {
   padding-right: var(--rd-scrollbar-width, 0px);
 }
 
+/*
+ * Firefox "scroll anchoring" je pomerao skrol dok se sadržaj sekcije menja
+ * (traka radionica -> predavač), pa je popup bio pomeren nagore i ispod je
+ * ostajala bela traka. Sadržaj ove sekcije ne sme da bude sidro skrola.
+ */
+.radionice-page {
+  overflow-anchor: none;
+}
+
 .radionice-page--predavac-open {
   /* Iznad zubaca O projektu, koji bi inače virili na vrhu popupa. */
   z-index: 3;
@@ -786,6 +795,15 @@ html.radionice-predavac-otvoren body {
 .radionice-page--view-transition .radionice-predavac-view {
   --rd-view-ball: scaleX(var(--rd-view-ball-scale-x))
     scaleY(var(--rd-view-ball-scale-y));
+}
+
+/* Beli papir ima svoje faktore (Radionice.tsx), da lopta bude iste veličine
+   kao plava. Bez merenja ostaju zajednički. */
+.radionice-page--view-transition .radionice-predavac-view {
+  --rd-view-ball: scaleX(
+      var(--rd-predavac-ball-scale-x, var(--rd-view-ball-scale-x))
+    )
+    scaleY(var(--rd-predavac-ball-scale-y, var(--rd-view-ball-scale-y)));
 }
 
 /* Lopta u centru: kraj gužvanja i kraj uleta. */
