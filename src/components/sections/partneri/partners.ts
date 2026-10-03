@@ -79,8 +79,18 @@ const ROBNI_FILES: readonly PartnerFile[] = [
   ["Pab kviz 8x8", "pab-kviz-8x8-trim.png", "https://www.instagram.com/pabkviz8x8", undefined, 1.25],
   ["Slatka poruka", "slatka-poruka-trim.png", "https://www.instagram.com/slatkaporuka", undefined, 1.4],
   ["Pinecone Bar & Theater", "pinecone-bar-and-theater-trim.svg", "https://pinecone.theater/en"],
-  ["BeoGraf štamparija", "beograf.jpeg", "https://stamparijabeograf.rs"],
+  ["BeoGraf štamparija", "beograf.png", "https://stamparijabeograf.rs"],
   ["Napkinote", "napkinote.png", "https://www.instagram.com/napkinote/"],
+  ["Krojačeva škola", "krojaceva-skola.png", "https://www.krojacevaskola.com/", undefined, 1.1],
+  // Okrugli logoi: krug staje po visini, pa se malo uvećaju.
+  ["Minimemo", "minimemo.png", "https://www.instagram.com/minimemo_eventstation/", undefined, 1.3],
+  ["Samo nežno prema sebi", "samo-nezno-prema-sebi.webp", "https://www.instagram.com/samo_nezno_prema_sebi/", undefined, 1.3],
+  ["Unas Customs", "unas-customs.png", "https://www.instagram.com/unaas_customs/", undefined, 1.3],
+  ["Štampar Makarije", "stampar-makarije.png", "https://www.stamparmakarije.com/"],
+  ["Muzej grada Beograda", "muzej-grada-beograda.png", "https://www.mgb.org.rs/", undefined, 1.1],
+  ["Nikolas Wines", "nikolas-wines.png", "https://www.nikolas.co.rs/o-nama/"],
+  ["Ex Libris pečati za knjige", "ex-libris.png", "https://pecatzaknjige.rs/"],
+  ["Butik cveća Biljana", "butik-cveca-biljana.png", "https://www.instagram.com/cvecarabutikcvecabiljana/"],
 ];
 
 const NATURALNI_FILES: readonly PartnerFile[] = [
@@ -98,6 +108,7 @@ const NATURALNI_FILES: readonly PartnerFile[] = [
   // Okrugao logo sa providnim uglovima (bez belog kvadrata koji bi virio iz
   // heksagona); krug je ~82% širine heksagona, bar 6px od kosih ivica.
   ["Veganluk", "veganluk.webp", "https://www.veganluk.com/", undefined, 1.35],
+  ["Bocni ketering", "bocni-ketering.webp", "https://bocni.rs/"],
 ];
 
 const toPartner = (
