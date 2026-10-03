@@ -91,6 +91,7 @@ const ROBNI_FILES: readonly PartnerFile[] = [
   ["Nikolas Wines", "nikolas-wines.png", "https://www.nikolas.co.rs/o-nama/"],
   ["Ex Libris pečati za knjige", "ex-libris.png", "https://pecatzaknjige.rs/"],
   ["Butik cveća Biljana", "butik-cveca-biljana.png", "https://www.instagram.com/cvecarabutikcvecabiljana/"],
+  ["Kviz kultura", "kviz-kultura.png", "https://www.instagram.com/kvizkultura_pub_quiz/", undefined, 1.15],
 ];
 
 const NATURALNI_FILES: readonly PartnerFile[] = [
