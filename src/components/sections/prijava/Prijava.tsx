@@ -21,6 +21,7 @@ import radionicaRequired from "@/assets/prijava/fields/radionica-required.svg";
 import munjicaImg from "@/assets/prijava/icons/munjica.svg";
 import prijavaCornerStars from "@/assets/prijava/decor/zvezde.svg";
 import PrijavaExit from "./components/PrijavaExit";
+import WorkshopPicker from "./components/WorkshopPicker";
 import { usePoljeIznadTastature } from "./usePoljeIznadTastature";
 import { WORKSHOPS } from "@/data/workshops";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -28,6 +29,8 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 const NASLOVI_KORAKA = ["PRIJAVI SE", "RADIONICE", "PANEL", "ISKUSTVA"];
 // Isto kao $desktop u _mediaqueries.scss.
 const DESKTOP_MEDIA_QUERY = "only screen and (min-width: 1025px)";
+// Isto kao $mobile u _mediaqueries.scss.
+const MOBILE_MEDIA_QUERY = "only screen and (max-width: 768px)";
 const BROJEVI_GODINA = [
   { id: "1", label: "1." },
   { id: "2", label: "2." },
@@ -203,6 +206,8 @@ type WorkshopSelectVisualProps = {
   greska?: string;
   placeholder?: string;
   required?: boolean;
+  naslov: string;
+  druga?: boolean;
 };
 
 const WorkshopSelectVisual = ({
@@ -212,10 +217,15 @@ const WorkshopSelectVisual = ({
   greska,
   placeholder = "Izaberi radionicu",
   required = false,
+  naslov,
+  druga = false,
 }: WorkshopSelectVisualProps) => {
   const [otvoreno, setOtvoreno] = useState(false);
   const [aktivnaOpcija, setAktivnaOpcija] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
+  // Meni na telefonu je u portalu, van rootRef.
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const jeTelefon = useMediaQuery(MOBILE_MEDIA_QUERY);
   const listboxId = useId();
 
   const indeksIzabrane = Math.max(0, options.indexOf(value));
@@ -248,7 +258,12 @@ const WorkshopSelectVisual = ({
     }
 
     const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
+      const cilj = event.target as Node;
+
+      if (
+        !rootRef.current?.contains(cilj) &&
+        !pickerRef.current?.contains(cilj)
+      ) {
         zatvori();
       }
     };
@@ -362,7 +377,17 @@ const WorkshopSelectVisual = ({
         <span className="prijava-workshop-select__chevron" aria-hidden="true" />
       </div>
 
-      {otvoreno ? (
+      {otvoreno && jeTelefon ? (
+        <WorkshopPicker
+          naslov={naslov}
+          druga={druga}
+          value={value}
+          options={options}
+          pickerRef={pickerRef}
+          onIzaberi={izaberi}
+          onZatvori={zatvori}
+        />
+      ) : otvoreno ? (
         <div className="prijava-workshop-select__open" aria-hidden="false">
           <div className="prijava-workshop-select__menu-shell">
             <div
@@ -1433,6 +1458,7 @@ const Prijava = () => {
                         </div>
 
                         <WorkshopSelectVisual
+                          naslov="Prva želja"
                           required
                           value={forma.prvaZeljaRadionica}
                           options={radioniceZaPrvuZelju}
@@ -1531,6 +1557,8 @@ const Prijava = () => {
                         </div>
 
                         <WorkshopSelectVisual
+                          naslov="Druga želja"
+                          druga
                           value={forma.drugaZeljaRadionica}
                           options={radioniceZaDruguZelju}
                           onChange={promeniDruguZelju}

@@ -335,6 +335,11 @@
       .prijava-field__control {
         background: #b00020;
       }
+
+      .prijava-field__label {
+        color: $color-white;
+        background: #b00020;
+      }
     }
   }
 
@@ -1358,7 +1363,7 @@
     position: relative;
     width: min(100%, 650px);
     padding: 36px 40px 34px;
-    border: 3px solid $color-blue-dark;
+    border: 3px solid $color-black;
     box-sizing: border-box;
     color: $color-blue-dark;
     background: $color-white;
@@ -1722,6 +1727,7 @@
     }
 
     &--reasons {
+      border-color: $color-black;
       box-shadow: 7px 7px 0 $color-blue;
     }
 
@@ -2899,14 +2905,18 @@
       width: min(100%, 294px);
       margin: 0 auto;
 
-      // Zvezdica za obavezno je na gornjoj ivici, pa levo ne treba čuvati
-      // mesto za nju; tako i uvećan font (Instagram) staje bez "...".
+      // Isti razmak levo i desno (širina strelice), da tekst bude centriran
+      // u polju; najduži naziv radionice i dalje staje u jedan red.
       &__value {
-        left: calc(var(--workshop-select-left-inset) + 10px);
+        left: calc(
+          var(--workshop-select-left-inset) +
+          var(--workshop-select-chevron-width) +
+          6px
+        );
         right: calc(
           var(--workshop-select-right-inset) +
           var(--workshop-select-chevron-width) +
-          12px
+          6px
         );
         font-size: 17px;
         text-align: center;
@@ -5659,7 +5669,9 @@
 }
 
 .prijava .prijava-panel-choice[aria-invalid="true"]
-  .prijava-panel-choice__button::before {
+  .prijava-panel-choice__button::before,
+.prijava .prijava-experience-choice[aria-invalid="true"]
+  .prijava-experience-choice__button::before {
   background: #b00020;
 }
 
@@ -5820,5 +5832,67 @@ body:has(#prijava),
 @media #{$mobile} {
   .prijava__scroll-content {
     padding-bottom: var(--prijava-tastatura, 0px);
+  }
+}
+
+/* Nepopunjeno obavezno polje na koracima 2–4: kao na koraku 1, i offset
+   (senka) i tekst u polju postaju crveni, ne samo okvir. */
+.prijava .prijava-workshop-select[data-invalid="true"] .prijava-workshop-select__shadow path {
+  fill: #b00020;
+  stroke: #b00020;
+}
+
+.prijava .prijava-workshop-levels[aria-invalid="true"] .prijava-workshop-level {
+  --workshop-level-shadow-color: #b00020;
+
+  color: #b00020;
+}
+
+.prijava .prijava-workshop-details .prijava-workshop-textarea-shell--error::before,
+.prijava .prijava-workshop-details .prijava-workshop-textarea-shell--error::after,
+.prijava .prijava-panel-block .prijava-panel-textarea-shell--error::before,
+.prijava .prijava-panel-block .prijava-panel-textarea-shell--error::after {
+  background: #b00020;
+}
+
+.prijava .prijava-workshop-textarea-shell--error textarea::placeholder,
+.prijava .prijava-panel-textarea-shell--error textarea::placeholder {
+  color: #b00020;
+  opacity: 1;
+  -webkit-text-fill-color: #b00020;
+}
+
+.prijava .prijava-panel-choice[aria-invalid="true"] .prijava-panel-choice__button,
+.prijava .prijava-experience-choice[aria-invalid="true"] .prijava-experience-choice__button {
+  color: #b00020;
+  filter: drop-shadow(
+    var(--choice-shadow)
+    var(--choice-shadow)
+    0
+    #b00020
+  );
+}
+
+/* Korak 1: labela "Godina studija" je crvena kad godina nije izabrana. */
+.prijava .prijava_godina-sekcija--greska .prijava_labela {
+  color: $color-white;
+  background: #b00020;
+}
+
+/* Na telefonu se tekst forme ne selektuje: dug pritisak ili brzi tapovi
+   po dugmadima su označavali natpise i otvarali meni za kopiranje.
+   Polja za unos ostaju selektabilna, da se upisani tekst može ispraviti. */
+@media #{$mobile} {
+  .prijava {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .prijava input,
+  .prijava textarea {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
   }
 }
