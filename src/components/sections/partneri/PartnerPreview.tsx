@@ -18,6 +18,7 @@ type PartnerPreviewProps = {
 const PARTNER_KIND_LABEL: Record<PartnerKind, string> = {
   pokrovitelj: "POKROVITELJ PROJEKTA",
   godisnji: "GODIŠNJI",
+  medijski: "MEDIJSKI",
   robni: "ROBNI",
   naturalni: "NATURALNI",
 };
@@ -74,20 +75,22 @@ const PartnerPreview = ({
           {PARTNER_KIND_LABEL[partner.kind]}
         </span>
         <strong className="partner-preview-name">{partner.name}</strong>
-        <a
-          className="partner-preview-anchor"
-          href={partner.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          tabIndex={-1}
-          draggable={false}
-          onClick={onOpen}
-        >
-          <span className="partner-preview-link">
-            {formatPartnerLink(partner.url)}
-          </span>
-          <span className="partner-preview-open">Otvori ↗</span>
-        </a>
+        {partner.url ? (
+          <a
+            className="partner-preview-anchor"
+            href={partner.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={-1}
+            draggable={false}
+            onClick={onOpen}
+          >
+            <span className="partner-preview-link">
+              {formatPartnerLink(partner.url)}
+            </span>
+            <span className="partner-preview-open">Otvori ↗</span>
+          </a>
+        ) : null}
       </div>
     </div>,
     document.body,

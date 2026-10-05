@@ -15,7 +15,12 @@ import crownIllustration from "@/assets/partneri/kruna.svg";
 
 import PartnerPreview from "./PartnerPreview";
 import { HOVER_MEDIA_QUERY, isLeavingTowardPreview } from "./partnerPreviewLayout";
-import { GODISNJI_PARTNERS, ROBNI_PARTNERS, SPONSOR_PARTNER } from "./partners";
+import {
+  GODISNJI_PARTNERS,
+  MEDIJSKI_PARTNERS,
+  ROBNI_PARTNERS,
+  SPONSOR_PARTNER,
+} from "./partners";
 import { useSponsorPreview } from "./useSponsorPreview";
 import type { Partner } from "./partners";
 
@@ -530,6 +535,44 @@ const HexagonMarquee = ({
                   // Ponovljeni logoi su samo popuna trake, kao i kopije grupa.
                   const kopija = groupIndex > 0 || index >= (logos?.length ?? 0);
 
+                  const hexagon = (
+                    <Hexagon
+                      filled={filled}
+                      logoSrc={partner.src}
+                      logoAlt=""
+                      logoCrop={partner.crop}
+                      logoScale={partner.scale}
+                    />
+                  );
+                  const naMisUlaz = (event: ReactPointerEvent<HTMLElement>) => {
+                    if (event.pointerType === "mouse") {
+                      openPreview(partner, event.currentTarget);
+                    }
+                  };
+                  const naMisIzlaz = (event: ReactPointerEvent<HTMLElement>) => {
+                    if (event.pointerType === "mouse") {
+                      leaveLogo(event.clientY);
+                    }
+                  };
+
+                  // Partner bez linka (npr. medijski za sada): logo nije
+                  // klikabilan, ali kartica i dalje ide na prelazak mišem.
+                  if (!partner.url) {
+                    return (
+                      <span
+                        key={`${groupIndex}-${index}`}
+                        className="hexagon-link hexagon-link--bez-linka"
+                        role={kopija ? undefined : "img"}
+                        aria-hidden={groupIndex === 0 && kopija ? "true" : undefined}
+                        aria-label={kopija ? undefined : partner.name}
+                        onPointerEnter={naMisUlaz}
+                        onPointerLeave={naMisIzlaz}
+                      >
+                        {hexagon}
+                      </span>
+                    );
+                  }
+
                   return (
                     <a
                       key={`${groupIndex}-${index}`}
@@ -541,16 +584,8 @@ const HexagonMarquee = ({
                       tabIndex={kopija ? -1 : undefined}
                       aria-hidden={groupIndex === 0 && kopija ? "true" : undefined}
                       aria-label={`${partner.name} (otvara se u novom tabu)`}
-                      onPointerEnter={(event) => {
-                        if (event.pointerType === "mouse") {
-                          openPreview(partner, event.currentTarget);
-                        }
-                      }}
-                      onPointerLeave={(event) => {
-                        if (event.pointerType === "mouse") {
-                          leaveLogo(event.clientY);
-                        }
-                      }}
+                      onPointerEnter={naMisUlaz}
+                      onPointerLeave={naMisIzlaz}
                       // Samo fokus sa tastature otvara karticu. Fokus posle klika
                       // mišem (i povratak na tab) ne sme da je vrati.
                       onFocus={(event) => {
@@ -561,12 +596,7 @@ const HexagonMarquee = ({
                       onBlur={hidePreview}
                       onClick={hidePreview}
                     >
-                      <Hexagon
-                        logoSrc={partner.src}
-                        logoAlt=""
-                        logoCrop={partner.crop}
-                        logoScale={partner.scale}
-                      />
+                      {hexagon}
                     </a>
                   );
                 })
@@ -678,6 +708,7 @@ const Partneri = () => (
       direction="right"
       illustration={cameraIllustration}
       illustrationClassName="illustration-camera"
+      logos={MEDIJSKI_PARTNERS}
     />
 
     <PartnerRow

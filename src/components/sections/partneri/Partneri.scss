@@ -987,3 +987,8 @@
     transition: none;
   }
 }
+
+// Partner bez linka: logo se prikazuje, ali nije klikabilan.
+.hexagon-link--bez-linka {
+  cursor: default;
+}

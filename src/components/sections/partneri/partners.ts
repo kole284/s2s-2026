@@ -12,6 +12,12 @@ const naturalniModules = import.meta.glob("@/assets/partneri/naturalni/*", {
   query: "?url",
 }) as Record<string, string>;
 
+const medijskiModules = import.meta.glob("@/assets/partneri/medijski/*", {
+  eager: true,
+  import: "default",
+  query: "?url",
+}) as Record<string, string>;
+
 const godisnjiModules = import.meta.glob("@/assets/partneri/godisnji/*", {
   eager: true,
   import: "default",
@@ -28,12 +34,18 @@ const resolveAsset = (modules: Record<string, string>, filename: string): string
   return entry[1];
 };
 
-export type PartnerKind = "pokrovitelj" | "godisnji" | "robni" | "naturalni";
+export type PartnerKind =
+  | "pokrovitelj"
+  | "godisnji"
+  | "medijski"
+  | "robni"
+  | "naturalni";
 
 export type Partner = {
   name: string;
   src: string;
-  url: string;
+  // Bez linka logo nije klikabilan, a kartica nema red sa linkom.
+  url?: string;
   kind: PartnerKind;
   // CSS `inset(...)` that trims empty margin around the artwork, so the logo
   // fills the hexagon instead of floating in the middle of a padded image.
@@ -45,7 +57,7 @@ export type Partner = {
 type PartnerFile = readonly [
   name: string,
   file: string,
-  url: string,
+  url: string | undefined,
   crop?: string,
   scale?: number,
 ];
@@ -92,6 +104,9 @@ const ROBNI_FILES: readonly PartnerFile[] = [
   ["Ex Libris pečati za knjige", "ex-libris.png", "https://pecatzaknjige.rs/"],
   ["Butik cveća Biljana", "butik-cveca-biljana.png", "https://www.instagram.com/cvecarabutikcvecabiljana/"],
   ["Kviz kultura", "kviz-kultura.png", "https://www.instagram.com/kvizkultura_pub_quiz/", undefined, 1.15],
+  ["Kaži dragička", "kazi-dragicka.png", "https://www.instagram.com/kazi.dragicka/"],
+  // Uzak, visok crtež: staje po visini, pa se malo uveća.
+  ["Lala u krigli", "lala-u-krigli.png", "https://www.instagram.com/lalaukrigli/", undefined, 1.15],
 ];
 
 const NATURALNI_FILES: readonly PartnerFile[] = [
@@ -110,6 +125,22 @@ const NATURALNI_FILES: readonly PartnerFile[] = [
   // heksagona); krug je ~82% širine heksagona, bar 6px od kosih ivica.
   ["Veganluk", "veganluk.webp", "https://www.veganluk.com/", undefined, 1.35],
   ["Bocni ketering", "bocni-ketering.webp", "https://bocni.rs/"],
+  ["Oat Bar", "oat-bar.png", "https://www.instagram.com/oatbar_rs/"],
+];
+
+// Za sada bez linkova; dodaju se kad stignu.
+const MEDIJSKI_FILES: readonly PartnerFile[] = [
+  ["Case Study Club", "case-study-club.png", undefined],
+  ["Digitalizuj.me", "digitalizuj-me.png", undefined],
+  ["EESTEC LC Belgrade", "eestec.webp", undefined],
+  ["Istraživačko-razvojni centar FON", "istrazivacko-razvojni-centar.png", undefined],
+  ["ITNetwork", "itnetwork.png", undefined],
+  ["Magazin Student", "magazin-student.png", undefined],
+  // Samo krug; natpis ispod je beo i ne vidi se na belom heksagonu.
+  ["Marketing Workshop", "marketing-workshop.png", undefined, undefined, 1.25],
+  ["Portal SBU Poslovi", "portal-sbu-poslovi.webp", undefined],
+  ["PRObjave.com", "probjave.webp", undefined],
+  ["Znanje.rs", "znanje-rs.webp", undefined],
 ];
 
 const toPartner = (
@@ -134,6 +165,10 @@ export const SPONSOR_PARTNER: Partner = {
 
 export const GODISNJI_PARTNERS: Partner[] = GODISNJI_FILES.map((file) =>
   toPartner(godisnjiModules, "godisnji", file),
+);
+
+export const MEDIJSKI_PARTNERS: Partner[] = MEDIJSKI_FILES.map((file) =>
+  toPartner(medijskiModules, "medijski", file),
 );
 
 // Robni and naturalni partners are shown together under the single "ROBNI" heading.
