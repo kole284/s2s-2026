@@ -1,0 +1,11 @@
+# Server (LiteSpeed) je odgovarao i na http bez preusmeravanja, pa je
+# Firefox na Androidu otvarao http verziju sajta. Svaki http zahtev ide
+# na istu adresu preko https, a HSTS kaže browseru da ubuduće odmah
+# koristi https.
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>
