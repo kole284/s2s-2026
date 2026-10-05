@@ -558,30 +558,36 @@ $panel-yellow: #ffd100;
    ========================================================= */
 
 .panel-question {
+  /*
+    Tema stoji na gornjoj ivici plave trake, pod istim uglom; ugao i visinu
+    postavlja usePanelTemaNaTraci.ts (traka je na širim ekranima položenija).
+    Leva ivica je poravnata sa naslovom PANEL (centriran na 49.3%).
+  */
   position: absolute;
 
   z-index: 5;
 
-  top: 28%;
-  left: 58.98%;
-
-  width: 58%;
+  top: var(--panel-tema-top, 26%);
+  left: 40.8%;
 
   margin: 0;
 
   color: $color-black;
 
   font-family: $font-display;
-  font-size: 3.75cqw;
+  font-size: 2.5cqw;
   font-weight: $font-black;
 
-  line-height: 1;
+  line-height: 1.1;
 
   white-space: nowrap;
-  text-transform: uppercase;
 
-  transform: rotate(-5.9deg);
-  transform-origin: left center;
+  transform: rotate(var(--panel-tema-ugao, -5.9deg));
+  transform-origin: left bottom;
+}
+
+.panel-question__red {
+  display: block;
 }
 
 /* =========================================================
@@ -1003,20 +1009,28 @@ $panel-yellow: #ffd100;
 
   .panel-question {
     top: calc(120 * var(--panel-mobile-unit));
+    bottom: auto;
 
-    left: calc(50% - 130 * var(--panel-mobile-unit));
+    left: calc(50% - 150 * var(--panel-mobile-unit));
 
-    width: calc(260 * var(--panel-mobile-unit));
+    width: calc(300 * var(--panel-mobile-unit));
 
-    font-size: calc(30 * var(--panel-mobile-unit));
+    font-size: calc(20 * var(--panel-mobile-unit));
 
-    line-height: 1;
+    line-height: 1.1;
 
     white-space: normal;
 
     transform: none;
 
     text-align: center;
+  }
+
+  // Crni deo se prelama sam; plavi podnaslov ostaje u svom redu.
+  .panel-question__red--podnaslov {
+    margin-top: calc(4 * var(--panel-mobile-unit));
+
+    white-space: nowrap;
   }
 
   /* =======================================================

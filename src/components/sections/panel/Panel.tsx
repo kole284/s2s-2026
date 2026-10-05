@@ -5,6 +5,8 @@ import arrow from "@/assets/panel/arrow.svg";
 import microphone from "@/assets/panel/microphone.svg";
 import questionMark from "@/assets/panel/question-mark.svg";
 
+import { usePanelTemaNaTraci } from "./usePanelTemaNaTraci";
+
 import "./Panel.scss";
 
 const PANELISTS = ["Panelista 1", "Panelista 2", "Panelista 3", "Panelista 4", "Panelista 5"];
@@ -30,6 +32,12 @@ const Panel = () => {
   const [direction, setDirection] = useState<TransitionDirection>("next");
 
   const transitionLocked = useRef(false);
+
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const trakaRef = useRef<HTMLDivElement>(null);
+  const temaRef = useRef<HTMLParagraphElement>(null);
+
+  usePanelTemaNaTraci(canvasRef, trakaRef, temaRef);
 
   const isAnimating = phase !== "idle";
 
@@ -101,12 +109,12 @@ const Panel = () => {
 
   return (
     <section className="panel-section" id="panel">
-      <div className="panel-canvas">
+      <div className="panel-canvas" ref={canvasRef}>
         {/* =================================================
             DESKTOP BLUE BAND
             ================================================= */}
 
-        <div className="panel-stage-band" aria-hidden="true" />
+        <div className="panel-stage-band" ref={trakaRef} aria-hidden="true" />
 
         {/* =================================================
             MOBILE SPLIT STAGE
@@ -269,7 +277,15 @@ const Panel = () => {
             QUESTION
             ================================================= */}
 
-        <p className="panel-question">Coming Soon</p>
+        {/* Tema stoji na gornjoj ivici plave trake (usePanelTemaNaTraci). */}
+        <p className="panel-question" ref={temaRef}>
+          <span className="panel-question__red">
+            AI, kreativnost i preduzetništvo:
+          </span>{" "}
+          <span className="panel-question__red panel-question__red--podnaslov">
+            Od ideje do stvarnosti
+          </span>
+        </p>
       </div>
     </section>
   );
