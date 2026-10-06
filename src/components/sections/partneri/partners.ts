@@ -107,6 +107,7 @@ const ROBNI_FILES: readonly PartnerFile[] = [
   ["Kaži dragička", "kazi-dragicka.png", "https://www.instagram.com/kazi.dragicka/"],
   // Uzak, visok crtež: staje po visini, pa se malo uveća.
   ["Lala u krigli", "lala-u-krigli.png", "https://www.instagram.com/lalaukrigli/", undefined, 1.15],
+  ["Wool mania", "wool-mania.webp", "https://www.instagram.com/wool__mania/"],
 ];
 
 const NATURALNI_FILES: readonly PartnerFile[] = [
@@ -126,6 +127,9 @@ const NATURALNI_FILES: readonly PartnerFile[] = [
   ["Veganluk", "veganluk.webp", "https://www.veganluk.com/", undefined, 1.35],
   ["Bocni ketering", "bocni-ketering.webp", "https://bocni.rs/"],
   ["Oat Bar", "oat-bar.png", "https://www.instagram.com/oatbar_rs/"],
+  // Okrugao logo sa providnim uglovima; krug staje po visini.
+  ["Njam njam za 10", "njam-njam-za-10.webp", "https://www.instagram.com/njamnjamza10/", undefined, 1.3],
+  ["Ketering Kovačević", "ketering-kovacevic.png", "https://keteringkovacevic.rs/"],
 ];
 
 // Za sada bez linkova; dodaju se kad stignu.
