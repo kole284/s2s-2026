@@ -22,6 +22,7 @@ import munjicaImg from "@/assets/prijava/icons/munjica.svg";
 import prijavaCornerStars from "@/assets/prijava/decor/zvezde.svg";
 import PrijavaExit from "./components/PrijavaExit";
 import WorkshopPicker from "./components/WorkshopPicker";
+import BrojacZnakova from "./components/BrojacZnakova";
 import { usePoljeIznadTastature } from "./usePoljeIznadTastature";
 import { WORKSHOPS } from "@/data/workshops";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -1537,8 +1538,14 @@ const Prijava = () => {
                                 }
                                 placeholder="Upiši..."
                                 aria-invalid={Boolean(greske.prvaZeljaPrimena)}
+                                aria-describedby="prijava-prva-primena-brojac"
                               />
                             </div>
+                            <BrojacZnakova
+                              id="prijava-prva-primena-brojac"
+                              duzina={forma.prvaZeljaPrimena.length}
+                              limit={LIMITI_POLJA.razlogPrveRadionice}
+                            />
                           </div>
                         </div>
                       </section>
@@ -1651,8 +1658,15 @@ const Prijava = () => {
                                 placeholder="Upiši..."
                                 disabled={!imaDruguRadionicu}
                                 aria-invalid={Boolean(greske.drugaZeljaPrimena)}
+                                aria-describedby="prijava-druga-primena-brojac"
                               />
                             </div>
+                            <BrojacZnakova
+                              id="prijava-druga-primena-brojac"
+                              duzina={forma.drugaZeljaPrimena.length}
+                              limit={LIMITI_POLJA.razlogDrugeRadionice}
+                              sakriven={!imaDruguRadionicu}
+                            />
                           </div>
                           <EraserScribble
                             variant="workshop"
@@ -1756,6 +1770,7 @@ const Prijava = () => {
                                   : "Izaberi DA ako želiš da postaviš pitanje panelistima."
                               }
                               disabled={forma.prisustvoPanelu !== true}
+                              aria-describedby="prijava-pitanje-predavaci-brojac"
                             />
                             <EraserScribble
                               variant="panel"
@@ -1763,6 +1778,12 @@ const Prijava = () => {
                               className="prijava-scribble-overlay prijava-scribble-overlay--panel"
                             />
                           </div>
+                          <BrojacZnakova
+                            id="prijava-pitanje-predavaci-brojac"
+                            duzina={forma.pitanjeZaPredavace.length}
+                            limit={LIMITI_POLJA.pitanjeZaPredavace}
+                            sakriven={forma.prisustvoPanelu !== true}
+                          />
                         </section>
                       </div>
 
@@ -1800,8 +1821,14 @@ const Prijava = () => {
                             }
                             placeholder="Upiši..."
                             aria-invalid={Boolean(greske.razloziZaS2S)}
+                            aria-describedby="prijava-razlozi-s2s-brojac"
                           />
                         </div>
+                        <BrojacZnakova
+                          id="prijava-razlozi-s2s-brojac"
+                          duzina={forma.razloziZaS2S.length}
+                          limit={LIMITI_POLJA.razloziZaS2S}
+                        />
                       </section>
                     </div>
                   </div>
@@ -1883,8 +1910,14 @@ const Prijava = () => {
                                   )
                                 }
                                 placeholder="Upiši..."
+                                aria-describedby="prijava-predlog-radionice-brojac"
                               />
                             </div>
+                            <BrojacZnakova
+                              id="prijava-predlog-radionice-brojac"
+                              duzina={forma.predlogRadionice.length}
+                              limit={LIMITI_POLJA.predlogRadionice}
+                            />
                           </div>
                         </section>
                       </div>
@@ -1946,6 +1979,7 @@ const Prijava = () => {
                                 }
                                 placeholder="Upiši..."
                                 disabled={forma.ranijeUcestvovao !== true}
+                                aria-describedby="prijava-s2s-iskustvo-brojac"
                               />
                               <EraserScribble
                                 variant="experience"
@@ -1953,6 +1987,12 @@ const Prijava = () => {
                                 className="prijava-scribble-overlay prijava-scribble-overlay--experience"
                               />
                             </div>
+                            <BrojacZnakova
+                              id="prijava-s2s-iskustvo-brojac"
+                              duzina={forma.s2sIskustvo.length}
+                              limit={LIMITI_POLJA.s2sIskustvo}
+                              sakriven={forma.ranijeUcestvovao !== true}
+                            />
                           </div>
                         </section>
                       </div>
