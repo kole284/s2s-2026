@@ -3,6 +3,13 @@
 # na istu adresu preko https, a HSTS kaže browseru da ubuduće odmah
 # koristi https.
 RewriteEngine On
+
+# Sertifikat (*.fonis.rs) ne pokriva www.s2s.fonis.rs, pa se www odmah
+# šalje na adresu bez www. (Direktan https://www... i dalje dobija
+# upozorenje dok sertifikat ne pokrije i www.)
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
