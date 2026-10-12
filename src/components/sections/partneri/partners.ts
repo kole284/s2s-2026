@@ -257,6 +257,16 @@ const ROBNI_FILES: readonly PartnerFile[] = [
     "pozoriste-na-terazijama.webp",
     "https://pozoristeterazije.com/",
   ],
+  ["Cubes School", "cubes-school.png", "https://cubes.edu.rs/"],
+  ["The Risotto Bar", "the-risotto-bar.webp", "https://therisottobar.rs/"],
+  // Okrugao logo sa providnim uglovima; krug staje po visini.
+  [
+    "Love is Sweet decoration studio",
+    "love-is-sweet.webp",
+    "https://www.instagram.com/dekoracije_loveissweetbg/",
+    undefined,
+    1.3,
+  ],
 ];
 
 const NATURALNI_FILES: readonly PartnerFile[] = [
@@ -322,22 +332,56 @@ const NATURALNI_FILES: readonly PartnerFile[] = [
 ];
 
 // Za sada bez linkova; dodaju se kad stignu.
+// Linkovi iz spiska "link od sajtova za partnere". Bez linka su oni čiji
+// link ne radi ili ne vodi na samog partnera (dodaju se kad se provere).
 const MEDIJSKI_FILES: readonly PartnerFile[] = [
-  ["Case Study Club", "case-study-club.png", undefined],
-  ["Digitalizuj.me", "digitalizuj-me.png", undefined],
-  ["EESTEC LC Belgrade", "eestec.webp", undefined],
+  ["BEST Novi Sad", "best-novi-sad.png", "https://bestns.org.rs/"],
+  // Fotografija nalepnice (partner nije poslao fajl logoa).
+  ["Bum Bum radio", "bum-bum-radio.png", "https://bumbumradio.rs/"],
+  ["Case Study Club", "case-study-club.png", "https://casestudyclub.org/en/"],
+  ["Digitalizuj.me", "digitalizuj-me.png", "https://digitalizuj.me/"],
+  ["EESTEC LC Novi Sad", "eestec.png", "https://eestec.net/"],
+  ["H-Bridges", "h-bridges.png", "https://h-bridges.etf.bg.ac.rs/"],
+  ["HeapSpace", "heapspace.png", "https://heapspace.rs/"],
+  ["ICT", "ict.png", "https://ict.edu.rs/", undefined, 1.15],
   [
     "Istraživačko-razvojni centar FON",
     "istrazivacko-razvojni-centar.png",
-    undefined,
+    "https://irc.fon.bg.ac.rs/",
   ],
-  ["ITNetwork", "itnetwork.png", undefined],
-  ["Magazin Student", "magazin-student.png", undefined],
+  ["ITNetwork", "itnetwork.png", "https://www.itnetwork.rs/"],
+  [
+    "Magazin Student",
+    "magazin-student.png",
+    "https://www.instagram.com/magazinstudent/",
+  ],
   // Samo krug; natpis ispod je beo i ne vidi se na belom heksagonu.
-  ["Marketing Workshop", "marketing-workshop.png", undefined, undefined, 1.25],
+  [
+    "Marketing Workshop",
+    "marketing-workshop.png",
+    "https://www.instagram.com/marketingworkshop/",
+    undefined,
+    1.25,
+  ],
   ["Portal SBU Poslovi", "portal-sbu-poslovi.webp", "https://sbu-poslovi.rs/"],
-  ["PRObjave.com", "probjave.webp", undefined],
-  ["Znanje.rs", "znanje-rs.webp", undefined],
+  [
+    "PR Team FPN",
+    "pr-team-fpn.png",
+    "https://www.instagram.com/prteamfpn/",
+    undefined,
+    1.3,
+  ],
+  ["PRObjave.com", "probjave.webp", "https://probjave.com/"],
+  ["Računarski fakultet", "raf.png", "https://raf.edu.rs/"],
+  // Spisak ima samo sajt Ekonomskog fakulteta, ne SSEF-a.
+  [
+    "Savez studenata Ekonomskog fakulteta",
+    "ssef.png",
+    undefined,
+    undefined,
+    1.3,
+  ],
+  ["Znanje.rs", "znanje-rs.webp", "https://www.znanje.rs/"],
 ];
 
 const toPartner = (
