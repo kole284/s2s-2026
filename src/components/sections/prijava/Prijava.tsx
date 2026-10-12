@@ -56,6 +56,10 @@ const LIMITI_POLJA = {
 // CONTENT GAP: partneri trenutno nemaju canonical data source za pokrovitelje.
 const BROJ_POKROVITELJA = 1;
 const PRIJAVE_SE_OTVARAJU = new Date("2026-09-28T00:00:00+02:00").getTime();
+// Ponoć između 11. i 12. oktobra po našem vremenu.
+const PRIJAVE_SE_ZATVARAJU = new Date("2026-10-12T00:00:00+02:00").getTime();
+// setTimeout ne prima kašnjenje duže od ~24.8 dana.
+const NAJDUZI_TIMEOUT_MS = 2_147_483_647;
 
 const formatirajOdbrojavanje = (preostaloMs: number) => {
   const ukupnoSekundi = Math.max(0, Math.floor(preostaloMs / 1000));
@@ -695,6 +699,9 @@ const Prijava = () => {
   usePoljeIznadTastature(sekcijaRef);
   const [sada, setSada] = useState(() => Date.now());
   const prijaveZakljucane = sada < PRIJAVE_SE_OTVARAJU;
+  const prijaveZatvorene = sada >= PRIJAVE_SE_ZATVARAJU;
+  // Forma se ne prikazuje ni pre otvaranja ni posle zatvaranja prijava.
+  const formaNedostupna = prijaveZakljucane || prijaveZatvorene;
   const odbrojavanje = formatirajOdbrojavanje(PRIJAVE_SE_OTVARAJU - sada);
   const [forma, setForma] = useState<PrijavaForma>(praznaForma);
   const [korak, setKorak] = useState(1);
@@ -782,6 +789,27 @@ const Prijava = () => {
 
     return () => window.clearInterval(interval);
   }, [prijaveZakljucane]);
+
+  // Stranica otvorena pre roka se sama zatvori u trenutku zatvaranja prijava,
+  // da se iz starog taba ne može poslati prijava posle roka.
+  useEffect(() => {
+    if (prijaveZakljucane || prijaveZatvorene) {
+      return;
+    }
+
+    const doZatvaranja = PRIJAVE_SE_ZATVARAJU - Date.now();
+
+    if (doZatvaranja > NAJDUZI_TIMEOUT_MS) {
+      return;
+    }
+
+    const timeout = window.setTimeout(
+      () => setSada(Date.now()),
+      Math.max(0, doZatvaranja) + 50,
+    );
+
+    return () => window.clearTimeout(timeout);
+  }, [prijaveZakljucane, prijaveZatvorene]);
 
   const ocistiGreske = (...polja: Array<keyof PrijavaForma>) => {
     setGreske((prev) => {
@@ -1102,7 +1130,7 @@ const Prijava = () => {
   };
 
   const posaljiPrijavu = async () => {
-    if (prijaveZakljucane) {
+    if (formaNedostupna || Date.now() >= PRIJAVE_SE_ZATVARAJU) {
       return;
     }
 
@@ -1184,7 +1212,7 @@ const Prijava = () => {
   return (
     <section className="prijava" id="prijava" ref={sekcijaRef}>
       <PrijavaExit />
-      {!prijaveZakljucane ? (
+      {!formaNedostupna ? (
         <div className="prijava__scroll-content">
           <div className="prijava__canvas">
           <div className="prijava__mobile-s2s-band" aria-hidden="true">
@@ -2251,7 +2279,7 @@ const Prijava = () => {
         </div>
       ) : null}
 
-      {prijaveZakljucane
+      {formaNedostupna
         ? createPortal(
             <div
               className="prijava-workshop-validation-backdrop prijava-workshop-validation-backdrop--locked"
@@ -2264,31 +2292,51 @@ const Prijava = () => {
                 aria-labelledby="prijava-locked-title"
                 aria-describedby="prijava-locked-description"
               >
-                <strong
-                  id="prijava-locked-title"
-                  className="prijava-workshop-validation-popup__title"
-                >
-                  PRIJAVE USKORO
-                </strong>
+                {prijaveZatvorene ? (
+                  <>
+                    <strong
+                      id="prijava-locked-title"
+                      className="prijava-workshop-validation-popup__title"
+                    >
+                      PRIJAVE SU ZATVORENE
+                    </strong>
 
-                <p className="prijava-workshop-validation-popup__intro">
-                  Prijave se otvaraju 28. septembra.
-                </p>
+                    <p
+                      id="prijava-locked-description"
+                      className="prijava-workshop-validation-popup__intro"
+                    >
+                      Vidimo se na S2S-u!
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <strong
+                      id="prijava-locked-title"
+                      className="prijava-workshop-validation-popup__title"
+                    >
+                      PRIJAVE USKORO
+                    </strong>
 
-                <p
-                  id="prijava-locked-description"
-                  className="prijava-workshop-validation-popup__success-message"
-                >
-                  Vrati se uskoro i rezerviši svoje mesto na S2S-u.
-                </p>
+                    <p className="prijava-workshop-validation-popup__intro">
+                      Prijave se otvaraju 28. septembra.
+                    </p>
 
-                <p
-                  className="prijava-workshop-validation-popup__countdown"
-                  aria-live="polite"
-                  aria-atomic="true"
-                >
-                  {odbrojavanje}
-                </p>
+                    <p
+                      id="prijava-locked-description"
+                      className="prijava-workshop-validation-popup__success-message"
+                    >
+                      Vrati se uskoro i rezerviši svoje mesto na S2S-u.
+                    </p>
+
+                    <p
+                      className="prijava-workshop-validation-popup__countdown"
+                      aria-live="polite"
+                      aria-atomic="true"
+                    >
+                      {odbrojavanje}
+                    </p>
+                  </>
+                )}
 
                 <button
                   type="button"

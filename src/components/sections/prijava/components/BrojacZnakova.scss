@@ -15,4 +15,34 @@
   &--sakriven {
     visibility: hidden;
   }
+
+  // Na desktopu su kartice i dugmad tačno uklopljeni u papir; brojač ne sme
+  // da poveća karticu (ni kroz gap grida), pa je van toka, odmah ispod
+  // polja, u donjem paddingu kartice. Inače NAZAD/NAREDNA izlaze preko
+  // donje ivice papira.
+  @media #{$desktop} {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+}
+
+@media #{$desktop} {
+  .prijava :has(> .prijava-brojac) {
+    position: relative;
+  }
+
+  // Na koraku 3 je brojač direktno u kartici panela, pa ide u njen donji
+  // padding (ispod kartice bi izašao), poravnat sa desnom ivicom polja.
+  .prijava .prijava-panel-block > .prijava-brojac {
+    top: auto;
+    bottom: calc(var(--prijava-design-width) * 3 / 1440);
+    right: calc(var(--prijava-design-width) * 16 / 1440);
+  }
+
+  .prijava .prijava-panel-block--reasons > .prijava-brojac {
+    right: calc(var(--prijava-design-width) * 22 / 1440);
+  }
 }
